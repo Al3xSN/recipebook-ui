@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/Button';
+import { UserMenu } from '@/components/layout/UserMenu';
 
 export function Navbar() {
   const { user, isLoading, logout } = useAuth();
@@ -51,11 +52,8 @@ export function Navbar() {
                   Recipes
                 </Link>
                 {user.displayName && (
-                  <span className="hidden text-sm text-gray-500 sm:block">{user.displayName}</span>
+                  <UserMenu displayName={user.displayName} onLogout={handleLogout} />
                 )}
-                <Button variant="ghost" onClick={handleLogout}>
-                  Sign out
-                </Button>
               </>
             ) : (
               <>
