@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { apiAuth, ApiRequestError } from '@/lib/api';
 import type { RecipeDto } from '@/types/recipe';
+import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 import { RecipeCard } from './_components/RecipeCard';
 
 export default function RecipesPage() {
@@ -33,10 +35,9 @@ export default function RecipesPage() {
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">My Recipes</h1>
-        <button
-          disabled
-          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
-          title="Coming soon"
+        <Link
+          href="/protected/recipes/new"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600"
         >
           <svg
             className="h-4 w-4"
@@ -52,7 +53,42 @@ export default function RecipesPage() {
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
           New recipe
-        </button>
+        </Link>
+      </div>
+
+      {/* Search */}
+      <div className="mb-4">
+        <input
+          type="search"
+          placeholder="Search recipes…"
+          className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
+        />
+      </div>
+
+      {/* Filters */}
+      <div className="mb-8 flex flex-wrap items-center gap-3">
+        <select
+          defaultValue=""
+          className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
+        >
+          <option value="">All categories</option>
+          {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
+        <div className="flex flex-wrap gap-1.5">
+          {Object.entries(TAG_LABELS).map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-200"
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Loading skeleton */}
@@ -102,10 +138,9 @@ export default function RecipesPage() {
           <p className="mb-6 text-sm text-gray-500">
             Add your first recipe to start building your collection.
           </p>
-          <button
-            disabled
-            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
-            title="Coming soon"
+          <Link
+            href="/protected/recipes/new"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600"
           >
             <svg
               className="h-4 w-4"
@@ -121,7 +156,7 @@ export default function RecipesPage() {
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             Add your first recipe
-          </button>
+          </Link>
         </div>
       )}
 
