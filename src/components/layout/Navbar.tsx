@@ -11,7 +11,7 @@ export function Navbar() {
 
   function handleLogout() {
     logout();
-    router.replace('/login');
+    router.replace('/');
   }
 
   return (
@@ -44,6 +44,12 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             {user ? (
               <>
+                <Link
+                  href="/recipes"
+                  className="text-sm font-medium text-gray-600 transition-colors hover:text-orange-500"
+                >
+                  Recipes
+                </Link>
                 {user.displayName && (
                   <span className="hidden text-sm text-gray-500 sm:block">{user.displayName}</span>
                 )}

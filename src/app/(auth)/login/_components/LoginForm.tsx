@@ -30,7 +30,7 @@ export function LoginForm() {
         body: JSON.stringify({ email, password }),
       });
       auth.login(data);
-      router.replace('/profile');
+      router.replace('/recipes');
     } catch (err) {
       if (err instanceof ApiRequestError) {
         setError(err.detail);
@@ -43,7 +43,7 @@ export function LoginForm() {
   }
 
   return (
-    <AuthCard title="Sign in to RecipeBook">
+    <AuthCard title="Sign in">
       {error && (
         <p role="alert" className="mb-4 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">
           {error}

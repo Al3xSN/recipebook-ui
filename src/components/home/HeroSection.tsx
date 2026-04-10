@@ -38,10 +38,10 @@ export function HeroSection() {
             </p>
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
-                href="/profile"
+                href="/recipes"
                 className="inline-flex items-center justify-center rounded-lg bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
               >
-                My profile
+                My recipes
               </Link>
             </div>
           </>

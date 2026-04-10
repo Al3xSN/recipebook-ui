@@ -37,7 +37,7 @@ export function RegisterForm() {
         }),
       });
       auth.login(data);
-      router.replace('/profile');
+      router.replace('/recipes');
     } catch (err) {
       if (err instanceof ApiRequestError) {
         setError(err.detail);
