@@ -64,7 +64,7 @@ export function UserMenu({ displayName, onLogout }: UserMenuProps) {
         }`}
       >
         <Link
-          href="/profile"
+          href="/profile/me"
           onClick={close}
           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
         >

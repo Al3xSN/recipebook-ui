@@ -4,24 +4,27 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { apiAuth, AuthError, ApiRequestError } from '@/lib/api';
+import { PLACEHOLDER_RECIPES } from '@/lib/placeholder-data';
 import { CATEGORY_LABELS, TAG_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
 
-export default function NewRecipePage() {
+export default function EditRecipePage({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const seed = PLACEHOLDER_RECIPES.find((r) => r.id === params.id) ?? PLACEHOLDER_RECIPES[0];
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState(0);
-  const [tags, setTags] = useState<number[]>([]);
-  const [prepTimeMinutes, setPrepTimeMinutes] = useState('');
-  const [cookTimeMinutes, setCookTimeMinutes] = useState('');
-  const [servings, setServings] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: 0 }]);
-  const [instructions, setInstructions] = useState([{ text: '' }]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [title, setTitle] = useState(seed.title);
+  const [description, setDescription] = useState(seed.description ?? '');
+  const [category, setCategory] = useState(seed.category);
+  const [tags, setTags] = useState<number[]>(seed.tags);
+  const [prepTimeMinutes, setPrepTimeMinutes] = useState(String(seed.prepTimeMinutes));
+  const [cookTimeMinutes, setCookTimeMinutes] = useState(String(seed.cookTimeMinutes));
+  const [servings, setServings] = useState(String(seed.servings));
+  const [imageUrl, setImageUrl] = useState(seed.imageUrl ?? '');
+  const [ingredients, setIngredients] = useState(
+    seed.ingredients.map((ing) => ({ name: ing.name, amount: String(ing.amount), unit: ing.unit })),
+  );
+  const [instructions, setInstructions] = useState(
+    seed.instructions.map((s) => ({ text: s.text })),
+  );
 
   function toggleTag(tag: number) {
     setTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
@@ -57,61 +60,19 @@ export default function NewRecipePage() {
     setInstructions((prev) => prev.map((inst, i) => (i === index ? { text: value } : inst)));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    setIsLoading(true);
-
-    try {
-      await apiAuth('/recipes', {
-        method: 'POST',
-        body: JSON.stringify({
-          title: title.trim(),
-          description: description.trim() || null,
-          category,
-          tags,
-          prepTimeMinutes: Number(prepTimeMinutes),
-          cookTimeMinutes: Number(cookTimeMinutes),
-          servings: Number(servings),
-          imageUrl: imageUrl.trim() || null,
-          ingredients: ingredients.map((ing) => ({
-            name: ing.name,
-            amount: Number(ing.amount),
-            unit: ing.unit,
-          })),
-          instructions: instructions.map((inst, i) => ({
-            stepNumber: i + 1,
-            text: inst.text,
-          })),
-        }),
-      });
-      router.push('/recipes');
-    } catch (err) {
-      if (err instanceof AuthError) {
-        router.replace('/login');
-      } else if (err instanceof ApiRequestError) {
-        setError(err.detail);
-      } else {
-        setError('Failed to create recipe. Please try again.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
+    // No-op for placeholder UI — navigate back to detail page
+    router.push(`/recipes/${params.id}`);
   }
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">New recipe</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Edit recipe</h1>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-8">
-        {error && (
-          <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
-            {error}
-          </p>
-        )}
-
         {/* Basic info */}
         <section className="flex flex-col gap-4">
           <h2 className="text-base font-semibold text-gray-900">Basic info</h2>
@@ -396,14 +357,11 @@ export default function NewRecipePage() {
 
         {/* Actions */}
         <div className="flex gap-3 border-t border-gray-200 pt-6">
-          <Button type="submit" isLoading={isLoading}>
-            Save recipe
-          </Button>
+          <Button type="submit">Save changes</Button>
           <Button
             type="button"
             variant="secondary"
-            onClick={() => router.push('/protected/recipes')}
-            disabled={isLoading}
+            onClick={() => router.push(`/recipes/${params.id}`)}
           >
             Cancel
           </Button>
