@@ -1,25 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import {
-  PLACEHOLDER_FRIENDS,
-  PLACEHOLDER_FRIEND_REQUESTS,
-  PLACEHOLDER_SENT_REQUESTS,
-  type PlaceholderFriend,
-  type PlaceholderRequest,
-} from '@/lib/placeholder-data';
+import { apiFetch } from '@/lib/api';
 import { TabBar } from '@/components/ui/TabBar';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 
+interface FriendDto {
+  userId: string;
+  username: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  recipeCount: number;
+}
+
+interface IncomingRequestDto {
+  id: string;
+  senderId: string;
+  senderUsername: string;
+  receiverId: string;
+  status: number;
+  createdAt: string;
+}
+
+interface SentRequestDto {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  receiverUsername: string;
+  status: number;
+  createdAt: string;
+}
+
 function Avatar({ name }: { name: string }) {
-  const initials = name
-    .split(' ')
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+  const initials = name.slice(0, 2).toUpperCase();
   return (
     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-bold text-orange-700">
       {initials}
@@ -27,7 +42,13 @@ function Avatar({ name }: { name: string }) {
   );
 }
 
-function FriendList({ friends }: { friends: PlaceholderFriend[] }) {
+function FriendList({
+  friends,
+  onRemove,
+}: {
+  friends: FriendDto[];
+  onRemove: (userId: string) => void;
+}) {
   if (friends.length === 0) {
     return (
       <EmptyState
@@ -64,26 +85,39 @@ function FriendList({ friends }: { friends: PlaceholderFriend[] }) {
 
   return (
     <div className="flex flex-col gap-2">
-      {friends.map((friend) => (
-        <div
-          key={friend.username}
-          className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
-        >
-          <Avatar name={friend.displayName} />
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-gray-900">{friend.displayName}</p>
-            <p className="text-sm text-gray-500">
-              @{friend.username} · {friend.recipeCount} recipes
-            </p>
-          </div>
-          <Link
-            href={`/profile/${friend.username}`}
-            className="flex-shrink-0 rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-orange-500"
+      {friends.map((friend) => {
+        const displayName = friend.displayName ?? friend.username;
+        return (
+          <div
+            key={friend.userId}
+            className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
           >
-            View profile
-          </Link>
-        </div>
-      ))}
+            <Avatar name={displayName} />
+            <div className="min-w-0 flex-1">
+              <p className="font-medium text-gray-900">{displayName}</p>
+              <p className="text-sm text-gray-500">
+                @{friend.username} · {friend.recipeCount} recipe
+                {friend.recipeCount !== 1 ? 's' : ''}
+              </p>
+            </div>
+            <div className="flex flex-shrink-0 gap-2">
+              <Link
+                href={`/profile/${friend.username}`}
+                className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-orange-500"
+              >
+                View profile
+              </Link>
+              <button
+                type="button"
+                onClick={() => onRemove(friend.userId)}
+                className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-400 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-500"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -93,9 +127,9 @@ function RequestList({
   onAccept,
   onDecline,
 }: {
-  requests: PlaceholderRequest[];
-  onAccept: (username: string) => void;
-  onDecline: (username: string) => void;
+  requests: IncomingRequestDto[];
+  onAccept: (id: string) => void;
+  onDecline: (id: string) => void;
 }) {
   if (requests.length === 0) {
     return (
@@ -128,19 +162,19 @@ function RequestList({
     <div className="flex flex-col gap-2">
       {requests.map((req) => (
         <div
-          key={req.username}
+          key={req.id}
           className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
         >
-          <Avatar name={req.displayName} />
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-gray-900">{req.displayName}</p>
-            <p className="text-sm text-gray-500">@{req.username}</p>
+          <Avatar name={req.senderUsername} />
+          <div className="min-w-0 flex-1">
+            <p className="font-medium text-gray-900">@{req.senderUsername}</p>
+            <p className="text-xs text-gray-400">{new Date(req.createdAt).toLocaleDateString()}</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="primary" onClick={() => onAccept(req.username)}>
+            <Button variant="primary" onClick={() => onAccept(req.id)}>
               Accept
             </Button>
-            <Button variant="secondary" onClick={() => onDecline(req.username)}>
+            <Button variant="secondary" onClick={() => onDecline(req.id)}>
               Decline
             </Button>
           </div>
@@ -154,8 +188,8 @@ function SentList({
   requests,
   onCancel,
 }: {
-  requests: PlaceholderRequest[];
-  onCancel: (username: string) => void;
+  requests: SentRequestDto[];
+  onCancel: (id: string) => void;
 }) {
   if (requests.length === 0) {
     return (
@@ -185,15 +219,15 @@ function SentList({
     <div className="flex flex-col gap-2">
       {requests.map((req) => (
         <div
-          key={req.username}
+          key={req.id}
           className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
         >
-          <Avatar name={req.displayName} />
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-gray-900">{req.displayName}</p>
-            <p className="text-sm text-gray-500">@{req.username}</p>
+          <Avatar name={req.receiverUsername} />
+          <div className="min-w-0 flex-1">
+            <p className="font-medium text-gray-900">@{req.receiverUsername}</p>
+            <p className="text-xs text-gray-400">{new Date(req.createdAt).toLocaleDateString()}</p>
           </div>
-          <Button variant="secondary" onClick={() => onCancel(req.username)}>
+          <Button variant="secondary" onClick={() => onCancel(req.id)}>
             Cancel
           </Button>
         </div>
@@ -204,20 +238,89 @@ function SentList({
 
 export default function FriendsPage() {
   const [activeTab, setActiveTab] = useState('friends');
-  const [friends] = useState(PLACEHOLDER_FRIENDS);
-  const [requests, setRequests] = useState(PLACEHOLDER_FRIEND_REQUESTS);
-  const [sent, setSent] = useState(PLACEHOLDER_SENT_REQUESTS);
+  const [friends, setFriends] = useState<FriendDto[]>([]);
+  const [requests, setRequests] = useState<IncomingRequestDto[]>([]);
+  const [sent, setSent] = useState<SentRequestDto[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  function handleAccept(username: string) {
-    setRequests((prev) => prev.filter((r) => r.username !== username));
+  useEffect(() => {
+    Promise.all([
+      apiFetch<FriendDto[]>('/api/friends'),
+      apiFetch<IncomingRequestDto[]>('/api/friends/requests'),
+      apiFetch<SentRequestDto[]>('/api/friends/requests?direction=sent'),
+    ])
+      .then(([f, r, s]) => {
+        setFriends(f);
+        setRequests(r);
+        setSent(s);
+      })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  async function handleAccept(id: string) {
+    try {
+      await apiFetch(`/api/friends/requests/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ accept: true }),
+      });
+      // Move from requests to friends (we don't have the friend data yet, so just remove from requests)
+      const accepted = requests.find((r) => r.id === id);
+      setRequests((prev) => prev.filter((r) => r.id !== id));
+      if (accepted) {
+        // Optimistically add to friends list with minimal data
+        setFriends((prev) => [
+          ...prev,
+          {
+            userId: accepted.senderId,
+            username: accepted.senderUsername,
+            displayName: null,
+            avatarUrl: null,
+            recipeCount: 0,
+          },
+        ]);
+      }
+    } catch {
+      // ignore
+    }
   }
 
-  function handleDecline(username: string) {
-    setRequests((prev) => prev.filter((r) => r.username !== username));
+  async function handleDecline(id: string) {
+    try {
+      await apiFetch(`/api/friends/requests/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ accept: false }),
+      });
+      setRequests((prev) => prev.filter((r) => r.id !== id));
+    } catch {
+      // ignore
+    }
   }
 
-  function handleCancel(username: string) {
-    setSent((prev) => prev.filter((r) => r.username !== username));
+  async function handleRemoveFriend(userId: string) {
+    try {
+      await apiFetch(`/api/friends/${userId}`, { method: 'DELETE' });
+      setFriends((prev) => prev.filter((f) => f.userId !== userId));
+    } catch {
+      // ignore
+    }
+  }
+
+  async function handleCancelSent(id: string) {
+    try {
+      await apiFetch(`/api/friends/requests/${id}`, { method: 'DELETE' });
+      setSent((prev) => prev.filter((r) => r.id !== id));
+    } catch {
+      // ignore
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-10">
+        <p className="text-sm text-gray-400">Loading…</p>
+      </div>
+    );
   }
 
   return (
@@ -238,11 +341,11 @@ export default function FriendsPage() {
         />
       </div>
 
-      {activeTab === 'friends' && <FriendList friends={friends} />}
+      {activeTab === 'friends' && <FriendList friends={friends} onRemove={handleRemoveFriend} />}
       {activeTab === 'requests' && (
         <RequestList requests={requests} onAccept={handleAccept} onDecline={handleDecline} />
       )}
-      {activeTab === 'sent' && <SentList requests={sent} onCancel={handleCancel} />}
+      {activeTab === 'sent' && <SentList requests={sent} onCancel={handleCancelSent} />}
     </div>
   );
 }

@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useAuth } from '@/context/auth-context';
+import { useSession } from 'next-auth/react';
 
 export function HeroSection() {
-  const { user, isLoading } = useAuth();
+  const { data: session, status } = useSession();
+  const isLoading = status === 'loading';
+  const user = session?.user ?? null;
 
   if (isLoading) return null;
 
@@ -31,7 +33,7 @@ export function HeroSection() {
             <h1 className="mb-4 text-5xl font-bold tracking-tight text-gray-900">
               Welcome back,
               <br />
-              <span className="text-orange-500">{user.displayName || user.email}.</span>
+              <span className="text-orange-500">{user.displayName ?? user.username}.</span>
             </h1>
             <p className="mb-10 text-lg text-gray-500">
               Pick up where you left off — your collection is waiting.

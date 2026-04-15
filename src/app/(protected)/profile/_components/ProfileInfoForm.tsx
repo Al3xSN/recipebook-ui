@@ -1,11 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { useAuth } from '@/context/auth-context';
-import { apiAuth, AuthError, ApiRequestError } from '@/lib/api';
+import { apiFetch, ApiRequestError } from '@/lib/api';
 import type {
   ProfileDto,
   UpdateProfileInfoRequest,
@@ -13,8 +12,7 @@ import type {
 } from '@/types/profile';
 
 export function ProfileInfoForm() {
-  const router = useRouter();
-  const auth = useAuth();
+  const { update: updateSession } = useSession();
 
   const [profile, setProfile] = useState<ProfileDto | null>(null);
   const [formData, setFormData] = useState<UpdateProfileInfoRequest>({
@@ -33,7 +31,7 @@ export function ProfileInfoForm() {
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const data = await apiAuth<ProfileDto>('/profile');
+        const data = await apiFetch<ProfileDto>('/api/profile');
         setProfile(data);
         setFormData({
           username: data.username,
@@ -42,9 +40,7 @@ export function ProfileInfoForm() {
           avatarUrl: data.avatarUrl,
         });
       } catch (err) {
-        if (err instanceof AuthError) {
-          router.replace('/login');
-        } else if (err instanceof ApiRequestError) {
+        if (err instanceof ApiRequestError) {
           setFetchError(err.detail);
         } else {
           setFetchError('Failed to load profile.');
@@ -55,7 +51,7 @@ export function ProfileInfoForm() {
     }
 
     fetchProfile();
-  }, [router]);
+  }, []);
 
   function handleChange(field: keyof UpdateProfileInfoRequest, value: string) {
     setFormData((prev) => ({ ...prev, [field]: value || null }));
@@ -81,17 +77,14 @@ export function ProfileInfoForm() {
     setIsSaveLoading(true);
 
     try {
-      const response = await apiAuth<UpdateProfileInfoResponse>('/profile/info', {
+      const response = await apiFetch<UpdateProfileInfoResponse>('/api/profile/info', {
         method: 'PUT',
         body: JSON.stringify(formData),
       });
 
-      if (response.token && response.refreshToken) {
-        auth.updateUser(
-          { email: auth.user!.email, displayName: response.displayName },
-          response.token,
-          response.refreshToken,
-        );
+      // If username changed the server returns updated session data — refresh NextAuth session
+      if (response.usernameChanged) {
+        await updateSession({ username: response.username, displayName: response.displayName });
       }
 
       setProfile((prev) =>
@@ -109,9 +102,7 @@ export function ProfileInfoForm() {
       setSaveSuccess(true);
       setIsEditing(false);
     } catch (err) {
-      if (err instanceof AuthError) {
-        router.replace('/login');
-      } else if (err instanceof ApiRequestError) {
+      if (err instanceof ApiRequestError) {
         setSaveError(err.detail);
       } else {
         setSaveError('Failed to save profile.');

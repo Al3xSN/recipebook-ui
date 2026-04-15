@@ -1,30 +1,55 @@
 'use client';
 
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { PLACEHOLDER_RECIPES } from '@/lib/placeholder-data';
+import { apiFetch, ApiRequestError } from '@/lib/api';
 import { CATEGORY_LABELS, TAG_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
+import type { RecipeDto } from '@/types/recipe';
 
-export default function EditRecipePage({ params }: { params: { id: string } }) {
+export default function EditRecipePage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
-  const seed = PLACEHOLDER_RECIPES.find((r) => r.id === params.id) ?? PLACEHOLDER_RECIPES[0];
+  const { id } = use(params);
 
-  const [title, setTitle] = useState(seed.title);
-  const [description, setDescription] = useState(seed.description ?? '');
-  const [category, setCategory] = useState(seed.category);
-  const [tags, setTags] = useState<number[]>(seed.tags);
-  const [prepTimeMinutes, setPrepTimeMinutes] = useState(String(seed.prepTimeMinutes));
-  const [cookTimeMinutes, setCookTimeMinutes] = useState(String(seed.cookTimeMinutes));
-  const [servings, setServings] = useState(String(seed.servings));
-  const [imageUrl, setImageUrl] = useState(seed.imageUrl ?? '');
-  const [ingredients, setIngredients] = useState(
-    seed.ingredients.map((ing) => ({ name: ing.name, amount: String(ing.amount), unit: ing.unit })),
-  );
-  const [instructions, setInstructions] = useState(
-    seed.instructions.map((s) => ({ text: s.text })),
-  );
+  const [isLoadingRecipe, setIsLoadingRecipe] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState(0);
+  const [tags, setTags] = useState<number[]>([]);
+  const [prepTimeMinutes, setPrepTimeMinutes] = useState('');
+  const [cookTimeMinutes, setCookTimeMinutes] = useState('');
+  const [servings, setServings] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: 0 }]);
+  const [instructions, setInstructions] = useState([{ text: '' }]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    apiFetch<RecipeDto>(`/api/recipes/${id}`)
+      .then((r) => {
+        setTitle(r.title);
+        setDescription(r.description ?? '');
+        setCategory(r.category);
+        setTags(r.tags);
+        setPrepTimeMinutes(String(r.prepTimeMinutes));
+        setCookTimeMinutes(String(r.cookTimeMinutes));
+        setServings(String(r.servings));
+        setImageUrl(r.imageUrl ?? '');
+        setIngredients(
+          r.ingredients.map((i) => ({ name: i.name, amount: String(i.amount), unit: i.unit })),
+        );
+        setInstructions(r.instructions.map((s) => ({ text: s.text })));
+      })
+      .catch((err) => {
+        if (err instanceof ApiRequestError) setLoadError(err.detail);
+        else setLoadError('Failed to load recipe.');
+      })
+      .finally(() => setIsLoadingRecipe(false));
+  }, [id]);
 
   function toggleTag(tag: number) {
     setTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
@@ -60,10 +85,58 @@ export default function EditRecipePage({ params }: { params: { id: string } }) {
     setInstructions((prev) => prev.map((inst, i) => (i === index ? { text: value } : inst)));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // No-op for placeholder UI — navigate back to detail page
-    router.push(`/recipes/${params.id}`);
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await apiFetch(`/api/recipes/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          title: title.trim(),
+          description: description.trim() || null,
+          category,
+          tags,
+          prepTimeMinutes: Number(prepTimeMinutes),
+          cookTimeMinutes: Number(cookTimeMinutes),
+          servings: Number(servings),
+          imageUrl: imageUrl.trim() || null,
+          visibility: 3, // keep Private on edit — user can change via dedicated field later
+          ingredients: ingredients.map((ing) => ({
+            name: ing.name,
+            amount: Number(ing.amount),
+            unit: ing.unit,
+          })),
+          instructions: instructions.map((inst, i) => ({
+            stepNumber: i + 1,
+            text: inst.text,
+          })),
+        }),
+      });
+      router.push(`/recipes/${id}`);
+    } catch (err) {
+      if (err instanceof ApiRequestError) setError(err.detail);
+      else setError('Failed to save recipe. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  if (isLoadingRecipe) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-10">
+        <p className="text-sm text-gray-400">Loading recipe…</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-10">
+        <p className="text-sm text-red-600">{loadError}</p>
+      </div>
+    );
   }
 
   return (
@@ -73,6 +146,12 @@ export default function EditRecipePage({ params }: { params: { id: string } }) {
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-8">
+        {error && (
+          <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
+            {error}
+          </p>
+        )}
+
         {/* Basic info */}
         <section className="flex flex-col gap-4">
           <h2 className="text-base font-semibold text-gray-900">Basic info</h2>
@@ -357,11 +436,14 @@ export default function EditRecipePage({ params }: { params: { id: string } }) {
 
         {/* Actions */}
         <div className="flex gap-3 border-t border-gray-200 pt-6">
-          <Button type="submit">Save changes</Button>
+          <Button type="submit" isLoading={isLoading}>
+            Save changes
+          </Button>
           <Button
             type="button"
             variant="secondary"
-            onClick={() => router.push(`/recipes/${params.id}`)}
+            onClick={() => router.push(`/recipes/${id}`)}
+            disabled={isLoading}
           >
             Cancel
           </Button>

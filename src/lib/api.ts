@@ -1,14 +1,4 @@
-import { getToken, getRefreshToken, setTokens, clearTokens } from '@/lib/auth-storage';
 import type { ApiError } from '@/types/profile';
-
-const BASE_URL = 'http://localhost:5000';
-
-export class AuthError extends Error {
-  constructor(message = 'Session expired') {
-    super(message);
-    this.name = 'AuthError';
-  }
-}
 
 export class ApiRequestError extends Error {
   status: number;
@@ -39,8 +29,12 @@ async function parseResponse<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+/**
+ * Fetch wrapper for all API routes (/api/*).
+ * Session cookie is sent automatically for same-origin requests.
+ */
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(path, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -48,66 +42,6 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
     },
   });
 
-  if (!res.ok) {
-    throw await parseError(res);
-  }
-
+  if (!res.ok) throw await parseError(res);
   return parseResponse<T>(res);
-}
-
-export async function apiAuth<T>(path: string, options?: RequestInit): Promise<T> {
-  const token = getToken();
-
-  const res = await fetch(`${BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-  });
-
-  if (res.status !== 401) {
-    if (!res.ok) throw await parseError(res);
-    return parseResponse<T>(res);
-  }
-
-  // 401 — attempt token refresh
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) {
-    clearTokens();
-    throw new AuthError();
-  }
-
-  const refreshRes = await fetch(`${BASE_URL}/auth/refresh`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ refreshToken }),
-  });
-
-  if (refreshRes.status === 401) {
-    clearTokens();
-    throw new AuthError();
-  }
-
-  if (!refreshRes.ok) {
-    clearTokens();
-    throw new AuthError();
-  }
-
-  const refreshData = (await refreshRes.json()) as { token: string; refreshToken: string };
-  setTokens(refreshData.token, refreshData.refreshToken);
-
-  // Retry original request with new token
-  const retryRes = await fetch(`${BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-      Authorization: `Bearer ${refreshData.token}`,
-    },
-  });
-
-  if (!retryRes.ok) throw await parseError(retryRes);
-  return parseResponse<T>(retryRes);
 }

@@ -1,20 +1,45 @@
-'use client';
-
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { PLACEHOLDER_RECIPES } from '@/lib/placeholder-data';
+import { auth } from '@/auth';
+import { db } from '@/lib/db';
 import { CATEGORY_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
 import { RatingStars } from './_components/RatingStars';
 import { CommentList } from './_components/CommentList';
 
-export default function RecipeDetailPage({ params }: { params: { id: string } }) {
-  // Use placeholder data regardless of actual id
-  const recipe = PLACEHOLDER_RECIPES.find((r) => r.id === params.id) ?? PLACEHOLDER_RECIPES[0];
+function formatTime(minutes: number) {
+  if (minutes < 60) return `${minutes}m`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
 
-  function formatTime(minutes: number) {
-    if (minutes < 60) return `${minutes}m`;
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return m > 0 ? `${h}h ${m}m` : `${h}h`;
+export default async function RecipeDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const session = await auth();
+  const { id } = await params;
+
+  const recipe = await db.recipe.findUnique({
+    where: { id },
+    include: { ingredients: true, instructions: true, tags: true },
+  });
+
+  if (!recipe) notFound();
+
+  const isOwner = recipe.userId === session?.user?.id;
+
+  if (!isOwner) {
+    if (recipe.visibility === 0) {
+      notFound();
+    } else if (recipe.visibility === 2) {
+      const friendship = await db.friendship.findFirst({
+        where: {
+          OR: [
+            { userAId: session!.user!.id, userBId: recipe.userId },
+            { userAId: recipe.userId, userBId: session!.user!.id },
+          ],
+        },
+      });
+      if (!friendship) notFound();
+    }
   }
 
   return (
@@ -42,25 +67,27 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
         )}
 
         {/* Edit button */}
-        <Link
-          href={`/recipes/${params.id}/edit`}
-          className="absolute right-3 top-3 flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-orange-500"
-        >
-          <svg
-            className="h-3.5 w-3.5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
+        {isOwner && (
+          <Link
+            href={`/recipes/${id}/edit`}
+            className="absolute right-3 top-3 flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-orange-500"
           >
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-          </svg>
-          Edit
-        </Link>
+            <svg
+              className="h-3.5 w-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            Edit
+          </Link>
+        )}
       </div>
 
       {/* Category + Title */}
@@ -138,7 +165,6 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
         <p className="mb-8 leading-relaxed text-gray-600">{recipe.description}</p>
       )}
 
-      {/* Divider */}
       <hr className="mb-8 border-gray-200" />
 
       {/* Ingredients */}
@@ -149,7 +175,7 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
             <li key={i} className="flex items-center justify-between px-4 py-3">
               <span className="text-sm font-medium text-gray-900">{ing.name}</span>
               <span className="text-sm text-gray-500">
-                {ing.amount} {UNIT_LABELS[ing.unit]}
+                {Number(ing.amount)} {UNIT_LABELS[ing.unit]}
               </span>
             </li>
           ))}
@@ -160,29 +186,34 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
       <section className="mb-8">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">Instructions</h2>
         <ol className="flex flex-col gap-4">
-          {recipe.instructions.map((step) => (
-            <li key={step.stepNumber} className="flex gap-4">
-              <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-bold text-orange-700">
-                {step.stepNumber}
-              </span>
-              <p className="pt-0.5 leading-relaxed text-gray-700">{step.text}</p>
-            </li>
-          ))}
+          {recipe.instructions
+            .sort((a, b) => a.stepNumber - b.stepNumber)
+            .map((step) => (
+              <li key={step.stepNumber} className="flex gap-4">
+                <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-bold text-orange-700">
+                  {step.stepNumber}
+                </span>
+                <p className="pt-0.5 leading-relaxed text-gray-700">{step.text}</p>
+              </li>
+            ))}
         </ol>
       </section>
 
       <hr className="mb-8 border-gray-200" />
 
-      {/* Rating */}
-      <section className="mb-8">
-        <RatingStars />
-      </section>
-
-      <hr className="mb-8 border-gray-200" />
+      {/* Rating — only show for non-owners */}
+      {!isOwner && (
+        <>
+          <section className="mb-8">
+            <RatingStars recipeId={id} />
+          </section>
+          <hr className="mb-8 border-gray-200" />
+        </>
+      )}
 
       {/* Comments */}
       <section>
-        <CommentList />
+        <CommentList recipeId={id} />
       </section>
     </div>
   );

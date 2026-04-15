@@ -1,22 +1,57 @@
 'use client';
 
 import { useState } from 'react';
-import { PLACEHOLDER_PUBLIC_PROFILE } from '@/lib/placeholder-data';
+import { apiFetch } from '@/lib/api';
 
-type FriendshipStatus = 'none' | 'pending' | 'friends';
+export interface PublicProfileData {
+  userId: string;
+  username: string;
+  displayName: string | null;
+  bio: string | null;
+  avatarUrl: string | null;
+}
 
-export function PublicProfileHeader({ username }: { username: string }) {
-  const [status, setStatus] = useState<FriendshipStatus>('none');
+// 0=NotFriends, 1=PendingOutgoing, 2=PendingIncoming, 3=Friends
+type FriendshipStatus = 0 | 1 | 2 | 3;
 
-  // Use placeholder profile data (username displayed is from the URL)
-  const profile = { ...PLACEHOLDER_PUBLIC_PROFILE, username };
+interface Props {
+  profile: PublicProfileData;
+  initialFriendshipStatus: FriendshipStatus;
+}
 
-  const initials = profile.displayName
-    .split(' ')
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+export function PublicProfileHeader({ profile, initialFriendshipStatus }: Props) {
+  const [status, setStatus] = useState<FriendshipStatus>(initialFriendshipStatus);
+  const [isActing, setIsActing] = useState(false);
+
+  const displayName = profile.displayName ?? profile.username;
+  const initials = displayName.slice(0, 2).toUpperCase();
+
+  async function handleAddFriend() {
+    setIsActing(true);
+    try {
+      await apiFetch('/api/friends/requests', {
+        method: 'POST',
+        body: JSON.stringify({ receiverUsername: profile.username }),
+      });
+      setStatus(1);
+    } catch {
+      // silently ignore
+    } finally {
+      setIsActing(false);
+    }
+  }
+
+  async function handleRemoveFriend() {
+    setIsActing(true);
+    try {
+      await apiFetch(`/api/friends/${profile.userId}`, { method: 'DELETE' });
+      setStatus(0);
+    } catch {
+      // silently ignore
+    } finally {
+      setIsActing(false);
+    }
+  }
 
   return (
     <div className="mb-8 flex flex-col items-start gap-6 sm:flex-row sm:items-center">
@@ -26,7 +61,7 @@ export function PublicProfileHeader({ username }: { username: string }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={profile.avatarUrl}
-            alt={profile.displayName}
+            alt={displayName}
             className="h-24 w-24 rounded-full object-cover"
           />
         ) : (
@@ -36,25 +71,18 @@ export function PublicProfileHeader({ username }: { username: string }) {
 
       {/* Info */}
       <div className="flex-1">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">{profile.displayName}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">{displayName}</h1>
         <p className="text-sm text-gray-500">@{profile.username}</p>
         {profile.bio && <p className="mt-2 text-sm text-gray-600">{profile.bio}</p>}
-        <div className="mt-2 flex gap-4 text-sm text-gray-500">
-          <span>
-            <span className="font-semibold text-gray-900">{profile.recipeCount}</span> recipes
-          </span>
-          <span>
-            <span className="font-semibold text-gray-900">{profile.friendCount}</span> friends
-          </span>
-        </div>
       </div>
 
-      {/* Friendship action button */}
-      {status === 'none' && (
+      {/* Friendship action */}
+      {status === 0 && (
         <button
           type="button"
-          onClick={() => setStatus('pending')}
-          className="flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-600"
+          onClick={handleAddFriend}
+          disabled={isActing}
+          className="flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
         >
           <svg
             className="h-4 w-4"
@@ -75,11 +103,11 @@ export function PublicProfileHeader({ username }: { username: string }) {
         </button>
       )}
 
-      {status === 'pending' && (
+      {status === 1 && (
         <button
           type="button"
-          onClick={() => setStatus('none')}
-          className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition-colors hover:bg-gray-50"
+          disabled
+          className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-500 shadow-sm opacity-75"
         >
           <svg
             className="h-4 w-4"
@@ -98,11 +126,18 @@ export function PublicProfileHeader({ username }: { username: string }) {
         </button>
       )}
 
-      {status === 'friends' && (
+      {status === 2 && (
+        <span className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-medium text-orange-700">
+          Sent you a request — check Friends page
+        </span>
+      )}
+
+      {status === 3 && (
         <button
           type="button"
-          onClick={() => setStatus('none')}
-          className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+          onClick={handleRemoveFriend}
+          disabled={isActing}
+          className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
         >
           <svg
             className="h-4 w-4"

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { apiAuth, ApiRequestError } from '@/lib/api';
+import { apiFetch, ApiRequestError } from '@/lib/api';
 import type { RecipeDto } from '@/types/recipe';
 import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 import { RecipeCard } from './_components/RecipeCard';
@@ -15,7 +15,7 @@ export default function RecipesPage() {
   useEffect(() => {
     async function load() {
       try {
-        const data = await apiAuth<RecipeDto[]>('/recipes');
+        const data = await apiFetch<RecipeDto[]>('/api/recipes');
         setRecipes(data);
       } catch (err) {
         if (err instanceof ApiRequestError) {
@@ -36,7 +36,7 @@ export default function RecipesPage() {
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">My Recipes</h1>
         <Link
-          href="/protected/recipes/new"
+          href="/recipes/new"
           className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600"
         >
           <svg
@@ -139,7 +139,7 @@ export default function RecipesPage() {
             Add your first recipe to start building your collection.
           </p>
           <Link
-            href="/protected/recipes/new"
+            href="/recipes/new"
             className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600"
           >
             <svg

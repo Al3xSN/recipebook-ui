@@ -1,13 +1,15 @@
 import Link from 'next/link';
-import type { PlaceholderProfile } from '@/lib/placeholder-data';
 
-export function ProfileHeader({ profile }: { profile: PlaceholderProfile }) {
-  const initials = profile.displayName
-    .split(' ')
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+export interface ProfileData {
+  username: string;
+  displayName: string | null;
+  bio: string | null;
+  avatarUrl: string | null;
+}
+
+export function ProfileHeader({ profile }: { profile: ProfileData }) {
+  const displayName = profile.displayName ?? profile.username;
+  const initials = displayName.slice(0, 2).toUpperCase();
 
   return (
     <div className="mb-8 flex flex-col items-start gap-6 sm:flex-row sm:items-center">
@@ -17,7 +19,7 @@ export function ProfileHeader({ profile }: { profile: PlaceholderProfile }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={profile.avatarUrl}
-            alt={profile.displayName}
+            alt={displayName}
             className="h-24 w-24 rounded-full object-cover"
           />
         ) : (
@@ -27,7 +29,7 @@ export function ProfileHeader({ profile }: { profile: PlaceholderProfile }) {
 
       {/* Info */}
       <div className="flex-1">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">{profile.displayName}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">{displayName}</h1>
         <p className="text-sm text-gray-500">@{profile.username}</p>
         {profile.bio && <p className="mt-2 text-sm text-gray-600">{profile.bio}</p>}
       </div>

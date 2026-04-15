@@ -26,6 +26,12 @@ export const TAG_LABELS: Record<number, string> = {
   10: 'Healthy',
 };
 
+export const VISIBILITY_LABELS: Record<number, string> = {
+  1: 'Public',
+  2: 'Friends only',
+  3: 'Private',
+};
+
 export const UNIT_LABELS: Record<number, string> = {
   0: 'tbsp',
   1: 'tsp',

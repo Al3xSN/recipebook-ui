@@ -1,14 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { apiAuth, AuthError, ApiRequestError } from '@/lib/api';
+import { apiFetch, ApiRequestError } from '@/lib/api';
 
 export function ChangePasswordForm() {
-  const router = useRouter();
-
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -29,7 +26,7 @@ export function ChangePasswordForm() {
     setIsLoading(true);
 
     try {
-      await apiAuth('/profile/password', {
+      await apiFetch('/api/profile/password', {
         method: 'PUT',
         body: JSON.stringify({ currentPassword, newPassword }),
       });
@@ -38,9 +35,7 @@ export function ChangePasswordForm() {
       setNewPassword('');
       setConfirmPassword('');
     } catch (err) {
-      if (err instanceof AuthError) {
-        router.replace('/login');
-      } else if (err instanceof ApiRequestError) {
+      if (err instanceof ApiRequestError) {
         setError(err.detail);
       } else {
         setError('Failed to change password.');

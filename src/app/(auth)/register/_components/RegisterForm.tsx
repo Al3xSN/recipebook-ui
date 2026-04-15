@@ -3,16 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { AuthCard } from '@/components/auth/AuthCard';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { useAuth } from '@/context/auth-context';
-import { apiFetch, ApiRequestError } from '@/lib/api';
-import type { AuthResponseDto } from '@/types/auth';
 
 export function RegisterForm() {
   const router = useRouter();
-  const auth = useAuth();
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -27,8 +24,9 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      const data = await apiFetch<AuthResponseDto>('/auth/register', {
+      const res = await fetch('/api/auth/register', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username,
           email,
@@ -36,14 +34,23 @@ export function RegisterForm() {
           ...(displayName ? { displayName } : {}),
         }),
       });
-      auth.login(data);
-      router.replace('/');
-    } catch (err) {
-      if (err instanceof ApiRequestError) {
-        setError(err.detail);
-      } else {
-        setError('Something went wrong. Please try again.');
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setError(body.detail ?? 'Registration failed. Please try again.');
+        return;
       }
+
+      // Account created — sign in automatically
+      const result = await signIn('credentials', { email, password, redirect: false });
+      if (result?.error) {
+        setError('Account created but sign-in failed. Please sign in manually.');
+        router.replace('/login');
+      } else {
+        router.replace('/recipes');
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }

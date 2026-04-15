@@ -3,16 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { AuthCard } from '@/components/auth/AuthCard';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { useAuth } from '@/context/auth-context';
-import { apiFetch, ApiRequestError } from '@/lib/api';
-import type { AuthResponseDto } from '@/types/auth';
 
 export function LoginForm() {
   const router = useRouter();
-  const auth = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,18 +22,14 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      const data = await apiFetch<AuthResponseDto>('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
-      });
-      auth.login(data);
-      router.replace('/');
-    } catch (err) {
-      if (err instanceof ApiRequestError) {
-        setError(err.detail);
+      const result = await signIn('credentials', { email, password, redirect: false });
+      if (result?.error) {
+        setError('Invalid email or password.');
       } else {
-        setError('Something went wrong. Please try again.');
+        router.replace('/recipes');
       }
+    } catch {
+      setError('Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }

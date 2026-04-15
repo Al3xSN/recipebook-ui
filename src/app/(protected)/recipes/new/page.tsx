@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { apiAuth, AuthError, ApiRequestError } from '@/lib/api';
-import { CATEGORY_LABELS, TAG_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
+import { apiFetch, ApiRequestError } from '@/lib/api';
+import { CATEGORY_LABELS, TAG_LABELS, UNIT_LABELS, VISIBILITY_LABELS } from '@/lib/recipe-enums';
 
 export default function NewRecipePage() {
   const router = useRouter();
@@ -17,6 +17,7 @@ export default function NewRecipePage() {
   const [prepTimeMinutes, setPrepTimeMinutes] = useState('');
   const [cookTimeMinutes, setCookTimeMinutes] = useState('');
   const [servings, setServings] = useState('');
+  const [visibility, setVisibility] = useState(1);
   const [imageUrl, setImageUrl] = useState('');
   const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: 0 }]);
   const [instructions, setInstructions] = useState([{ text: '' }]);
@@ -63,12 +64,13 @@ export default function NewRecipePage() {
     setIsLoading(true);
 
     try {
-      await apiAuth('/recipes', {
+      await apiFetch('/api/recipes', {
         method: 'POST',
         body: JSON.stringify({
           title: title.trim(),
           description: description.trim() || null,
           category,
+          visibility,
           tags,
           prepTimeMinutes: Number(prepTimeMinutes),
           cookTimeMinutes: Number(cookTimeMinutes),
@@ -87,9 +89,7 @@ export default function NewRecipePage() {
       });
       router.push('/recipes');
     } catch (err) {
-      if (err instanceof AuthError) {
-        router.replace('/login');
-      } else if (err instanceof ApiRequestError) {
+      if (err instanceof ApiRequestError) {
         setError(err.detail);
       } else {
         setError('Failed to create recipe. Please try again.');
@@ -158,6 +158,23 @@ export default function NewRecipePage() {
               className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
             >
               {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="visibility" className="text-sm font-medium text-gray-700">
+              Visibility
+            </label>
+            <select
+              id="visibility"
+              value={visibility}
+              onChange={(e) => setVisibility(Number(e.target.value))}
+              className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
+            >
+              {Object.entries(VISIBILITY_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>
                   {label}
                 </option>
@@ -402,7 +419,7 @@ export default function NewRecipePage() {
           <Button
             type="button"
             variant="secondary"
-            onClick={() => router.push('/protected/recipes')}
+            onClick={() => router.push('/recipes')}
             disabled={isLoading}
           >
             Cancel

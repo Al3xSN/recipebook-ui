@@ -18,8 +18,7 @@ export interface UpdateProfileInfoResponse {
   displayName: string | null;
   bio: string | null;
   avatarUrl: string | null;
-  token?: string;
-  refreshToken?: string;
+  usernameChanged: boolean;
 }
 
 export interface ChangePasswordRequest {

@@ -1,24 +1,25 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/context/auth-context';
+import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/Button';
 import { UserMenu } from '@/components/layout/UserMenu';
+import { useRouter } from 'next/navigation';
 
 // Hardcoded until notifications API is wired up
 const hasUnread = true;
 
 export function Navbar() {
-  const { user, isLoading, logout } = useAuth();
+  const { data: session, status } = useSession();
+  const isLoading = status === 'loading';
+  const user = session?.user ?? null;
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
     setMobileMenuOpen(false);
-    router.replace('/');
+    await signOut({ redirectTo: '/' });
   }
 
   // Lock body scroll while mobile menu is open
@@ -59,14 +60,14 @@ export function Navbar() {
 
           {/* Center: Nav links (desktop) */}
           <nav className="hidden flex-1 items-center justify-center gap-6 md:flex">
-            <Link
-              href="/"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-orange-500"
-            >
-              Home
-            </Link>
             {!isLoading && user && (
               <>
+                <Link
+                  href="/"
+                  className="text-sm font-medium text-gray-600 transition-colors hover:text-orange-500"
+                >
+                  Home
+                </Link>
                 <Link
                   href="/recipes"
                   className="text-sm font-medium text-gray-600 transition-colors hover:text-orange-500"
@@ -117,8 +118,11 @@ export function Navbar() {
                         <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
                       )}
                     </Link>
-                    {user.displayName && (
-                      <UserMenu displayName={user.displayName} onLogout={handleLogout} />
+                    {(user.displayName ?? user.username) && (
+                      <UserMenu
+                        displayName={user.displayName ?? user.username}
+                        onLogout={handleLogout}
+                      />
                     )}
                   </>
                 ) : (
