@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  displayName  String?
+  bio          String?
+  avatarUrl    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  recipes          Recipe[]
+  ratings          Rating[]
+  comments         Comment[]
+  sentRequests     FriendRequest[] @relation("SentRequests")
+  receivedRequests FriendRequest[] @relation("ReceivedRequests")
+  friendshipsA     Friendship[]    @relation("FriendA")
+  friendshipsB     Friendship[]    @relation("FriendB")
+  blocksGiven      Block[]         @relation("Blocker")
+  blocksReceived   Block[]         @relation("Blocked")
+}
+
+model Recipe {
+  id              String   @id @default(uuid())
+  title           String
+  description     String?
+  category        Int
+  visibility      Int
+  difficulty      Int?
+  cuisine         Int?
+  prepTimeMinutes Int
+  cookTimeMinutes Int
+  servings        Int
+  imageUrl        String?
+  userId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredients  Ingredient[]
+  instructions InstructionStep[]
+  tags         RecipeTag[]
+  ratings      Rating[]
+  comments     Comment[]
+}
+
+model Ingredient {
+  id       String  @id @default(uuid())
+  name     String
+  amount   Decimal @db.Decimal(10, 2)
+  unit     Int
+  recipeId String
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+}
+
+model InstructionStep {
+  id         String @id @default(uuid())
+  stepNumber Int
+  text       String
+  recipeId   String
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+}
+
+model RecipeTag {
+  recipeId String
+  tag      Int
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([recipeId, tag])
+}
+
+model Rating {
+  recipeId  String
+  userId    String
+  value     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([recipeId, userId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  text      String
+  recipeId  String
+  authorId  String
+  createdAt DateTime @default(now())
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  author User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model FriendRequest {
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  status     Int      @default(0) // 0=Pending, 1=Accepted, 2=Rejected
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+model Friendship {
+  userAId String
+  userBId String
+
+  userA User @relation("FriendA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB User @relation("FriendB", fields: [userBId], references: [id], onDelete: Cascade)
+
+  @@id([userAId, userBId])
+}
+
+model Block {
+  blockerId String
+  blockedId String
+
+  blocker User @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@id([blockerId, blockedId])
+}
