@@ -1,10 +1,30 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
+import { cacheLife, cacheTag } from 'next/cache';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { CATEGORY_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
 import { RatingStars } from './_components/RatingStars';
 import { CommentList } from './_components/CommentList';
+
+async function getRecipe(id: string) {
+  'use cache';
+  cacheTag(`recipe-${id}`);
+  cacheLife({ stale: 60, revalidate: 300 });
+
+  const recipe = await db.recipe.findUnique({
+    where: { id },
+    include: { ingredients: true, instructions: true, tags: true, user: true },
+  });
+
+  if (!recipe) return null;
+
+  return {
+    ...recipe,
+    ingredients: recipe.ingredients.map((i) => ({ ...i, amount: Number(i.amount) })),
+  };
+}
 
 const AVATAR_COLORS = [
   'bg-orange-400',
@@ -32,10 +52,7 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ i
   const session = await auth();
   const { id } = await params;
 
-  const recipe = await db.recipe.findUnique({
-    where: { id },
-    include: { ingredients: true, instructions: true, tags: true, user: true },
-  });
+  const recipe = await getRecipe(id);
 
   if (!recipe) notFound();
 
@@ -62,8 +79,16 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ i
       {/* Hero image */}
       <div className="relative mb-6 overflow-hidden rounded-2xl">
         {recipe.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={recipe.imageUrl} alt={recipe.title} className="h-72 w-full object-cover" />
+          <div className="relative h-72 w-full">
+            <Image
+              src={recipe.imageUrl}
+              alt={recipe.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 672px"
+              priority
+            />
+          </div>
         ) : (
           <div className="flex h-72 w-full items-center justify-center bg-orange-50">
             <svg
@@ -120,10 +145,11 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ i
           className="mb-4 inline-flex items-center gap-2"
         >
           {recipe.user.avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={recipe.user.avatarUrl}
               alt={recipe.user.displayName ?? recipe.user.username ?? ''}
+              width={24}
+              height={24}
               className="h-6 w-6 rounded-full object-cover"
             />
           ) : (

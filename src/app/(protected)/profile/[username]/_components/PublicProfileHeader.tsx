@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { apiFetch } from '@/lib/api';
 
 export interface PublicProfileData {
@@ -60,10 +61,11 @@ export function PublicProfileHeader({ profile, initialFriendshipStatus, isOwner 
       {/* Avatar */}
       <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-2xl font-bold text-orange-600">
         {profile.avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={profile.avatarUrl}
             alt={displayName}
+            width={96}
+            height={96}
             className="h-24 w-24 rounded-full object-cover"
           />
         ) : (

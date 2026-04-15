@@ -1,60 +1,47 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { apiFetch, ApiRequestError } from '@/lib/api';
+import { cacheLife, cacheTag } from 'next/cache';
+import { auth } from '@/auth';
+import { db } from '@/lib/db';
+import { toRecipeDto } from '@/lib/server/recipe-mapper';
 import type { RecipeDto } from '@/types/recipe';
-import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 import { RecipeCard } from './_components/RecipeCard';
+import { RecipeFilters } from './_components/RecipeFilters';
 
-export default function RecipesPage() {
-  const { data: session } = useSession();
-  const currentUserId = session?.user?.id;
-  const [recipes, setRecipes] = useState<RecipeDto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+async function getUserRecipes(userId: string): Promise<RecipeDto[]> {
+  'use cache';
+  cacheTag(`user-recipes-${userId}`);
+  cacheLife({ stale: 30, revalidate: 60 });
 
-  const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('');
-  const [activeTags, setActiveTags] = useState<Set<number>>(new Set());
+  const recipes = await db.recipe.findMany({
+    where: { userId },
+    include: { ingredients: true, instructions: true, tags: true, user: true },
+    orderBy: { createdAt: 'desc' },
+  });
+  return recipes.map(toRecipeDto);
+}
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const data = await apiFetch<RecipeDto[]>('/api/recipes');
-        setRecipes(data);
-      } catch (err) {
-        if (err instanceof ApiRequestError) {
-          setError(err.detail);
-        } else {
-          setError('Failed to load recipes. Please refresh the page.');
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    load();
-  }, []);
+export default async function RecipesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string; category?: string; tags?: string }>;
+}) {
+  const session = await auth();
+  const userId = session!.user!.id;
 
-  function toggleTag(tagValue: number) {
-    setActiveTags((prev) => {
-      const next = new Set(prev);
-      if (next.has(tagValue)) {
-        next.delete(tagValue);
-      } else {
-        next.add(tagValue);
-      }
-      return next;
-    });
-  }
+  const { search = '', category = '', tags = '' } = await searchParams;
 
+  const recipes = await getUserRecipes(userId);
+
+  const activeTags = new Set(tags ? tags.split(',').map(Number) : []);
   const filteredRecipes = recipes.filter((r) => {
     if (search && !r.title.toLowerCase().includes(search.toLowerCase())) return false;
     if (category !== '' && r.category !== Number(category)) return false;
     if (activeTags.size > 0 && !r.tags.some((t) => activeTags.has(t))) return false;
     return true;
   });
+
+  const hasFilters = search !== '' || category !== '' || activeTags.size > 0;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
@@ -82,81 +69,13 @@ export default function RecipesPage() {
         </Link>
       </div>
 
-      {/* Search */}
-      <div className="mb-4">
-        <input
-          type="search"
-          placeholder="Search recipes…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
-        />
-      </div>
-
-      {/* Filters */}
-      <div className="mb-8 flex flex-wrap items-center gap-3">
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
-        >
-          <option value="">All categories</option>
-          {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-        <div className="flex flex-wrap gap-1.5">
-          {Object.entries(TAG_LABELS).map(([value, label]) => {
-            const tagNum = Number(value);
-            const isActive = activeTags.has(tagNum);
-            return (
-              <button
-                key={value}
-                type="button"
-                onClick={() => toggleTag(tagNum)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  isActive
-                    ? 'bg-orange-500 text-white hover:bg-orange-600'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Loading skeleton */}
-      {isLoading && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="animate-pulse overflow-hidden rounded-xl border border-gray-200 bg-white"
-            >
-              <div className="h-40 bg-gray-100" />
-              <div className="flex flex-col gap-3 p-4">
-                <div className="h-4 w-20 rounded-full bg-gray-100" />
-                <div className="h-5 w-3/4 rounded bg-gray-100" />
-                <div className="h-3 w-1/2 rounded bg-gray-100" />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Error */}
-      {!isLoading && error && (
-        <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
-          {error}
-        </p>
-      )}
+      {/* Filters — client component, Suspense required for useSearchParams */}
+      <Suspense fallback={<div className="mb-8 h-24" />}>
+        <RecipeFilters />
+      </Suspense>
 
       {/* Empty state — no recipes at all */}
-      {!isLoading && !error && recipes.length === 0 && (
+      {recipes.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white py-20 text-center">
           <div className="mb-4 flex items-center justify-center rounded-2xl bg-orange-100 p-4">
             <svg
@@ -199,30 +118,17 @@ export default function RecipesPage() {
       )}
 
       {/* No filter match */}
-      {!isLoading && !error && recipes.length > 0 && filteredRecipes.length === 0 && (
+      {recipes.length > 0 && filteredRecipes.length === 0 && hasFilters && (
         <div className="rounded-xl border border-dashed border-gray-300 bg-white py-16 text-center">
           <p className="text-sm text-gray-500">No recipes match your filters.</p>
-          <button
-            type="button"
-            onClick={() => {
-              setSearch('');
-              setCategory('');
-              setActiveTags(new Set());
-            }}
-            className="mt-3 text-sm font-medium text-orange-500 hover:text-orange-600"
-          >
-            Clear filters
-          </button>
         </div>
       )}
 
       {/* Recipe grid */}
-      {!isLoading && !error && filteredRecipes.length > 0 && (
+      {filteredRecipes.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredRecipes.map((recipe) => (
-            <Link key={recipe.id} href={`/recipes/${recipe.id}`} className="block">
-              <RecipeCard recipe={recipe} currentUserId={currentUserId} />
-            </Link>
+            <RecipeCard key={recipe.id} recipe={recipe} currentUserId={userId} />
           ))}
         </div>
       )}

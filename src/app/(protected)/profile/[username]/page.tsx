@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
+import { cacheLife, cacheTag } from 'next/cache';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { areFriends } from '@/lib/server/friendship-helpers';
@@ -8,6 +8,16 @@ import { RecipeCard } from '../../recipes/_components/RecipeCard';
 import { PublicProfileHeader } from './_components/PublicProfileHeader';
 import { ProfileStats } from '@/components/ui/ProfileStats';
 import type { PublicProfileData } from './_components/PublicProfileHeader';
+import type { User } from '@/generated/prisma/client';
+import Link from 'next/link';
+
+async function getProfileUser(username: string): Promise<User | null> {
+  'use cache';
+  cacheTag(`profile-${username}`);
+  cacheLife({ stale: 60, revalidate: 300 });
+
+  return db.user.findUnique({ where: { username } });
+}
 
 export default async function PublicProfilePage({
   params,
@@ -17,7 +27,7 @@ export default async function PublicProfilePage({
   const session = await auth();
   const { username } = await params;
 
-  const target = await db.user.findUnique({ where: { username } });
+  const target = await getProfileUser(username);
   if (!target) notFound();
 
   // 404 if caller is blocked by target
@@ -35,7 +45,6 @@ export default async function PublicProfilePage({
   let friendCount = 0;
 
   if (isOwner) {
-    // Count friends for stats display
     friendCount = await db.friendship.count({
       where: { OR: [{ userAId: target.id }, { userBId: target.id }] },
     });
@@ -58,7 +67,6 @@ export default async function PublicProfilePage({
     }
   }
 
-  // Owner sees all recipes; others see only visibility-appropriate ones
   const visibilityFilter = isOwner
     ? undefined
     : friendshipStatus === 3
@@ -100,9 +108,12 @@ export default async function PublicProfilePage({
       {recipeDtos.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {recipeDtos.map((recipe) => (
-            <Link key={recipe.id} href={`/recipes/${recipe.id}`} className="block">
-              <RecipeCard recipe={recipe} showVisibility={isOwner} currentUserId={currentUserId} />
-            </Link>
+            <RecipeCard
+              key={recipe.id}
+              recipe={recipe}
+              showVisibility={isOwner}
+              currentUserId={currentUserId}
+            />
           ))}
         </div>
       ) : (

@@ -1,6 +1,5 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
 import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 import type { RecipeDto } from '@/types/recipe';
 
@@ -26,7 +25,6 @@ function getAvatarColor(username: string): string {
 }
 
 export function RecipeCard({ recipe, showVisibility = false, currentUserId }: RecipeCardProps) {
-  const router = useRouter();
   const totalMinutes = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
   const showAuthor = recipe.userId !== currentUserId;
 
@@ -38,9 +36,9 @@ export function RecipeCard({ recipe, showVisibility = false, currentUserId }: Re
   }
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+    <article className="relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
       {/* Image */}
-      <div className="relative">
+      <div className="relative h-40 w-full">
         {showVisibility && recipe.visibility === 3 && (
           <span className="absolute left-2 top-2 z-10 rounded-full bg-gray-800/70 px-2 py-0.5 text-xs font-medium text-white">
             Private
@@ -52,10 +50,15 @@ export function RecipeCard({ recipe, showVisibility = false, currentUserId }: Re
           </span>
         )}
         {recipe.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={recipe.imageUrl} alt={recipe.title} className="h-40 w-full object-cover" />
+          <Image
+            src={recipe.imageUrl}
+            alt={recipe.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
         ) : (
-          <div className="flex h-40 w-full items-center justify-center bg-orange-50">
+          <div className="flex h-full w-full items-center justify-center bg-orange-50">
             <svg
               className="h-10 w-10 text-orange-200"
               viewBox="0 0 24 24"
@@ -81,9 +84,11 @@ export function RecipeCard({ recipe, showVisibility = false, currentUserId }: Re
           </span>
         </div>
 
-        {/* Title */}
+        {/* Title — stretched link covers the full card */}
         <h2 className="line-clamp-2 text-base font-semibold leading-snug text-gray-900">
-          {recipe.title}
+          <Link href={`/recipes/${recipe.id}`} className="after:absolute after:inset-0">
+            {recipe.title}
+          </Link>
         </h2>
 
         {/* Meta: time + servings */}
@@ -143,29 +148,18 @@ export function RecipeCard({ recipe, showVisibility = false, currentUserId }: Re
           </div>
         )}
 
-        {/* Author byline */}
+        {/* Author byline — relative z-10 sits above the stretched link overlay */}
         {showAuthor && (
-          <span
-            role="link"
-            tabIndex={0}
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              router.push(`/profile/${recipe.author.username}`);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.stopPropagation();
-                router.push(`/profile/${recipe.author.username}`);
-              }
-            }}
-            className="mt-auto flex cursor-pointer items-center gap-2 border-t border-gray-100 pt-3"
+          <Link
+            href={`/profile/${recipe.author.username}`}
+            className="relative z-10 mt-auto flex cursor-pointer items-center gap-2 border-t border-gray-100 pt-3"
           >
             {recipe.author.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={recipe.author.avatarUrl}
                 alt={recipe.author.displayName}
+                width={24}
+                height={24}
                 className="h-6 w-6 rounded-full object-cover"
               />
             ) : (
@@ -178,7 +172,7 @@ export function RecipeCard({ recipe, showVisibility = false, currentUserId }: Re
             <span className="truncate text-xs text-gray-500 hover:text-gray-700">
               {recipe.author.displayName}
             </span>
-          </span>
+          </Link>
         )}
       </div>
     </article>
