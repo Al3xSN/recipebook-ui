@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 
 export interface PublicProfileData {
@@ -17,9 +18,10 @@ type FriendshipStatus = 0 | 1 | 2 | 3;
 interface Props {
   profile: PublicProfileData;
   initialFriendshipStatus: FriendshipStatus;
+  isOwner?: boolean;
 }
 
-export function PublicProfileHeader({ profile, initialFriendshipStatus }: Props) {
+export function PublicProfileHeader({ profile, initialFriendshipStatus, isOwner = false }: Props) {
   const [status, setStatus] = useState<FriendshipStatus>(initialFriendshipStatus);
   const [isActing, setIsActing] = useState(false);
 
@@ -76,8 +78,31 @@ export function PublicProfileHeader({ profile, initialFriendshipStatus }: Props)
         {profile.bio && <p className="mt-2 text-sm text-gray-600">{profile.bio}</p>}
       </div>
 
+      {/* Owner: settings button */}
+      {isOwner && (
+        <Link
+          href="/profile/me/settings"
+          className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition-colors hover:border-gray-300 hover:bg-gray-50"
+        >
+          <svg
+            className="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          Settings
+        </Link>
+      )}
+
       {/* Friendship action */}
-      {status === 0 && (
+      {!isOwner && status === 0 && (
         <button
           type="button"
           onClick={handleAddFriend}
@@ -103,7 +128,7 @@ export function PublicProfileHeader({ profile, initialFriendshipStatus }: Props)
         </button>
       )}
 
-      {status === 1 && (
+      {!isOwner && status === 1 && (
         <button
           type="button"
           disabled
@@ -126,13 +151,13 @@ export function PublicProfileHeader({ profile, initialFriendshipStatus }: Props)
         </button>
       )}
 
-      {status === 2 && (
+      {!isOwner && status === 2 && (
         <span className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-medium text-orange-700">
           Sent you a request — check Friends page
         </span>
       )}
 
-      {status === 3 && (
+      {!isOwner && status === 3 && (
         <button
           type="button"
           onClick={handleRemoveFriend}

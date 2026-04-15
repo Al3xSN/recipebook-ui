@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
     db.recipe.count({ where }),
     db.recipe.findMany({
       where,
-      include: { ingredients: true, instructions: true, tags: true },
+      include: { ingredients: true, instructions: true, tags: true, user: true },
       orderBy,
       skip: (page - 1) * pageSize,
       take: pageSize,

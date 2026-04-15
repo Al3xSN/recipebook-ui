@@ -6,6 +6,21 @@ import { CATEGORY_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
 import { RatingStars } from './_components/RatingStars';
 import { CommentList } from './_components/CommentList';
 
+const AVATAR_COLORS = [
+  'bg-orange-400',
+  'bg-blue-400',
+  'bg-green-400',
+  'bg-purple-400',
+  'bg-pink-400',
+  'bg-teal-400',
+  'bg-red-400',
+  'bg-yellow-400',
+];
+
+function getAvatarColor(username: string): string {
+  return AVATAR_COLORS[username.charCodeAt(0) % AVATAR_COLORS.length];
+}
+
 function formatTime(minutes: number) {
   if (minutes < 60) return `${minutes}m`;
   const h = Math.floor(minutes / 60);
@@ -19,7 +34,7 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ i
 
   const recipe = await db.recipe.findUnique({
     where: { id },
-    include: { ingredients: true, instructions: true, tags: true },
+    include: { ingredients: true, instructions: true, tags: true, user: true },
   });
 
   if (!recipe) notFound();
@@ -96,7 +111,33 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ i
           {CATEGORY_LABELS[recipe.category] ?? 'Other'}
         </span>
       </div>
-      <h1 className="mb-4 text-3xl font-bold tracking-tight text-gray-900">{recipe.title}</h1>
+      <h1 className="mb-3 text-3xl font-bold tracking-tight text-gray-900">{recipe.title}</h1>
+
+      {/* Author byline */}
+      {!isOwner && (
+        <Link
+          href={`/profile/${recipe.user.username ?? ''}`}
+          className="mb-4 inline-flex items-center gap-2"
+        >
+          {recipe.user.avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={recipe.user.avatarUrl}
+              alt={recipe.user.displayName ?? recipe.user.username ?? ''}
+              className="h-6 w-6 rounded-full object-cover"
+            />
+          ) : (
+            <span
+              className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(recipe.user.username ?? '')}`}
+            >
+              {(recipe.user.displayName ?? recipe.user.username ?? '?').charAt(0).toUpperCase()}
+            </span>
+          )}
+          <span className="text-sm text-gray-500 hover:text-gray-700">
+            {recipe.user.displayName ?? recipe.user.username}
+          </span>
+        </Link>
+      )}
 
       {/* Meta row */}
       <div className="mb-6 flex flex-wrap gap-6 text-sm text-gray-500">

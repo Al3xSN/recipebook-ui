@@ -279,13 +279,6 @@ export function Navbar() {
                 </span>
                 Notifications
               </Link>
-              <Link
-                href="/profile/me"
-                className="flex w-full items-center rounded-lg px-3 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-orange-50 hover:text-orange-500"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Profile
-              </Link>
             </>
           )}
         </nav>

@@ -7,36 +7,50 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm run dev          # Start dev server with Turbopack
 npm run build        # Production build
-npm run lint         # ESLint on src/
-npm run format       # Prettier (writes)
-npm run format:check # Prettier (check only)
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run format       # Format all files with Prettier
+npm run format:check # Check formatting without writing
 ```
 
-There are no tests configured yet.
+Pre-commit hooks (Husky + lint-staged) automatically run ESLint and Prettier on staged files.
 
 ## Architecture
 
-**RecipeBook** is a Next.js 16 frontend (App Router) for discovering, saving, and sharing recipes. It consumes a separate ASP.NET Core backend.
+RecipeBook is a **social recipe-sharing platform** built with Next.js 16 App Router, React 19, Prisma 7 + PostgreSQL, and NextAuth 5 (beta).
 
-- `src/app/` — App Router pages and layouts. Server Components by default; add `'use client'` only when needed.
-- `src/components/` — Reusable React components (empty, ready for development).
-- `src/lib/` — Utilities and helpers (empty, ready for development).
-- `src/types/` — TypeScript type definitions (empty, ready for development).
-- `API_REFERENCE.md` — Full backend API contract (read this before implementing any data-fetching).
+### Route Groups
 
-Path alias `@/*` maps to `./src/*`.
+- `(auth)/` — Login and Register pages. Layout redirects already-authenticated users to `/recipes`.
+- `(protected)/` — All post-login pages (Recipes, Explore, Friends, Profile, Notifications). Layout redirects unauthenticated users to `/`.
+- `api/` — REST route handlers. All require authentication via `requireAuth()`.
 
-## Backend API
+### Data Flow
 
-Base URL (local dev): `http://localhost:5000`  
-Interactive docs: `http://localhost:5000/scalar`
+1. User authenticates with NextAuth credentials provider (email + bcrypt password).
+2. Session is stored as a JWT cookie; the token carries `id`, `username`, and `displayName`.
+3. Client pages (`'use client'`) call API routes via the `apiFetch<T>()` wrapper (`src/lib/api.ts`).
+4. API route handlers call `requireAuth()` (`src/lib/server/require-auth.ts`) — returns 401 if no session.
+5. Handlers query PostgreSQL through the global PrismaClient singleton (`src/lib/db.ts`) using the `@prisma/adapter-pg` connection-pooling adapter.
+6. Server-only utilities live under `src/lib/server/`: `password.ts` (bcrypt), `recipe-mapper.ts` (Prisma → DTO), `friendship-helpers.ts`, `api-error.ts`.
 
-**Auth:** JWT Bearer tokens. Access token expires in 60 min; refresh token expires in 7 days. On 401, call `POST /auth/refresh` with the stored refresh token to get new tokens. If refresh also 401s, redirect to login. If the username changes via `PUT /profile/info`, the response includes new tokens — replace stored tokens immediately.
+### Key Conventions
 
-All API errors return RFC 7807 `{ "status": ..., "detail": "..." }`.
+- **Error responses**: `{ status, detail }` — use `apiError()` from `src/lib/server/api-error.ts`.
+- **Validation failures**: HTTP 422; bad requests: 400; missing auth: 401.
+- **DTOs**: Convert Prisma models to typed DTOs via `recipe-mapper.ts` before returning from API routes.
+- **Enums**: Recipe categories, tags, units, and visibility are numeric enums defined in `src/lib/recipe-enums.ts`. Use these constants — never hardcode integers.
+- **Visibility**: Public = 1, Friends Only = 2, Private = 3.
+- **Path alias**: `@/*` maps to `src/*`.
 
-**Enums are integers** in both requests and responses (e.g. `RecipeCategory`, `RecipeTag`, `MeasurementUnit`). See `API_REFERENCE.md` for the full enum tables.
+### Prisma
 
-## Code Style
+Schema lives in `prisma/schema.prisma`. Generated types output to `src/generated/prisma/`. Run `npx prisma generate` after schema changes and `npx prisma migrate dev` to apply migrations.
 
-Pre-commit hooks (Husky + lint-staged) enforce ESLint and Prettier on staged files automatically. Prettier config: single quotes, semicolons, trailing commas, 100-char print width, 2-space indent.
+### Environment Variables
+
+```
+DATABASE_URL         # PostgreSQL connection string
+AUTH_SECRET          # NextAuth secret
+NEXT_PUBLIC_APP_NAME # Displayed app name (client-safe)
+```

@@ -9,6 +9,12 @@ export interface InstructionStep {
   text: string;
 }
 
+export interface RecipeAuthor {
+  username: string;
+  displayName: string;
+  avatarUrl: string | null;
+}
+
 export interface RecipeDto {
   id: string;
   title: string;
@@ -20,8 +26,10 @@ export interface RecipeDto {
   prepTimeMinutes: number;
   cookTimeMinutes: number;
   servings: number;
+  visibility: number;
   imageUrl: string | null;
   userId: string;
+  author: RecipeAuthor;
   createdAt: string;
   updatedAt: string;
 }

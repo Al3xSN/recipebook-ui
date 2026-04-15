@@ -11,7 +11,7 @@ export async function GET() {
 
   const recipes = await db.recipe.findMany({
     where: { userId: session.userId },
-    include: { ingredients: true, instructions: true, tags: true },
+    include: { ingredients: true, instructions: true, tags: true, user: true },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       instructions: { create: instructions },
       tags: { create: tags.map((tag: number) => ({ tag })) },
     },
-    include: { ingredients: true, instructions: true, tags: true },
+    include: { ingredients: true, instructions: true, tags: true, user: true },
   });
 
   return NextResponse.json(toRecipeDto(recipe), { status: 201 });

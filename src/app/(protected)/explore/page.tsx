@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { RecipeCard } from '../recipes/_components/RecipeCard';
 import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 import { apiFetch } from '@/lib/api';
@@ -18,6 +19,8 @@ interface PagedResult {
 }
 
 export default function ExplorePage() {
+  const { data: session } = useSession();
+  const currentUserId = session?.user?.id;
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('1');
@@ -186,7 +189,7 @@ export default function ExplorePage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {recipes.map((recipe) => (
               <Link key={recipe.id} href={`/recipes/${recipe.id}`} className="block">
-                <RecipeCard recipe={recipe} />
+                <RecipeCard recipe={recipe} currentUserId={currentUserId} />
               </Link>
             ))}
           </div>

@@ -14,7 +14,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params;
   const recipe = await db.recipe.findUnique({
     where: { id },
-    include: { ingredients: true, instructions: true, tags: true },
+    include: { ingredients: true, instructions: true, tags: true, user: true },
   });
 
   if (!recipe) return apiError(404, 'Recipe not found.');
@@ -91,7 +91,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
         instructions: { create: instructions },
         tags: { create: tags.map((tag: number) => ({ tag })) },
       },
-      include: { ingredients: true, instructions: true, tags: true },
+      include: { ingredients: true, instructions: true, tags: true, user: true },
     }),
   ]);
 

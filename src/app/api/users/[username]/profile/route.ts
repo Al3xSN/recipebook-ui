@@ -50,7 +50,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
   const recipes = await db.recipe.findMany({
     where: { userId: target.id, visibility: visibilityFilter },
-    include: { ingredients: true, instructions: true, tags: true },
+    include: { ingredients: true, instructions: true, tags: true, user: true },
     orderBy: { createdAt: 'desc' },
   });
 

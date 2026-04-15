@@ -6,6 +6,7 @@ import { areFriends } from '@/lib/server/friendship-helpers';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
 import { RecipeCard } from '../../recipes/_components/RecipeCard';
 import { PublicProfileHeader } from './_components/PublicProfileHeader';
+import { ProfileStats } from '@/components/ui/ProfileStats';
 import type { PublicProfileData } from './_components/PublicProfileHeader';
 
 export default async function PublicProfilePage({
@@ -28,29 +29,45 @@ export default async function PublicProfilePage({
   }
 
   const currentUserId = session?.user?.id;
-  const isFriend = currentUserId ? await areFriends(currentUserId, target.id) : false;
+  const isOwner = currentUserId === target.id;
 
   let friendshipStatus: 0 | 1 | 2 | 3 = 0;
-  if (isFriend) {
-    friendshipStatus = 3;
-  } else if (currentUserId) {
-    const pending = await db.friendRequest.findFirst({
-      where: {
-        OR: [
-          { senderId: currentUserId, receiverId: target.id, status: 0 },
-          { senderId: target.id, receiverId: currentUserId, status: 0 },
-        ],
-      },
+  let friendCount = 0;
+
+  if (isOwner) {
+    // Count friends for stats display
+    friendCount = await db.friendship.count({
+      where: { OR: [{ userAId: target.id }, { userBId: target.id }] },
     });
-    if (pending) {
-      friendshipStatus = pending.senderId === currentUserId ? 1 : 2;
+  } else {
+    const isFriend = currentUserId ? await areFriends(currentUserId, target.id) : false;
+    if (isFriend) {
+      friendshipStatus = 3;
+    } else if (currentUserId) {
+      const pending = await db.friendRequest.findFirst({
+        where: {
+          OR: [
+            { senderId: currentUserId, receiverId: target.id, status: 0 },
+            { senderId: target.id, receiverId: currentUserId, status: 0 },
+          ],
+        },
+      });
+      if (pending) {
+        friendshipStatus = pending.senderId === currentUserId ? 1 : 2;
+      }
     }
   }
 
-  const visibilityFilter = isFriend ? { in: [1, 2] as number[] } : { equals: 1 };
+  // Owner sees all recipes; others see only visibility-appropriate ones
+  const visibilityFilter = isOwner
+    ? undefined
+    : friendshipStatus === 3
+      ? { in: [1, 2] as number[] }
+      : { equals: 1 };
+
   const recipes = await db.recipe.findMany({
-    where: { userId: target.id, visibility: visibilityFilter },
-    include: { ingredients: true, instructions: true, tags: true },
+    where: { userId: target.id, ...(visibilityFilter ? { visibility: visibilityFilter } : {}) },
+    include: { ingredients: true, instructions: true, tags: true, user: true },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -66,21 +83,41 @@ export default async function PublicProfilePage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <PublicProfileHeader profile={profile} initialFriendshipStatus={friendshipStatus} />
+      <PublicProfileHeader
+        profile={profile}
+        initialFriendshipStatus={friendshipStatus}
+        isOwner={isOwner}
+      />
 
-      <h2 className="mb-4 text-base font-semibold text-gray-900">Recipes</h2>
+      {isOwner && (
+        <ProfileStats recipeCount={recipeDtos.length} importedCount={0} friendCount={friendCount} />
+      )}
+
+      <h2 className="mb-4 text-base font-semibold text-gray-900">
+        {isOwner ? 'My Recipes' : 'Recipes'}
+      </h2>
 
       {recipeDtos.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {recipeDtos.map((recipe) => (
             <Link key={recipe.id} href={`/recipes/${recipe.id}`} className="block">
-              <RecipeCard recipe={recipe} />
+              <RecipeCard recipe={recipe} showVisibility={isOwner} currentUserId={currentUserId} />
             </Link>
           ))}
         </div>
       ) : (
         <div className="rounded-xl border border-dashed border-gray-300 bg-white py-20 text-center">
-          <p className="text-sm text-gray-500">No recipes to show.</p>
+          <p className="text-sm text-gray-500">
+            {isOwner ? 'No recipes yet. Add your first recipe!' : 'No recipes to show.'}
+          </p>
+          {isOwner && (
+            <Link
+              href="/recipes/new"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600"
+            >
+              Add recipe
+            </Link>
+          )}
         </div>
       )}
     </div>

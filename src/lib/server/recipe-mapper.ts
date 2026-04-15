@@ -1,9 +1,16 @@
-import type { Recipe, Ingredient, InstructionStep, RecipeTag } from '@/generated/prisma/client';
+import type {
+  Recipe,
+  Ingredient,
+  InstructionStep,
+  RecipeTag,
+  User,
+} from '@/generated/prisma/client';
 
 type RecipeWithRelations = Recipe & {
   ingredients: Ingredient[];
   instructions: InstructionStep[];
   tags: RecipeTag[];
+  user: User;
 };
 
 export function toRecipeDto(recipe: RecipeWithRelations) {
@@ -30,6 +37,11 @@ export function toRecipeDto(recipe: RecipeWithRelations) {
     servings: recipe.servings,
     imageUrl: recipe.imageUrl,
     userId: recipe.userId,
+    author: {
+      username: recipe.user.username ?? '',
+      displayName: recipe.user.displayName ?? recipe.user.username ?? '',
+      avatarUrl: recipe.user.avatarUrl,
+    },
     createdAt: recipe.createdAt instanceof Date ? recipe.createdAt.toISOString() : recipe.createdAt,
     updatedAt: recipe.updatedAt instanceof Date ? recipe.updatedAt.toISOString() : recipe.updatedAt,
   };

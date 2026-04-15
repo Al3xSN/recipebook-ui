@@ -2,15 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { apiFetch, ApiRequestError } from '@/lib/api';
 import type { RecipeDto } from '@/types/recipe';
 import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 import { RecipeCard } from './_components/RecipeCard';
 
 export default function RecipesPage() {
+  const { data: session } = useSession();
+  const currentUserId = session?.user?.id;
   const [recipes, setRecipes] = useState<RecipeDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('');
+  const [activeTags, setActiveTags] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     async function load() {
@@ -29,6 +36,25 @@ export default function RecipesPage() {
     }
     load();
   }, []);
+
+  function toggleTag(tagValue: number) {
+    setActiveTags((prev) => {
+      const next = new Set(prev);
+      if (next.has(tagValue)) {
+        next.delete(tagValue);
+      } else {
+        next.add(tagValue);
+      }
+      return next;
+    });
+  }
+
+  const filteredRecipes = recipes.filter((r) => {
+    if (search && !r.title.toLowerCase().includes(search.toLowerCase())) return false;
+    if (category !== '' && r.category !== Number(category)) return false;
+    if (activeTags.size > 0 && !r.tags.some((t) => activeTags.has(t))) return false;
+    return true;
+  });
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
@@ -61,6 +87,8 @@ export default function RecipesPage() {
         <input
           type="search"
           placeholder="Search recipes…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
         />
       </div>
@@ -68,7 +96,8 @@ export default function RecipesPage() {
       {/* Filters */}
       <div className="mb-8 flex flex-wrap items-center gap-3">
         <select
-          defaultValue=""
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
           className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
         >
           <option value="">All categories</option>
@@ -79,15 +108,24 @@ export default function RecipesPage() {
           ))}
         </select>
         <div className="flex flex-wrap gap-1.5">
-          {Object.entries(TAG_LABELS).map(([value, label]) => (
-            <button
-              key={value}
-              type="button"
-              className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-200"
-            >
-              {label}
-            </button>
-          ))}
+          {Object.entries(TAG_LABELS).map(([value, label]) => {
+            const tagNum = Number(value);
+            const isActive = activeTags.has(tagNum);
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => toggleTag(tagNum)}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  isActive
+                    ? 'bg-orange-500 text-white hover:bg-orange-600'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -117,7 +155,7 @@ export default function RecipesPage() {
         </p>
       )}
 
-      {/* Empty state */}
+      {/* Empty state — no recipes at all */}
       {!isLoading && !error && recipes.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white py-20 text-center">
           <div className="mb-4 flex items-center justify-center rounded-2xl bg-orange-100 p-4">
@@ -160,11 +198,31 @@ export default function RecipesPage() {
         </div>
       )}
 
+      {/* No filter match */}
+      {!isLoading && !error && recipes.length > 0 && filteredRecipes.length === 0 && (
+        <div className="rounded-xl border border-dashed border-gray-300 bg-white py-16 text-center">
+          <p className="text-sm text-gray-500">No recipes match your filters.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setSearch('');
+              setCategory('');
+              setActiveTags(new Set());
+            }}
+            className="mt-3 text-sm font-medium text-orange-500 hover:text-orange-600"
+          >
+            Clear filters
+          </button>
+        </div>
+      )}
+
       {/* Recipe grid */}
-      {!isLoading && !error && recipes.length > 0 && (
+      {!isLoading && !error && filteredRecipes.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {recipes.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} />
+          {filteredRecipes.map((recipe) => (
+            <Link key={recipe.id} href={`/recipes/${recipe.id}`} className="block">
+              <RecipeCard recipe={recipe} currentUserId={currentUserId} />
+            </Link>
           ))}
         </div>
       )}

@@ -1,4 +1,10 @@
-import type { RecipeDto } from '@/types/recipe';
+import type { RecipeDto, RecipeAuthor } from '@/types/recipe';
+
+const AUTHORS: Record<string, RecipeAuthor> = {
+  u1: { username: 'alex_cooks', displayName: 'Alex', avatarUrl: null },
+  u2: { username: 'julia_eats', displayName: 'Julia', avatarUrl: null },
+  u3: { username: 'priya_kitchen', displayName: 'Priya', avatarUrl: null },
+};
 
 export const PLACEHOLDER_RECIPES: RecipeDto[] = [
   {
@@ -12,6 +18,8 @@ export const PLACEHOLDER_RECIPES: RecipeDto[] = [
     servings: 4,
     imageUrl: null,
     userId: 'u1',
+    visibility: 1,
+    author: AUTHORS.u1,
     createdAt: '2026-01-10T10:00:00Z',
     updatedAt: '2026-01-10T10:00:00Z',
     ingredients: [
@@ -51,6 +59,8 @@ export const PLACEHOLDER_RECIPES: RecipeDto[] = [
     servings: 1,
     imageUrl: null,
     userId: 'u1',
+    visibility: 1,
+    author: AUTHORS.u1,
     createdAt: '2026-01-15T08:30:00Z',
     updatedAt: '2026-01-15T08:30:00Z',
     ingredients: [
@@ -85,6 +95,8 @@ export const PLACEHOLDER_RECIPES: RecipeDto[] = [
     servings: 2,
     imageUrl: null,
     userId: 'u2',
+    visibility: 1,
+    author: AUTHORS.u2,
     createdAt: '2026-01-20T14:00:00Z',
     updatedAt: '2026-01-20T14:00:00Z',
     ingredients: [
@@ -129,6 +141,8 @@ export const PLACEHOLDER_RECIPES: RecipeDto[] = [
     servings: 2,
     imageUrl: null,
     userId: 'u2',
+    visibility: 1,
+    author: AUTHORS.u2,
     createdAt: '2026-01-25T12:00:00Z',
     updatedAt: '2026-01-25T12:00:00Z',
     ingredients: [
@@ -160,6 +174,8 @@ export const PLACEHOLDER_RECIPES: RecipeDto[] = [
     servings: 4,
     imageUrl: null,
     userId: 'u1',
+    visibility: 1,
+    author: AUTHORS.u1,
     createdAt: '2026-02-01T18:00:00Z',
     updatedAt: '2026-02-01T18:00:00Z',
     ingredients: [
@@ -192,6 +208,8 @@ export const PLACEHOLDER_RECIPES: RecipeDto[] = [
     servings: 1,
     imageUrl: null,
     userId: 'u3',
+    visibility: 1,
+    author: AUTHORS.u3,
     createdAt: '2026-02-05T07:00:00Z',
     updatedAt: '2026-02-05T07:00:00Z',
     ingredients: [
@@ -218,6 +236,8 @@ export const PLACEHOLDER_RECIPES: RecipeDto[] = [
     servings: 6,
     imageUrl: null,
     userId: 'u3',
+    visibility: 1,
+    author: AUTHORS.u3,
     createdAt: '2026-02-10T11:00:00Z',
     updatedAt: '2026-02-10T11:00:00Z',
     ingredients: [
@@ -253,6 +273,8 @@ export const PLACEHOLDER_RECIPES: RecipeDto[] = [
     servings: 4,
     imageUrl: null,
     userId: 'u2',
+    visibility: 1,
+    author: AUTHORS.u2,
     createdAt: '2026-02-14T17:00:00Z',
     updatedAt: '2026-02-14T17:00:00Z',
     ingredients: [
@@ -298,6 +320,8 @@ export const PLACEHOLDER_RECIPES: RecipeDto[] = [
     servings: 12,
     imageUrl: null,
     userId: 'u3',
+    visibility: 1,
+    author: AUTHORS.u3,
     createdAt: '2026-02-18T10:00:00Z',
     updatedAt: '2026-02-18T10:00:00Z',
     ingredients: [

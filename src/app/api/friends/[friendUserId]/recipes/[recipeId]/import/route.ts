@@ -53,7 +53,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
       },
       tags: { create: original.tags.map((t) => ({ tag: t.tag })) },
     },
-    include: { ingredients: true, instructions: true, tags: true },
+    include: { ingredients: true, instructions: true, tags: true, user: true },
   });
 
   return NextResponse.json(toRecipeDto(copy), { status: 201 });
