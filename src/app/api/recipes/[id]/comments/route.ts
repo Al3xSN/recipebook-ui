@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
+import { createNotification, NotificationType } from '@/lib/server/notifications';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -47,9 +48,20 @@ export async function POST(req: NextRequest, { params }: Params) {
   if (!text) return apiError(422, 'Comment text is required.');
   if (text.length > 500) return apiError(422, 'Comment must be 500 characters or fewer.');
 
-  const comment = await db.comment.create({
-    data: { recipeId, authorId: session.userId, text },
-    include: { author: { select: { username: true, avatarUrl: true } } },
+  const comment = await db.$transaction(async (tx) => {
+    const c = await tx.comment.create({
+      data: { recipeId, authorId: session.userId, text },
+      include: { author: { select: { username: true, avatarUrl: true } } },
+    });
+    if (recipe.userId !== session.userId) {
+      await createNotification(tx, {
+        userId: recipe.userId,
+        senderId: session.userId,
+        type: NotificationType.COMMENT,
+        referenceId: c.id,
+      });
+    }
+    return c;
   });
 
   return NextResponse.json({

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
+import { createNotification, NotificationType } from '@/lib/server/notifications';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -22,10 +23,18 @@ export async function POST(req: NextRequest, { params }: Params) {
   if (typeof value !== 'number' || value < 1 || value > 5)
     return apiError(422, 'Rating value must be between 1 and 5.');
 
-  await db.rating.upsert({
-    where: { recipeId_userId: { recipeId, userId: session.userId } },
-    create: { recipeId, userId: session.userId, value },
-    update: { value },
+  await db.$transaction(async (tx) => {
+    await tx.rating.upsert({
+      where: { recipeId_userId: { recipeId, userId: session.userId } },
+      create: { recipeId, userId: session.userId, value },
+      update: { value },
+    });
+    await createNotification(tx, {
+      userId: recipe.userId,
+      senderId: session.userId,
+      type: NotificationType.RATING,
+      referenceId: recipeId,
+    });
   });
 
   const stats = await db.rating.aggregate({

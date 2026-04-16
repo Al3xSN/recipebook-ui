@@ -1,10 +1,37 @@
 'use client';
 
-import { useState } from 'react';
-import { PLACEHOLDER_NOTIFICATIONS, type IPlaceholderNotification } from '@/lib/placeholder-data';
+import { useEffect, useState } from 'react';
+import { apiFetch } from '@/lib/api';
 
-function NotificationIcon({ type }: { type: IPlaceholderNotification['type'] }) {
-  if (type === 'friend_request') {
+interface INotification {
+  id: string;
+  type: 'FRIEND_REQUEST' | 'FRIEND_ACCEPTED' | 'COMMENT' | 'RATING' | 'RECIPE_IMPORTED';
+  read: boolean;
+  createdAt: string;
+  referenceId: string | null;
+  senderId: string;
+  senderUsername: string;
+  senderDisplayName: string | null;
+}
+
+function notificationMessage(n: INotification): string {
+  const name = n.senderDisplayName ?? n.senderUsername;
+  switch (n.type) {
+    case 'FRIEND_REQUEST':
+      return `${name} sent you a friend request.`;
+    case 'FRIEND_ACCEPTED':
+      return `${name} accepted your friend request.`;
+    case 'COMMENT':
+      return `${name} commented on your recipe.`;
+    case 'RATING':
+      return `${name} rated your recipe.`;
+    case 'RECIPE_IMPORTED':
+      return `${name} imported one of your recipes.`;
+  }
+}
+
+function NotificationIcon({ type }: { type: INotification['type'] }) {
+  if (type === 'FRIEND_REQUEST') {
     return (
       <svg
         className="h-5 w-5"
@@ -24,7 +51,7 @@ function NotificationIcon({ type }: { type: IPlaceholderNotification['type'] }) 
     );
   }
 
-  if (type === 'friend_accepted') {
+  if (type === 'FRIEND_ACCEPTED') {
     return (
       <svg
         className="h-5 w-5"
@@ -43,7 +70,7 @@ function NotificationIcon({ type }: { type: IPlaceholderNotification['type'] }) 
     );
   }
 
-  if (type === 'recipe_comment') {
+  if (type === 'COMMENT') {
     return (
       <svg
         className="h-5 w-5"
@@ -60,7 +87,24 @@ function NotificationIcon({ type }: { type: IPlaceholderNotification['type'] }) 
     );
   }
 
-  // recipe_imported
+  if (type === 'RATING') {
+    return (
+      <svg
+        className="h-5 w-5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      </svg>
+    );
+  }
+
+  // RECIPE_IMPORTED
   return (
     <svg
       className="h-5 w-5"
@@ -80,13 +124,23 @@ function NotificationIcon({ type }: { type: IPlaceholderNotification['type'] }) 
 }
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState(PLACEHOLDER_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<INotification[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  function markAllRead() {
+  useEffect(() => {
+    apiFetch<INotification[]>('/api/notifications')
+      .then(setNotifications)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  async function markAllRead() {
+    await apiFetch('/api/notifications/read-all', { method: 'PUT' }).catch(() => {});
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   }
 
-  function markRead(id: string) {
+  async function markRead(id: string) {
+    await apiFetch(`/api/notifications/${id}/read`, { method: 'PUT' }).catch(() => {});
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
   }
 
@@ -110,7 +164,13 @@ export default function NotificationsPage() {
         )}
       </div>
 
-      {notifications.length === 0 ? (
+      {loading ? (
+        <div className="flex flex-col gap-2">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-100" />
+          ))}
+        </div>
+      ) : notifications.length === 0 ? (
         <div className="rounded-xl border border-dashed border-gray-300 bg-white py-20 text-center">
           <p className="text-sm text-gray-500">No notifications yet.</p>
         </div>
@@ -127,18 +187,22 @@ export default function NotificationsPage() {
                   : 'border-orange-100 bg-orange-50 hover:bg-orange-100/50'
               }`}
             >
-              {/* Icon */}
               <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-500">
                 <NotificationIcon type={n.type} />
               </div>
 
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-900">{n.message}</p>
-                <p className="mt-0.5 text-xs text-gray-400">{n.createdAt}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm text-gray-900">{notificationMessage(n)}</p>
+                <p className="mt-0.5 text-xs text-gray-400">
+                  {new Date(n.createdAt).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </p>
               </div>
 
-              {/* Unread dot */}
               {!n.read && <div className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-orange-500" />}
             </button>
           ))}

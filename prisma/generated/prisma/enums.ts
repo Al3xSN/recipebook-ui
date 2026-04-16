@@ -34,8 +34,10 @@ export type FriendRequestStatus = (typeof FriendRequestStatus)[keyof typeof Frie
 
 export const NotificationType = {
   FRIEND_REQUEST: 'FRIEND_REQUEST',
+  FRIEND_ACCEPTED: 'FRIEND_ACCEPTED',
   COMMENT: 'COMMENT',
   RATING: 'RATING',
+  RECIPE_IMPORTED: 'RECIPE_IMPORTED',
 } as const;
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType];

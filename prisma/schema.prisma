@@ -30,8 +30,10 @@ enum FriendRequestStatus {
 
 enum NotificationType {
   FRIEND_REQUEST
+  FRIEND_ACCEPTED
   COMMENT
   RATING
+  RECIPE_IMPORTED
 }
 
 model User {
@@ -50,7 +52,8 @@ model User {
   comments         Comment[]
   sentRequests     FriendRequest[] @relation("SentRequests")
   receivedRequests FriendRequest[] @relation("ReceivedRequests")
-  notifications    Notification[]
+  notifications         Notification[] @relation("ReceivedNotifications")
+  sentNotifications     Notification[] @relation("SentNotifications")
 }
 
 model Recipe {
@@ -147,10 +150,12 @@ model FriendRequest {
 model Notification {
   id          String           @id @default(uuid())
   userId      String
+  senderId    String
   type        NotificationType
   referenceId String?
   read        Boolean          @default(false)
   createdAt   DateTime         @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User @relation("ReceivedNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  sender User @relation("SentNotifications", fields: [senderId], references: [id], onDelete: Cascade)
 }

@@ -5,10 +5,8 @@ import { useEffect, useState } from 'react';
 import { signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/Button';
 import { UserMenu } from '@/components/layout/UserMenu';
+import { apiFetch } from '@/lib/api';
 import { useRouter } from 'next/navigation';
-
-// Hardcoded until notifications API is wired up
-const hasUnread = true;
 
 interface INavbarClientProps {
   user: { displayName?: string | null; username: string } | null;
@@ -17,6 +15,14 @@ interface INavbarClientProps {
 export function NavbarClient({ user }: INavbarClientProps) {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hasUnread, setHasUnread] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    apiFetch<{ hasUnread: boolean }>('/api/notifications/unread')
+      .then((data) => setHasUnread(data.hasUnread))
+      .catch(() => {});
+  }, [user]);
 
   async function handleLogout() {
     setMobileMenuOpen(false);
