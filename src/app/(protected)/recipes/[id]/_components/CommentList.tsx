@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { apiFetch, ApiRequestError } from '@/lib/api';
+import { CommentListSkeleton } from './CommentListSkeleton';
 
 interface CommentDto {
   id: string;
@@ -77,7 +78,7 @@ export function CommentList({ recipeId }: Props) {
 
       {/* Comment list */}
       {isLoading ? (
-        <p className="mb-6 text-sm text-gray-400">Loading comments…</p>
+        <CommentListSkeleton />
       ) : (
         <div className="mb-6 flex flex-col gap-4">
           {comments.map((comment) => (

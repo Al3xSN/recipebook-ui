@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { apiFetch, ApiRequestError } from '@/lib/api';
 import { CATEGORY_LABELS, TAG_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
 import type { RecipeDto } from '@/types/recipe';
+import { EditRecipePageSkeleton } from './_components/EditRecipePageSkeleton';
 
 export default function EditRecipePage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -124,11 +125,7 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
   }
 
   if (isLoadingRecipe) {
-    return (
-      <div className="mx-auto max-w-2xl px-4 py-10">
-        <p className="text-sm text-gray-400">Loading recipe…</p>
-      </div>
-    );
+    return <EditRecipePageSkeleton />;
   }
 
   if (loadError) {

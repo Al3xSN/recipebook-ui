@@ -6,6 +6,7 @@ import { apiFetch } from '@/lib/api';
 import { TabBar } from '@/components/ui/TabBar';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
+import { FriendsPageSkeleton } from './_components/FriendsPageSkeleton';
 
 interface FriendDto {
   userId: string;
@@ -316,11 +317,7 @@ export default function FriendsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 py-10">
-        <p className="text-sm text-gray-400">Loading…</p>
-      </div>
-    );
+    return <FriendsPageSkeleton />;
   }
 
   return (
