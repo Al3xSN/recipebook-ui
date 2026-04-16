@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { apiFetch } from '@/lib/api';
 
-export interface PublicProfileData {
+export interface IPublicProfileData {
   userId: string;
   username: string;
   displayName: string | null;
@@ -14,16 +14,20 @@ export interface PublicProfileData {
 }
 
 // 0=NotFriends, 1=PendingOutgoing, 2=PendingIncoming, 3=Friends
-type FriendshipStatus = 0 | 1 | 2 | 3;
+type TFriendshipStatus = 0 | 1 | 2 | 3;
 
-interface Props {
-  profile: PublicProfileData;
-  initialFriendshipStatus: FriendshipStatus;
+interface IPublicProfileHeader {
+  profile: IPublicProfileData;
+  initialFriendshipStatus: TFriendshipStatus;
   isOwner?: boolean;
 }
 
-export function PublicProfileHeader({ profile, initialFriendshipStatus, isOwner = false }: Props) {
-  const [status, setStatus] = useState<FriendshipStatus>(initialFriendshipStatus);
+export function PublicProfileHeader({
+  profile,
+  initialFriendshipStatus,
+  isOwner = false,
+}: IPublicProfileHeader) {
+  const [status, setStatus] = useState<TFriendshipStatus>(initialFriendshipStatus);
   const [isActing, setIsActing] = useState(false);
 
   const displayName = profile.displayName ?? profile.username;

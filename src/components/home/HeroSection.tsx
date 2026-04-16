@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
-interface HeroSectionProps {
+interface IHeroSectionProps {
   user: { displayName?: string | null; username: string } | null;
 }
 
-export function HeroSection({ user }: HeroSectionProps) {
+export function HeroSection({ user }: IHeroSectionProps) {
   return (
     <section className="bg-gradient-to-b from-orange-50 to-white px-4 py-10 text-center">
       <div className="mx-auto max-w-2xl">

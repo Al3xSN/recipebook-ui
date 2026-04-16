@@ -1,29 +1,29 @@
 import type { Visibility, Difficulty } from '@generated/prisma/client';
 
-export interface Ingredient {
+export interface IIngredient {
   name: string;
   amount: number;
   unit: number;
   order?: number;
 }
 
-export interface InstructionStep {
+export interface IInstructionStep {
   stepNumber: number;
   text: string;
 }
 
-export interface RecipeAuthor {
+export interface IRecipeAuthor {
   username: string;
   displayName: string;
   avatarUrl: string | null;
 }
 
-export interface RecipeDto {
+export interface IRecipeDto {
   id: string;
   title: string;
   description: string | null;
-  ingredients: Ingredient[];
-  instructions: InstructionStep[];
+  ingredients: IIngredient[];
+  instructions: IInstructionStep[];
   tags: number[];
   category: number;
   visibility: Visibility;
@@ -34,7 +34,7 @@ export interface RecipeDto {
   servings: number;
   imageUrl: string | null;
   userId: string;
-  author: RecipeAuthor;
+  author: IRecipeAuthor;
   createdAt: string;
   updatedAt: string;
 }

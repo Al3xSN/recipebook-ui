@@ -10,11 +10,11 @@ import { useRouter } from 'next/navigation';
 // Hardcoded until notifications API is wired up
 const hasUnread = true;
 
-interface NavbarClientProps {
+interface INavbarClientProps {
   user: { displayName?: string | null; username: string } | null;
 }
 
-export function NavbarClient({ user }: NavbarClientProps) {
+export function NavbarClient({ user }: INavbarClientProps) {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -137,6 +137,31 @@ export function NavbarClient({ user }: NavbarClientProps) {
               )}
             </div>
 
+            {/* Notifications bell (mobile) */}
+            {user && (
+              <Link
+                href="/notifications"
+                className="relative flex items-center justify-center rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 md:hidden"
+                aria-label="Notifications"
+              >
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.437L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" />
+                </svg>
+                {hasUnread && (
+                  <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
+                )}
+              </Link>
+            )}
+
             {/* Hamburger (mobile) */}
             <button
               className="flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 md:hidden"
@@ -174,7 +199,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
 
       {/* Panel */}
       <div
-        className={`fixed right-0 top-0 z-30 flex h-screen w-72 flex-col bg-white shadow-xl transition-transform duration-300 md:hidden ${
+        className={`fixed right-0 top-0 z-30 flex h-[100dvh] w-72 flex-col bg-white shadow-xl transition-transform duration-300 md:hidden ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -223,7 +248,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
         </div>
 
         {/* Nav links */}
-        <nav className="flex-1 px-2 py-4">
+        <nav className="flex-1 overflow-y-auto px-2 py-4">
           <Link
             href="/"
             className="flex w-full items-center rounded-lg px-3 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-orange-50 hover:text-orange-500"
@@ -255,28 +280,24 @@ export function NavbarClient({ user }: NavbarClientProps) {
                 Friends
               </Link>
               <Link
-                href="/notifications"
+                href="/profile/me"
                 className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-orange-50 hover:text-orange-500"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <span className="relative">
-                  <svg
-                    className="h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.437L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" />
-                  </svg>
-                  {hasUnread && (
-                    <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-red-500" />
-                  )}
-                </span>
-                Notifications
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                Profile
               </Link>
             </>
           )}

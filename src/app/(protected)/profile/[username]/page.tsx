@@ -7,7 +7,7 @@ import { toRecipeDto } from '@/lib/server/recipe-mapper';
 import { RecipeCard } from '../../recipes/_components/RecipeCard';
 import { PublicProfileHeader } from './_components/PublicProfileHeader';
 import { ProfileStats } from '@/components/ui/ProfileStats';
-import type { PublicProfileData } from './_components/PublicProfileHeader';
+import type { IPublicProfileData } from './_components/PublicProfileHeader';
 import { Visibility, FriendRequestStatus, type User } from '@generated/prisma/client';
 import Link from 'next/link';
 
@@ -74,7 +74,7 @@ export default async function PublicProfilePage({
     orderBy: { createdAt: 'desc' },
   });
 
-  const profile: PublicProfileData = {
+  const profile: IPublicProfileData = {
     userId: target.id,
     username: target.username,
     displayName: target.displayName,

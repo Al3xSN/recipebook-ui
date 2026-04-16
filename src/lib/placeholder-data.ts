@@ -1,12 +1,12 @@
-import type { RecipeDto, RecipeAuthor } from '@/types/recipe';
+import type { IRecipeDto, IRecipeAuthor } from '@/interfaces/IRecipe';
 
-const AUTHORS: Record<string, RecipeAuthor> = {
+const AUTHORS: Record<string, IRecipeAuthor> = {
   u1: { username: 'alex_cooks', displayName: 'Alex', avatarUrl: null },
   u2: { username: 'julia_eats', displayName: 'Julia', avatarUrl: null },
   u3: { username: 'priya_kitchen', displayName: 'Priya', avatarUrl: null },
 };
 
-export const PLACEHOLDER_RECIPES: RecipeDto[] = [
+export const PLACEHOLDER_RECIPES: IRecipeDto[] = [
   {
     id: 'r1',
     title: 'Spaghetti Bolognese',
@@ -346,7 +346,7 @@ export const PLACEHOLDER_RECIPES: RecipeDto[] = [
   },
 ];
 
-export interface PlaceholderProfile {
+export interface IPlaceholderProfile {
   username: string;
   displayName: string;
   bio: string;
@@ -356,7 +356,7 @@ export interface PlaceholderProfile {
   importedCount: number;
 }
 
-export const PLACEHOLDER_PROFILE: PlaceholderProfile = {
+export const PLACEHOLDER_PROFILE: IPlaceholderProfile = {
   username: 'alex_cooks',
   displayName: 'Alex',
   bio: 'Home cook & food lover. Always experimenting with new flavours.',
@@ -366,35 +366,35 @@ export const PLACEHOLDER_PROFILE: PlaceholderProfile = {
   importedCount: 5,
 };
 
-export interface PlaceholderFriend {
+export interface IPlaceholderFriend {
   username: string;
   displayName: string;
   recipeCount: number;
   avatarUrl: string | null;
 }
 
-export const PLACEHOLDER_FRIENDS: PlaceholderFriend[] = [
+export const PLACEHOLDER_FRIENDS: IPlaceholderFriend[] = [
   { username: 'julia_eats', displayName: 'Julia', recipeCount: 8, avatarUrl: null },
   { username: 'marcelo_chef', displayName: 'Marcelo', recipeCount: 22, avatarUrl: null },
   { username: 'priya_kitchen', displayName: 'Priya', recipeCount: 15, avatarUrl: null },
   { username: 'tom_cooks', displayName: 'Tom', recipeCount: 4, avatarUrl: null },
 ];
 
-export interface PlaceholderRequest {
+export interface IPlaceholderRequest {
   username: string;
   displayName: string;
   avatarUrl: string | null;
 }
 
-export const PLACEHOLDER_FRIEND_REQUESTS: PlaceholderRequest[] = [
+export const PLACEHOLDER_FRIEND_REQUESTS: IPlaceholderRequest[] = [
   { username: 'sarah_b', displayName: 'Sarah B.', avatarUrl: null },
 ];
 
-export const PLACEHOLDER_SENT_REQUESTS: PlaceholderRequest[] = [
+export const PLACEHOLDER_SENT_REQUESTS: IPlaceholderRequest[] = [
   { username: 'tommy_c', displayName: 'Tommy C.', avatarUrl: null },
 ];
 
-export interface PlaceholderNotification {
+export interface IPlaceholderNotification {
   id: string;
   type: 'friend_request' | 'friend_accepted' | 'recipe_comment' | 'recipe_imported';
   message: string;
@@ -402,7 +402,7 @@ export interface PlaceholderNotification {
   createdAt: string;
 }
 
-export const PLACEHOLDER_NOTIFICATIONS: PlaceholderNotification[] = [
+export const PLACEHOLDER_NOTIFICATIONS: IPlaceholderNotification[] = [
   {
     id: 'n1',
     type: 'friend_request',
@@ -454,7 +454,7 @@ export const PLACEHOLDER_NOTIFICATIONS: PlaceholderNotification[] = [
   },
 ];
 
-export interface PlaceholderPublicProfile {
+export interface IPlaceholderPublicProfile {
   username: string;
   displayName: string;
   bio: string;
@@ -463,7 +463,7 @@ export interface PlaceholderPublicProfile {
   friendCount: number;
 }
 
-export const PLACEHOLDER_PUBLIC_PROFILE: PlaceholderPublicProfile = {
+export const PLACEHOLDER_PUBLIC_PROFILE: IPlaceholderPublicProfile = {
   username: 'julia_eats',
   displayName: 'Julia',
   bio: 'Pastry chef by day, home cook by night. Obsessed with all things sweet.',

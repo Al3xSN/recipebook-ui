@@ -2,10 +2,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 import { Visibility } from '@generated/prisma/client';
-import type { RecipeDto } from '@/types/recipe';
+import type { IRecipeDto } from '@/interfaces/IRecipe';
 
-interface RecipeCardProps {
-  recipe: RecipeDto;
+interface IRecipeCardProps {
+  recipe: IRecipeDto;
   showVisibility?: boolean;
   currentUserId?: string;
 }
@@ -25,7 +25,7 @@ function getAvatarColor(username: string): string {
   return AVATAR_COLORS[username.charCodeAt(0) % AVATAR_COLORS.length];
 }
 
-export function RecipeCard({ recipe, showVisibility = false, currentUserId }: RecipeCardProps) {
+export function RecipeCard({ recipe, showVisibility = false, currentUserId }: IRecipeCardProps) {
   const totalMinutes = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
   const showAuthor = recipe.userId !== currentUserId;
 

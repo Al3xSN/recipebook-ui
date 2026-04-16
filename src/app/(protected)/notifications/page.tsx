@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { PLACEHOLDER_NOTIFICATIONS, type PlaceholderNotification } from '@/lib/placeholder-data';
+import { PLACEHOLDER_NOTIFICATIONS, type IPlaceholderNotification } from '@/lib/placeholder-data';
 
-function NotificationIcon({ type }: { type: PlaceholderNotification['type'] }) {
+function NotificationIcon({ type }: { type: IPlaceholderNotification['type'] }) {
   if (type === 'friend_request') {
     return (
       <svg

@@ -4,11 +4,11 @@ import { Prisma, Visibility, FriendRequestStatus } from '@generated/prisma/clien
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
-import type { RecipeDto } from '@/types/recipe';
+import type { IRecipeDto } from '@/interfaces/IRecipe';
 import { RecipeCard } from '../recipes/_components/RecipeCard';
 import { ExploreFilters } from './_components/ExploreFilters';
 
-interface ExploreParams {
+interface IExploreParams {
   search: string;
   sortOrder: number;
   category: number | undefined;
@@ -17,13 +17,13 @@ interface ExploreParams {
   pageSize: number;
 }
 
-interface ExploreResult {
-  items: RecipeDto[];
+interface IExploreResult {
+  items: IRecipeDto[];
   totalCount: number;
   totalPages: number;
 }
 
-async function getExploreRecipes(params: ExploreParams, userId: string): Promise<ExploreResult> {
+async function getExploreRecipes(params: IExploreParams, userId: string): Promise<IExploreResult> {
   'use cache';
   cacheTag('explore-recipes');
   cacheTag(`explore-recipes-${userId}`);
@@ -101,7 +101,7 @@ export default async function ExplorePage({
 
   const { search = '', sortOrder = '1', category = '', tags = '', page = '1' } = await searchParams;
 
-  const params: ExploreParams = {
+  const params: IExploreParams = {
     search,
     sortOrder: Number(sortOrder),
     category: category ? Number(category) : undefined,

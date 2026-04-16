@@ -4,11 +4,11 @@ import { cacheLife, cacheTag } from 'next/cache';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
-import type { RecipeDto } from '@/types/recipe';
+import type { IRecipeDto } from '@/interfaces/IRecipe';
 import { RecipeCard } from './_components/RecipeCard';
 import { RecipeFilters } from './_components/RecipeFilters';
 
-async function getUserRecipes(userId: string): Promise<RecipeDto[]> {
+async function getUserRecipes(userId: string): Promise<IRecipeDto[]> {
   'use cache';
   cacheTag(`user-recipes-${userId}`);
   cacheLife({ stale: 30, revalidate: 60 });
