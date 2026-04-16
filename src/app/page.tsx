@@ -1,18 +1,22 @@
 import type { Metadata } from 'next';
+import { auth } from '@/auth';
 import { Navbar } from '@/components/layout/Navbar';
 import { HeroSection } from '@/components/home/HeroSection';
 
 export const metadata: Metadata = { title: 'RecipeBook — Discover, save, and share recipes' };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+  const user = session?.user ?? null;
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <HeroSection />
+      <HeroSection user={user} />
 
       {/* Feature highlights */}
-      <section className="mx-auto max-w-5xl px-4 py-20">
+      <section className="mx-auto max-w-5xl px-4 py-10">
         <div className="grid gap-8 sm:grid-cols-3">
           <FeatureCard
             icon={
