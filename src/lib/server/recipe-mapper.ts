@@ -4,7 +4,7 @@ import type {
   InstructionStep,
   RecipeTag,
   User,
-} from '@/generated/prisma/client';
+} from '@generated/prisma/client';
 
 type RecipeWithRelations = Recipe & {
   ingredients: Ingredient[];

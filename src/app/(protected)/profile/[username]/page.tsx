@@ -8,7 +8,7 @@ import { RecipeCard } from '../../recipes/_components/RecipeCard';
 import { PublicProfileHeader } from './_components/PublicProfileHeader';
 import { ProfileStats } from '@/components/ui/ProfileStats';
 import type { PublicProfileData } from './_components/PublicProfileHeader';
-import type { User } from '@/generated/prisma/client';
+import type { User } from '@generated/prisma/client';
 import Link from 'next/link';
 
 async function getProfileUser(username: string): Promise<User | null> {

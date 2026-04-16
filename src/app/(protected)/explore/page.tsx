@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { cacheLife, cacheTag } from 'next/cache';
-import { Prisma } from '@/generated/prisma/client';
+import { Prisma } from '@generated/prisma/client';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
