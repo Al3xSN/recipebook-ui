@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
 import { areFriends } from '@/lib/server/friendship-helpers';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
+import { Visibility } from '@generated/prisma/client';
 
 type Params = { params: Promise<{ friendUserId: string; recipeId: string }> };
 
@@ -30,7 +31,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
       title: original.title,
       description: original.description,
       category: original.category,
-      visibility: 3, // imported copies default to Private
+      visibility: Visibility.PRIVATE, // imported copies default to Private
       difficulty: original.difficulty,
       cuisine: original.cuisine,
       prepTimeMinutes: original.prepTimeMinutes,
@@ -43,6 +44,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
           name: i.name,
           amount: i.amount,
           unit: i.unit,
+          order: i.order,
         })),
       },
       instructions: {

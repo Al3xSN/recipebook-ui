@@ -383,7 +383,7 @@ export const ModelName = {
   Rating: 'Rating',
   Comment: 'Comment',
   FriendRequest: 'FriendRequest',
-  Friendship: 'Friendship',
+  Notification: 'Notification',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -412,7 +412,7 @@ export type TypeMap<
       | 'rating'
       | 'comment'
       | 'friendRequest'
-      | 'friendship';
+      | 'notification';
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -1012,77 +1012,79 @@ export type TypeMap<
         };
       };
     };
-    Friendship: {
-      payload: Prisma.$FriendshipPayload<ExtArgs>;
-      fields: Prisma.FriendshipFieldRefs;
+    Notification: {
+      payload: Prisma.$NotificationPayload<ExtArgs>;
+      fields: Prisma.NotificationFieldRefs;
       operations: {
         findUnique: {
-          args: Prisma.FriendshipFindUniqueArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FriendshipPayload> | null;
+          args: Prisma.NotificationFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload> | null;
         };
         findUniqueOrThrow: {
-          args: Prisma.FriendshipFindUniqueOrThrowArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FriendshipPayload>;
+          args: Prisma.NotificationFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
         };
         findFirst: {
-          args: Prisma.FriendshipFindFirstArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FriendshipPayload> | null;
+          args: Prisma.NotificationFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload> | null;
         };
         findFirstOrThrow: {
-          args: Prisma.FriendshipFindFirstOrThrowArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FriendshipPayload>;
+          args: Prisma.NotificationFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
         };
         findMany: {
-          args: Prisma.FriendshipFindManyArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FriendshipPayload>[];
+          args: Prisma.NotificationFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>[];
         };
         create: {
-          args: Prisma.FriendshipCreateArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FriendshipPayload>;
+          args: Prisma.NotificationCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
         };
         createMany: {
-          args: Prisma.FriendshipCreateManyArgs<ExtArgs>;
+          args: Prisma.NotificationCreateManyArgs<ExtArgs>;
           result: BatchPayload;
         };
         createManyAndReturn: {
-          args: Prisma.FriendshipCreateManyAndReturnArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FriendshipPayload>[];
+          args: Prisma.NotificationCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>[];
         };
         delete: {
-          args: Prisma.FriendshipDeleteArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FriendshipPayload>;
+          args: Prisma.NotificationDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
         };
         update: {
-          args: Prisma.FriendshipUpdateArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FriendshipPayload>;
+          args: Prisma.NotificationUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
         };
         deleteMany: {
-          args: Prisma.FriendshipDeleteManyArgs<ExtArgs>;
+          args: Prisma.NotificationDeleteManyArgs<ExtArgs>;
           result: BatchPayload;
         };
         updateMany: {
-          args: Prisma.FriendshipUpdateManyArgs<ExtArgs>;
+          args: Prisma.NotificationUpdateManyArgs<ExtArgs>;
           result: BatchPayload;
         };
         updateManyAndReturn: {
-          args: Prisma.FriendshipUpdateManyAndReturnArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FriendshipPayload>[];
+          args: Prisma.NotificationUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>[];
         };
         upsert: {
-          args: Prisma.FriendshipUpsertArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FriendshipPayload>;
+          args: Prisma.NotificationUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
         };
         aggregate: {
-          args: Prisma.FriendshipAggregateArgs<ExtArgs>;
-          result: runtime.Types.Utils.Optional<Prisma.AggregateFriendship>;
+          args: Prisma.NotificationAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNotification>;
         };
         groupBy: {
-          args: Prisma.FriendshipGroupByArgs<ExtArgs>;
-          result: runtime.Types.Utils.Optional<Prisma.FriendshipGroupByOutputType>[];
+          args: Prisma.NotificationGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.NotificationGroupByOutputType>[];
         };
         count: {
-          args: Prisma.FriendshipCountArgs<ExtArgs>;
-          result: runtime.Types.Utils.Optional<Prisma.FriendshipCountAggregateOutputType> | number;
+          args: Prisma.NotificationCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.NotificationCountAggregateOutputType>
+            | number;
         };
       };
     };
@@ -1164,6 +1166,7 @@ export const IngredientScalarFieldEnum = {
   name: 'name',
   amount: 'amount',
   unit: 'unit',
+  order: 'order',
   recipeId: 'recipeId',
 } as const;
 
@@ -1205,6 +1208,7 @@ export const CommentScalarFieldEnum = {
   recipeId: 'recipeId',
   authorId: 'authorId',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
 } as const;
 
 export type CommentScalarFieldEnum =
@@ -1221,13 +1225,17 @@ export const FriendRequestScalarFieldEnum = {
 export type FriendRequestScalarFieldEnum =
   (typeof FriendRequestScalarFieldEnum)[keyof typeof FriendRequestScalarFieldEnum];
 
-export const FriendshipScalarFieldEnum = {
-  userAId: 'userAId',
-  userBId: 'userBId',
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  referenceId: 'referenceId',
+  read: 'read',
+  createdAt: 'createdAt',
 } as const;
 
-export type FriendshipScalarFieldEnum =
-  (typeof FriendshipScalarFieldEnum)[keyof typeof FriendshipScalarFieldEnum];
+export type NotificationScalarFieldEnum =
+  (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',
@@ -1285,6 +1293,38 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>;
 
 /**
+ * Reference to a field of type 'Visibility'
+ */
+export type EnumVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'Visibility'
+>;
+
+/**
+ * Reference to a field of type 'Visibility[]'
+ */
+export type ListEnumVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'Visibility[]'
+>;
+
+/**
+ * Reference to a field of type 'Difficulty'
+ */
+export type EnumDifficultyFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'Difficulty'
+>;
+
+/**
+ * Reference to a field of type 'Difficulty[]'
+ */
+export type ListEnumDifficultyFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'Difficulty[]'
+>;
+
+/**
  * Reference to a field of type 'Decimal'
  */
 export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>;
@@ -1293,6 +1333,43 @@ export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'Decimal[]'
  */
 export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>;
+
+/**
+ * Reference to a field of type 'FriendRequestStatus'
+ */
+export type EnumFriendRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'FriendRequestStatus'
+>;
+
+/**
+ * Reference to a field of type 'FriendRequestStatus[]'
+ */
+export type ListEnumFriendRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'FriendRequestStatus[]'
+>;
+
+/**
+ * Reference to a field of type 'NotificationType'
+ */
+export type EnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'NotificationType'
+>;
+
+/**
+ * Reference to a field of type 'NotificationType[]'
+ */
+export type ListEnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'NotificationType[]'
+>;
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>;
 
 /**
  * Reference to a field of type 'Float'
@@ -1415,7 +1492,7 @@ export type GlobalOmitConfig = {
   rating?: Prisma.RatingOmit;
   comment?: Prisma.CommentOmit;
   friendRequest?: Prisma.FriendRequestOmit;
-  friendship?: Prisma.FriendshipOmit;
+  notification?: Prisma.NotificationOmit;
 };
 
 /* Types for Logging */

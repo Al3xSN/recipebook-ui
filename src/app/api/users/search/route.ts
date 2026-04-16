@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma, FriendRequestStatus } from '@generated/prisma/client';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 
@@ -10,10 +10,15 @@ export async function GET(req: NextRequest) {
 
   const query = req.nextUrl.searchParams.get('username')?.trim() || '';
 
-  const friendships = await db.friendship.findMany({
-    where: { OR: [{ userAId: session.userId }, { userBId: session.userId }] },
+  const connections = await db.friendRequest.findMany({
+    where: {
+      status: FriendRequestStatus.ACCEPTED,
+      OR: [{ senderId: session.userId }, { receiverId: session.userId }],
+    },
   });
-  const friendIds = friendships.map((f) => (f.userAId === session.userId ? f.userBId : f.userAId));
+  const friendIds = connections.map((c) =>
+    c.senderId === session.userId ? c.receiverId : c.senderId,
+  );
 
   const excludeIds = [session.userId, ...friendIds];
 

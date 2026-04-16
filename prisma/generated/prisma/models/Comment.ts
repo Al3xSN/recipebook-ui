@@ -29,6 +29,7 @@ export type CommentMinAggregateOutputType = {
   recipeId: string | null;
   authorId: string | null;
   createdAt: Date | null;
+  updatedAt: Date | null;
 };
 
 export type CommentMaxAggregateOutputType = {
@@ -37,6 +38,7 @@ export type CommentMaxAggregateOutputType = {
   recipeId: string | null;
   authorId: string | null;
   createdAt: Date | null;
+  updatedAt: Date | null;
 };
 
 export type CommentCountAggregateOutputType = {
@@ -45,6 +47,7 @@ export type CommentCountAggregateOutputType = {
   recipeId: number;
   authorId: number;
   createdAt: number;
+  updatedAt: number;
   _all: number;
 };
 
@@ -54,6 +57,7 @@ export type CommentMinAggregateInputType = {
   recipeId?: true;
   authorId?: true;
   createdAt?: true;
+  updatedAt?: true;
 };
 
 export type CommentMaxAggregateInputType = {
@@ -62,6 +66,7 @@ export type CommentMaxAggregateInputType = {
   recipeId?: true;
   authorId?: true;
   createdAt?: true;
+  updatedAt?: true;
 };
 
 export type CommentCountAggregateInputType = {
@@ -70,6 +75,7 @@ export type CommentCountAggregateInputType = {
   recipeId?: true;
   authorId?: true;
   createdAt?: true;
+  updatedAt?: true;
   _all?: true;
 };
 
@@ -152,6 +158,7 @@ export type CommentGroupByOutputType = {
   recipeId: string;
   authorId: string;
   createdAt: Date;
+  updatedAt: Date;
   _count: CommentCountAggregateOutputType | null;
   _min: CommentMinAggregateOutputType | null;
   _max: CommentMaxAggregateOutputType | null;
@@ -178,6 +185,7 @@ export type CommentWhereInput = {
   recipeId?: Prisma.StringFilter<'Comment'> | string;
   authorId?: Prisma.StringFilter<'Comment'> | string;
   createdAt?: Prisma.DateTimeFilter<'Comment'> | Date | string;
+  updatedAt?: Prisma.DateTimeFilter<'Comment'> | Date | string;
   recipe?: Prisma.XOR<Prisma.RecipeScalarRelationFilter, Prisma.RecipeWhereInput>;
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>;
 };
@@ -188,6 +196,7 @@ export type CommentOrderByWithRelationInput = {
   recipeId?: Prisma.SortOrder;
   authorId?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
+  updatedAt?: Prisma.SortOrder;
   recipe?: Prisma.RecipeOrderByWithRelationInput;
   author?: Prisma.UserOrderByWithRelationInput;
 };
@@ -202,6 +211,7 @@ export type CommentWhereUniqueInput = Prisma.AtLeast<
     recipeId?: Prisma.StringFilter<'Comment'> | string;
     authorId?: Prisma.StringFilter<'Comment'> | string;
     createdAt?: Prisma.DateTimeFilter<'Comment'> | Date | string;
+    updatedAt?: Prisma.DateTimeFilter<'Comment'> | Date | string;
     recipe?: Prisma.XOR<Prisma.RecipeScalarRelationFilter, Prisma.RecipeWhereInput>;
     author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>;
   },
@@ -214,6 +224,7 @@ export type CommentOrderByWithAggregationInput = {
   recipeId?: Prisma.SortOrder;
   authorId?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
+  updatedAt?: Prisma.SortOrder;
   _count?: Prisma.CommentCountOrderByAggregateInput;
   _max?: Prisma.CommentMaxOrderByAggregateInput;
   _min?: Prisma.CommentMinOrderByAggregateInput;
@@ -232,12 +243,14 @@ export type CommentScalarWhereWithAggregatesInput = {
   recipeId?: Prisma.StringWithAggregatesFilter<'Comment'> | string;
   authorId?: Prisma.StringWithAggregatesFilter<'Comment'> | string;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<'Comment'> | Date | string;
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<'Comment'> | Date | string;
 };
 
 export type CommentCreateInput = {
   id?: string;
   text: string;
   createdAt?: Date | string;
+  updatedAt?: Date | string;
   recipe: Prisma.RecipeCreateNestedOneWithoutCommentsInput;
   author: Prisma.UserCreateNestedOneWithoutCommentsInput;
 };
@@ -248,12 +261,14 @@ export type CommentUncheckedCreateInput = {
   recipeId: string;
   authorId: string;
   createdAt?: Date | string;
+  updatedAt?: Date | string;
 };
 
 export type CommentUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   text?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   recipe?: Prisma.RecipeUpdateOneRequiredWithoutCommentsNestedInput;
   author?: Prisma.UserUpdateOneRequiredWithoutCommentsNestedInput;
 };
@@ -264,6 +279,7 @@ export type CommentUncheckedUpdateInput = {
   recipeId?: Prisma.StringFieldUpdateOperationsInput | string;
   authorId?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type CommentCreateManyInput = {
@@ -272,12 +288,14 @@ export type CommentCreateManyInput = {
   recipeId: string;
   authorId: string;
   createdAt?: Date | string;
+  updatedAt?: Date | string;
 };
 
 export type CommentUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   text?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type CommentUncheckedUpdateManyInput = {
@@ -286,6 +304,7 @@ export type CommentUncheckedUpdateManyInput = {
   recipeId?: Prisma.StringFieldUpdateOperationsInput | string;
   authorId?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type CommentListRelationFilter = {
@@ -304,6 +323,7 @@ export type CommentCountOrderByAggregateInput = {
   recipeId?: Prisma.SortOrder;
   authorId?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
+  updatedAt?: Prisma.SortOrder;
 };
 
 export type CommentMaxOrderByAggregateInput = {
@@ -312,6 +332,7 @@ export type CommentMaxOrderByAggregateInput = {
   recipeId?: Prisma.SortOrder;
   authorId?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
+  updatedAt?: Prisma.SortOrder;
 };
 
 export type CommentMinOrderByAggregateInput = {
@@ -320,6 +341,7 @@ export type CommentMinOrderByAggregateInput = {
   recipeId?: Prisma.SortOrder;
   authorId?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
+  updatedAt?: Prisma.SortOrder;
 };
 
 export type CommentCreateNestedManyWithoutAuthorInput = {
@@ -498,6 +520,7 @@ export type CommentCreateWithoutAuthorInput = {
   id?: string;
   text: string;
   createdAt?: Date | string;
+  updatedAt?: Date | string;
   recipe: Prisma.RecipeCreateNestedOneWithoutCommentsInput;
 };
 
@@ -506,6 +529,7 @@ export type CommentUncheckedCreateWithoutAuthorInput = {
   text: string;
   recipeId: string;
   createdAt?: Date | string;
+  updatedAt?: Date | string;
 };
 
 export type CommentCreateOrConnectWithoutAuthorInput = {
@@ -558,12 +582,14 @@ export type CommentScalarWhereInput = {
   recipeId?: Prisma.StringFilter<'Comment'> | string;
   authorId?: Prisma.StringFilter<'Comment'> | string;
   createdAt?: Prisma.DateTimeFilter<'Comment'> | Date | string;
+  updatedAt?: Prisma.DateTimeFilter<'Comment'> | Date | string;
 };
 
 export type CommentCreateWithoutRecipeInput = {
   id?: string;
   text: string;
   createdAt?: Date | string;
+  updatedAt?: Date | string;
   author: Prisma.UserCreateNestedOneWithoutCommentsInput;
 };
 
@@ -572,6 +598,7 @@ export type CommentUncheckedCreateWithoutRecipeInput = {
   text: string;
   authorId: string;
   createdAt?: Date | string;
+  updatedAt?: Date | string;
 };
 
 export type CommentCreateOrConnectWithoutRecipeInput = {
@@ -620,12 +647,14 @@ export type CommentCreateManyAuthorInput = {
   text: string;
   recipeId: string;
   createdAt?: Date | string;
+  updatedAt?: Date | string;
 };
 
 export type CommentUpdateWithoutAuthorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   text?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   recipe?: Prisma.RecipeUpdateOneRequiredWithoutCommentsNestedInput;
 };
 
@@ -634,6 +663,7 @@ export type CommentUncheckedUpdateWithoutAuthorInput = {
   text?: Prisma.StringFieldUpdateOperationsInput | string;
   recipeId?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type CommentUncheckedUpdateManyWithoutAuthorInput = {
@@ -641,6 +671,7 @@ export type CommentUncheckedUpdateManyWithoutAuthorInput = {
   text?: Prisma.StringFieldUpdateOperationsInput | string;
   recipeId?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type CommentCreateManyRecipeInput = {
@@ -648,12 +679,14 @@ export type CommentCreateManyRecipeInput = {
   text: string;
   authorId: string;
   createdAt?: Date | string;
+  updatedAt?: Date | string;
 };
 
 export type CommentUpdateWithoutRecipeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   text?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   author?: Prisma.UserUpdateOneRequiredWithoutCommentsNestedInput;
 };
 
@@ -662,6 +695,7 @@ export type CommentUncheckedUpdateWithoutRecipeInput = {
   text?: Prisma.StringFieldUpdateOperationsInput | string;
   authorId?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type CommentUncheckedUpdateManyWithoutRecipeInput = {
@@ -669,6 +703,7 @@ export type CommentUncheckedUpdateManyWithoutRecipeInput = {
   text?: Prisma.StringFieldUpdateOperationsInput | string;
   authorId?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type CommentSelect<
@@ -680,6 +715,7 @@ export type CommentSelect<
     recipeId?: boolean;
     authorId?: boolean;
     createdAt?: boolean;
+    updatedAt?: boolean;
     recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>;
     author?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
   },
@@ -695,6 +731,7 @@ export type CommentSelectCreateManyAndReturn<
     recipeId?: boolean;
     authorId?: boolean;
     createdAt?: boolean;
+    updatedAt?: boolean;
     recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>;
     author?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
   },
@@ -710,6 +747,7 @@ export type CommentSelectUpdateManyAndReturn<
     recipeId?: boolean;
     authorId?: boolean;
     createdAt?: boolean;
+    updatedAt?: boolean;
     recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>;
     author?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
   },
@@ -722,12 +760,13 @@ export type CommentSelectScalar = {
   recipeId?: boolean;
   authorId?: boolean;
   createdAt?: boolean;
+  updatedAt?: boolean;
 };
 
 export type CommentOmit<
   ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
-  'id' | 'text' | 'recipeId' | 'authorId' | 'createdAt',
+  'id' | 'text' | 'recipeId' | 'authorId' | 'createdAt' | 'updatedAt',
   ExtArgs['result']['comment']
 >;
 export type CommentInclude<
@@ -764,6 +803,7 @@ export type $CommentPayload<
       recipeId: string;
       authorId: string;
       createdAt: Date;
+      updatedAt: Date;
     },
     ExtArgs['result']['comment']
   >;
@@ -1343,6 +1383,7 @@ export interface CommentFieldRefs {
   readonly recipeId: Prisma.FieldRef<'Comment', 'String'>;
   readonly authorId: Prisma.FieldRef<'Comment', 'String'>;
   readonly createdAt: Prisma.FieldRef<'Comment', 'DateTime'>;
+  readonly updatedAt: Prisma.FieldRef<'Comment', 'DateTime'>;
 }
 
 // Custom InputTypes

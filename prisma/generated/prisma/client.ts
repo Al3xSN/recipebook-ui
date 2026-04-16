@@ -85,7 +85,7 @@ export type Comment = Prisma.CommentModel;
  */
 export type FriendRequest = Prisma.FriendRequestModel;
 /**
- * Model Friendship
+ * Model Notification
  *
  */
-export type Friendship = Prisma.FriendshipModel;
+export type Notification = Prisma.NotificationModel;

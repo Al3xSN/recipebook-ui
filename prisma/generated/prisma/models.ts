@@ -15,5 +15,5 @@ export type * from './models/RecipeTag';
 export type * from './models/Rating';
 export type * from './models/Comment';
 export type * from './models/FriendRequest';
-export type * from './models/Friendship';
+export type * from './models/Notification';
 export type * from './commonInputTypes';

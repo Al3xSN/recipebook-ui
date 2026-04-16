@@ -27,8 +27,6 @@ export type AggregateRecipe = {
 
 export type RecipeAvgAggregateOutputType = {
   category: number | null;
-  visibility: number | null;
-  difficulty: number | null;
   cuisine: number | null;
   prepTimeMinutes: number | null;
   cookTimeMinutes: number | null;
@@ -37,8 +35,6 @@ export type RecipeAvgAggregateOutputType = {
 
 export type RecipeSumAggregateOutputType = {
   category: number | null;
-  visibility: number | null;
-  difficulty: number | null;
   cuisine: number | null;
   prepTimeMinutes: number | null;
   cookTimeMinutes: number | null;
@@ -50,8 +46,8 @@ export type RecipeMinAggregateOutputType = {
   title: string | null;
   description: string | null;
   category: number | null;
-  visibility: number | null;
-  difficulty: number | null;
+  visibility: $Enums.Visibility | null;
+  difficulty: $Enums.Difficulty | null;
   cuisine: number | null;
   prepTimeMinutes: number | null;
   cookTimeMinutes: number | null;
@@ -67,8 +63,8 @@ export type RecipeMaxAggregateOutputType = {
   title: string | null;
   description: string | null;
   category: number | null;
-  visibility: number | null;
-  difficulty: number | null;
+  visibility: $Enums.Visibility | null;
+  difficulty: $Enums.Difficulty | null;
   cuisine: number | null;
   prepTimeMinutes: number | null;
   cookTimeMinutes: number | null;
@@ -99,8 +95,6 @@ export type RecipeCountAggregateOutputType = {
 
 export type RecipeAvgAggregateInputType = {
   category?: true;
-  visibility?: true;
-  difficulty?: true;
   cuisine?: true;
   prepTimeMinutes?: true;
   cookTimeMinutes?: true;
@@ -109,8 +103,6 @@ export type RecipeAvgAggregateInputType = {
 
 export type RecipeSumAggregateInputType = {
   category?: true;
-  visibility?: true;
-  difficulty?: true;
   cuisine?: true;
   prepTimeMinutes?: true;
   cookTimeMinutes?: true;
@@ -261,8 +253,8 @@ export type RecipeGroupByOutputType = {
   title: string;
   description: string | null;
   category: number;
-  visibility: number;
-  difficulty: number | null;
+  visibility: $Enums.Visibility;
+  difficulty: $Enums.Difficulty | null;
   cuisine: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -298,8 +290,8 @@ export type RecipeWhereInput = {
   title?: Prisma.StringFilter<'Recipe'> | string;
   description?: Prisma.StringNullableFilter<'Recipe'> | string | null;
   category?: Prisma.IntFilter<'Recipe'> | number;
-  visibility?: Prisma.IntFilter<'Recipe'> | number;
-  difficulty?: Prisma.IntNullableFilter<'Recipe'> | number | null;
+  visibility?: Prisma.EnumVisibilityFilter<'Recipe'> | $Enums.Visibility;
+  difficulty?: Prisma.EnumDifficultyNullableFilter<'Recipe'> | $Enums.Difficulty | null;
   cuisine?: Prisma.IntNullableFilter<'Recipe'> | number | null;
   prepTimeMinutes?: Prisma.IntFilter<'Recipe'> | number;
   cookTimeMinutes?: Prisma.IntFilter<'Recipe'> | number;
@@ -348,8 +340,8 @@ export type RecipeWhereUniqueInput = Prisma.AtLeast<
     title?: Prisma.StringFilter<'Recipe'> | string;
     description?: Prisma.StringNullableFilter<'Recipe'> | string | null;
     category?: Prisma.IntFilter<'Recipe'> | number;
-    visibility?: Prisma.IntFilter<'Recipe'> | number;
-    difficulty?: Prisma.IntNullableFilter<'Recipe'> | number | null;
+    visibility?: Prisma.EnumVisibilityFilter<'Recipe'> | $Enums.Visibility;
+    difficulty?: Prisma.EnumDifficultyNullableFilter<'Recipe'> | $Enums.Difficulty | null;
     cuisine?: Prisma.IntNullableFilter<'Recipe'> | number | null;
     prepTimeMinutes?: Prisma.IntFilter<'Recipe'> | number;
     cookTimeMinutes?: Prisma.IntFilter<'Recipe'> | number;
@@ -398,8 +390,11 @@ export type RecipeScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<'Recipe'> | string;
   description?: Prisma.StringNullableWithAggregatesFilter<'Recipe'> | string | null;
   category?: Prisma.IntWithAggregatesFilter<'Recipe'> | number;
-  visibility?: Prisma.IntWithAggregatesFilter<'Recipe'> | number;
-  difficulty?: Prisma.IntNullableWithAggregatesFilter<'Recipe'> | number | null;
+  visibility?: Prisma.EnumVisibilityWithAggregatesFilter<'Recipe'> | $Enums.Visibility;
+  difficulty?:
+    | Prisma.EnumDifficultyNullableWithAggregatesFilter<'Recipe'>
+    | $Enums.Difficulty
+    | null;
   cuisine?: Prisma.IntNullableWithAggregatesFilter<'Recipe'> | number | null;
   prepTimeMinutes?: Prisma.IntWithAggregatesFilter<'Recipe'> | number;
   cookTimeMinutes?: Prisma.IntWithAggregatesFilter<'Recipe'> | number;
@@ -415,8 +410,8 @@ export type RecipeCreateInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -437,8 +432,8 @@ export type RecipeUncheckedCreateInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -459,8 +454,8 @@ export type RecipeUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -481,8 +476,8 @@ export type RecipeUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -503,8 +498,8 @@ export type RecipeCreateManyInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -520,8 +515,8 @@ export type RecipeUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -536,8 +531,8 @@ export type RecipeUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -577,8 +572,6 @@ export type RecipeCountOrderByAggregateInput = {
 
 export type RecipeAvgOrderByAggregateInput = {
   category?: Prisma.SortOrder;
-  visibility?: Prisma.SortOrder;
-  difficulty?: Prisma.SortOrder;
   cuisine?: Prisma.SortOrder;
   prepTimeMinutes?: Prisma.SortOrder;
   cookTimeMinutes?: Prisma.SortOrder;
@@ -621,8 +614,6 @@ export type RecipeMinOrderByAggregateInput = {
 
 export type RecipeSumOrderByAggregateInput = {
   category?: Prisma.SortOrder;
-  visibility?: Prisma.SortOrder;
-  difficulty?: Prisma.SortOrder;
   cuisine?: Prisma.SortOrder;
   prepTimeMinutes?: Prisma.SortOrder;
   cookTimeMinutes?: Prisma.SortOrder;
@@ -714,6 +705,14 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number;
   multiply?: number;
   divide?: number;
+};
+
+export type EnumVisibilityFieldUpdateOperationsInput = {
+  set?: $Enums.Visibility;
+};
+
+export type NullableEnumDifficultyFieldUpdateOperationsInput = {
+  set?: $Enums.Difficulty | null;
 };
 
 export type NullableIntFieldUpdateOperationsInput = {
@@ -859,8 +858,8 @@ export type RecipeCreateWithoutUserInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -880,8 +879,8 @@ export type RecipeUncheckedCreateWithoutUserInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -945,8 +944,8 @@ export type RecipeScalarWhereInput = {
   title?: Prisma.StringFilter<'Recipe'> | string;
   description?: Prisma.StringNullableFilter<'Recipe'> | string | null;
   category?: Prisma.IntFilter<'Recipe'> | number;
-  visibility?: Prisma.IntFilter<'Recipe'> | number;
-  difficulty?: Prisma.IntNullableFilter<'Recipe'> | number | null;
+  visibility?: Prisma.EnumVisibilityFilter<'Recipe'> | $Enums.Visibility;
+  difficulty?: Prisma.EnumDifficultyNullableFilter<'Recipe'> | $Enums.Difficulty | null;
   cuisine?: Prisma.IntNullableFilter<'Recipe'> | number | null;
   prepTimeMinutes?: Prisma.IntFilter<'Recipe'> | number;
   cookTimeMinutes?: Prisma.IntFilter<'Recipe'> | number;
@@ -962,8 +961,8 @@ export type RecipeCreateWithoutIngredientsInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -983,8 +982,8 @@ export type RecipeUncheckedCreateWithoutIngredientsInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -1032,8 +1031,8 @@ export type RecipeUpdateWithoutIngredientsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1053,8 +1052,8 @@ export type RecipeUncheckedUpdateWithoutIngredientsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1074,8 +1073,8 @@ export type RecipeCreateWithoutInstructionsInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -1095,8 +1094,8 @@ export type RecipeUncheckedCreateWithoutInstructionsInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -1144,8 +1143,8 @@ export type RecipeUpdateWithoutInstructionsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1165,8 +1164,8 @@ export type RecipeUncheckedUpdateWithoutInstructionsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1186,8 +1185,8 @@ export type RecipeCreateWithoutTagsInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -1207,8 +1206,8 @@ export type RecipeUncheckedCreateWithoutTagsInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -1256,8 +1255,8 @@ export type RecipeUpdateWithoutTagsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1277,8 +1276,8 @@ export type RecipeUncheckedUpdateWithoutTagsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1298,8 +1297,8 @@ export type RecipeCreateWithoutRatingsInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -1319,8 +1318,8 @@ export type RecipeUncheckedCreateWithoutRatingsInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -1368,8 +1367,8 @@ export type RecipeUpdateWithoutRatingsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1389,8 +1388,8 @@ export type RecipeUncheckedUpdateWithoutRatingsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1410,8 +1409,8 @@ export type RecipeCreateWithoutCommentsInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -1431,8 +1430,8 @@ export type RecipeUncheckedCreateWithoutCommentsInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -1480,8 +1479,8 @@ export type RecipeUpdateWithoutCommentsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1501,8 +1500,8 @@ export type RecipeUncheckedUpdateWithoutCommentsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1522,8 +1521,8 @@ export type RecipeCreateManyUserInput = {
   title: string;
   description?: string | null;
   category: number;
-  visibility: number;
-  difficulty?: number | null;
+  visibility: $Enums.Visibility;
+  difficulty?: $Enums.Difficulty | null;
   cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
@@ -1538,8 +1537,8 @@ export type RecipeUpdateWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1559,8 +1558,8 @@ export type RecipeUncheckedUpdateWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1580,8 +1579,8 @@ export type RecipeUncheckedUpdateManyWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.IntFieldUpdateOperationsInput | number;
-  visibility?: Prisma.IntFieldUpdateOperationsInput | number;
-  difficulty?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
+  visibility?: Prisma.EnumVisibilityFieldUpdateOperationsInput | $Enums.Visibility;
+  difficulty?: Prisma.NullableEnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty | null;
   cuisine?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   prepTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
   cookTimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1821,8 +1820,8 @@ export type $RecipePayload<
       title: string;
       description: string | null;
       category: number;
-      visibility: number;
-      difficulty: number | null;
+      visibility: $Enums.Visibility;
+      difficulty: $Enums.Difficulty | null;
       cuisine: number | null;
       prepTimeMinutes: number;
       cookTimeMinutes: number;
@@ -2445,8 +2444,8 @@ export interface RecipeFieldRefs {
   readonly title: Prisma.FieldRef<'Recipe', 'String'>;
   readonly description: Prisma.FieldRef<'Recipe', 'String'>;
   readonly category: Prisma.FieldRef<'Recipe', 'Int'>;
-  readonly visibility: Prisma.FieldRef<'Recipe', 'Int'>;
-  readonly difficulty: Prisma.FieldRef<'Recipe', 'Int'>;
+  readonly visibility: Prisma.FieldRef<'Recipe', 'Visibility'>;
+  readonly difficulty: Prisma.FieldRef<'Recipe', 'Difficulty'>;
   readonly cuisine: Prisma.FieldRef<'Recipe', 'Int'>;
   readonly prepTimeMinutes: Prisma.FieldRef<'Recipe', 'Int'>;
   readonly cookTimeMinutes: Prisma.FieldRef<'Recipe', 'Int'>;

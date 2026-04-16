@@ -22,6 +22,7 @@ export function toRecipeDto(recipe: RecipeWithRelations) {
       name: i.name,
       amount: Number(i.amount),
       unit: i.unit,
+      order: i.order,
     })),
     instructions: recipe.instructions.map((s) => ({
       stepNumber: s.stepNumber,

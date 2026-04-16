@@ -28,11 +28,13 @@ export type AggregateIngredient = {
 export type IngredientAvgAggregateOutputType = {
   amount: runtime.Decimal | null;
   unit: number | null;
+  order: number | null;
 };
 
 export type IngredientSumAggregateOutputType = {
   amount: runtime.Decimal | null;
   unit: number | null;
+  order: number | null;
 };
 
 export type IngredientMinAggregateOutputType = {
@@ -40,6 +42,7 @@ export type IngredientMinAggregateOutputType = {
   name: string | null;
   amount: runtime.Decimal | null;
   unit: number | null;
+  order: number | null;
   recipeId: string | null;
 };
 
@@ -48,6 +51,7 @@ export type IngredientMaxAggregateOutputType = {
   name: string | null;
   amount: runtime.Decimal | null;
   unit: number | null;
+  order: number | null;
   recipeId: string | null;
 };
 
@@ -56,6 +60,7 @@ export type IngredientCountAggregateOutputType = {
   name: number;
   amount: number;
   unit: number;
+  order: number;
   recipeId: number;
   _all: number;
 };
@@ -63,11 +68,13 @@ export type IngredientCountAggregateOutputType = {
 export type IngredientAvgAggregateInputType = {
   amount?: true;
   unit?: true;
+  order?: true;
 };
 
 export type IngredientSumAggregateInputType = {
   amount?: true;
   unit?: true;
+  order?: true;
 };
 
 export type IngredientMinAggregateInputType = {
@@ -75,6 +82,7 @@ export type IngredientMinAggregateInputType = {
   name?: true;
   amount?: true;
   unit?: true;
+  order?: true;
   recipeId?: true;
 };
 
@@ -83,6 +91,7 @@ export type IngredientMaxAggregateInputType = {
   name?: true;
   amount?: true;
   unit?: true;
+  order?: true;
   recipeId?: true;
 };
 
@@ -91,6 +100,7 @@ export type IngredientCountAggregateInputType = {
   name?: true;
   amount?: true;
   unit?: true;
+  order?: true;
   recipeId?: true;
   _all?: true;
 };
@@ -189,6 +199,7 @@ export type IngredientGroupByOutputType = {
   name: string;
   amount: runtime.Decimal;
   unit: number;
+  order: number;
   recipeId: string;
   _count: IngredientCountAggregateOutputType | null;
   _avg: IngredientAvgAggregateOutputType | null;
@@ -222,6 +233,7 @@ export type IngredientWhereInput = {
     | number
     | string;
   unit?: Prisma.IntFilter<'Ingredient'> | number;
+  order?: Prisma.IntFilter<'Ingredient'> | number;
   recipeId?: Prisma.StringFilter<'Ingredient'> | string;
   recipe?: Prisma.XOR<Prisma.RecipeScalarRelationFilter, Prisma.RecipeWhereInput>;
 };
@@ -231,6 +243,7 @@ export type IngredientOrderByWithRelationInput = {
   name?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   unit?: Prisma.SortOrder;
+  order?: Prisma.SortOrder;
   recipeId?: Prisma.SortOrder;
   recipe?: Prisma.RecipeOrderByWithRelationInput;
 };
@@ -249,6 +262,7 @@ export type IngredientWhereUniqueInput = Prisma.AtLeast<
       | number
       | string;
     unit?: Prisma.IntFilter<'Ingredient'> | number;
+    order?: Prisma.IntFilter<'Ingredient'> | number;
     recipeId?: Prisma.StringFilter<'Ingredient'> | string;
     recipe?: Prisma.XOR<Prisma.RecipeScalarRelationFilter, Prisma.RecipeWhereInput>;
   },
@@ -260,6 +274,7 @@ export type IngredientOrderByWithAggregationInput = {
   name?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   unit?: Prisma.SortOrder;
+  order?: Prisma.SortOrder;
   recipeId?: Prisma.SortOrder;
   _count?: Prisma.IngredientCountOrderByAggregateInput;
   _avg?: Prisma.IngredientAvgOrderByAggregateInput;
@@ -285,6 +300,7 @@ export type IngredientScalarWhereWithAggregatesInput = {
     | number
     | string;
   unit?: Prisma.IntWithAggregatesFilter<'Ingredient'> | number;
+  order?: Prisma.IntWithAggregatesFilter<'Ingredient'> | number;
   recipeId?: Prisma.StringWithAggregatesFilter<'Ingredient'> | string;
 };
 
@@ -293,6 +309,7 @@ export type IngredientCreateInput = {
   name: string;
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
   unit: number;
+  order: number;
   recipe: Prisma.RecipeCreateNestedOneWithoutIngredientsInput;
 };
 
@@ -301,6 +318,7 @@ export type IngredientUncheckedCreateInput = {
   name: string;
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
   unit: number;
+  order: number;
   recipeId: string;
 };
 
@@ -314,6 +332,7 @@ export type IngredientUpdateInput = {
     | number
     | string;
   unit?: Prisma.IntFieldUpdateOperationsInput | number;
+  order?: Prisma.IntFieldUpdateOperationsInput | number;
   recipe?: Prisma.RecipeUpdateOneRequiredWithoutIngredientsNestedInput;
 };
 
@@ -327,6 +346,7 @@ export type IngredientUncheckedUpdateInput = {
     | number
     | string;
   unit?: Prisma.IntFieldUpdateOperationsInput | number;
+  order?: Prisma.IntFieldUpdateOperationsInput | number;
   recipeId?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
@@ -335,6 +355,7 @@ export type IngredientCreateManyInput = {
   name: string;
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
   unit: number;
+  order: number;
   recipeId: string;
 };
 
@@ -348,6 +369,7 @@ export type IngredientUpdateManyMutationInput = {
     | number
     | string;
   unit?: Prisma.IntFieldUpdateOperationsInput | number;
+  order?: Prisma.IntFieldUpdateOperationsInput | number;
 };
 
 export type IngredientUncheckedUpdateManyInput = {
@@ -360,6 +382,7 @@ export type IngredientUncheckedUpdateManyInput = {
     | number
     | string;
   unit?: Prisma.IntFieldUpdateOperationsInput | number;
+  order?: Prisma.IntFieldUpdateOperationsInput | number;
   recipeId?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
@@ -378,12 +401,14 @@ export type IngredientCountOrderByAggregateInput = {
   name?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   unit?: Prisma.SortOrder;
+  order?: Prisma.SortOrder;
   recipeId?: Prisma.SortOrder;
 };
 
 export type IngredientAvgOrderByAggregateInput = {
   amount?: Prisma.SortOrder;
   unit?: Prisma.SortOrder;
+  order?: Prisma.SortOrder;
 };
 
 export type IngredientMaxOrderByAggregateInput = {
@@ -391,6 +416,7 @@ export type IngredientMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   unit?: Prisma.SortOrder;
+  order?: Prisma.SortOrder;
   recipeId?: Prisma.SortOrder;
 };
 
@@ -399,12 +425,14 @@ export type IngredientMinOrderByAggregateInput = {
   name?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   unit?: Prisma.SortOrder;
+  order?: Prisma.SortOrder;
   recipeId?: Prisma.SortOrder;
 };
 
 export type IngredientSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder;
   unit?: Prisma.SortOrder;
+  order?: Prisma.SortOrder;
 };
 
 export type IngredientCreateNestedManyWithoutRecipeInput = {
@@ -506,6 +534,7 @@ export type IngredientCreateWithoutRecipeInput = {
   name: string;
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
   unit: number;
+  order: number;
 };
 
 export type IngredientUncheckedCreateWithoutRecipeInput = {
@@ -513,6 +542,7 @@ export type IngredientUncheckedCreateWithoutRecipeInput = {
   name: string;
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
   unit: number;
+  order: number;
 };
 
 export type IngredientCreateOrConnectWithoutRecipeInput = {
@@ -569,6 +599,7 @@ export type IngredientScalarWhereInput = {
     | number
     | string;
   unit?: Prisma.IntFilter<'Ingredient'> | number;
+  order?: Prisma.IntFilter<'Ingredient'> | number;
   recipeId?: Prisma.StringFilter<'Ingredient'> | string;
 };
 
@@ -577,6 +608,7 @@ export type IngredientCreateManyRecipeInput = {
   name: string;
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
   unit: number;
+  order: number;
 };
 
 export type IngredientUpdateWithoutRecipeInput = {
@@ -589,6 +621,7 @@ export type IngredientUpdateWithoutRecipeInput = {
     | number
     | string;
   unit?: Prisma.IntFieldUpdateOperationsInput | number;
+  order?: Prisma.IntFieldUpdateOperationsInput | number;
 };
 
 export type IngredientUncheckedUpdateWithoutRecipeInput = {
@@ -601,6 +634,7 @@ export type IngredientUncheckedUpdateWithoutRecipeInput = {
     | number
     | string;
   unit?: Prisma.IntFieldUpdateOperationsInput | number;
+  order?: Prisma.IntFieldUpdateOperationsInput | number;
 };
 
 export type IngredientUncheckedUpdateManyWithoutRecipeInput = {
@@ -613,6 +647,7 @@ export type IngredientUncheckedUpdateManyWithoutRecipeInput = {
     | number
     | string;
   unit?: Prisma.IntFieldUpdateOperationsInput | number;
+  order?: Prisma.IntFieldUpdateOperationsInput | number;
 };
 
 export type IngredientSelect<
@@ -623,6 +658,7 @@ export type IngredientSelect<
     name?: boolean;
     amount?: boolean;
     unit?: boolean;
+    order?: boolean;
     recipeId?: boolean;
     recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>;
   },
@@ -637,6 +673,7 @@ export type IngredientSelectCreateManyAndReturn<
     name?: boolean;
     amount?: boolean;
     unit?: boolean;
+    order?: boolean;
     recipeId?: boolean;
     recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>;
   },
@@ -651,6 +688,7 @@ export type IngredientSelectUpdateManyAndReturn<
     name?: boolean;
     amount?: boolean;
     unit?: boolean;
+    order?: boolean;
     recipeId?: boolean;
     recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>;
   },
@@ -662,13 +700,14 @@ export type IngredientSelectScalar = {
   name?: boolean;
   amount?: boolean;
   unit?: boolean;
+  order?: boolean;
   recipeId?: boolean;
 };
 
 export type IngredientOmit<
   ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
-  'id' | 'name' | 'amount' | 'unit' | 'recipeId',
+  'id' | 'name' | 'amount' | 'unit' | 'order' | 'recipeId',
   ExtArgs['result']['ingredient']
 >;
 export type IngredientInclude<
@@ -700,6 +739,7 @@ export type $IngredientPayload<
       name: string;
       amount: runtime.Decimal;
       unit: number;
+      order: number;
       recipeId: string;
     },
     ExtArgs['result']['ingredient']
@@ -1288,6 +1328,7 @@ export interface IngredientFieldRefs {
   readonly name: Prisma.FieldRef<'Ingredient', 'String'>;
   readonly amount: Prisma.FieldRef<'Ingredient', 'Decimal'>;
   readonly unit: Prisma.FieldRef<'Ingredient', 'Int'>;
+  readonly order: Prisma.FieldRef<'Ingredient', 'Int'>;
   readonly recipeId: Prisma.FieldRef<'Ingredient', 'String'>;
 }
 

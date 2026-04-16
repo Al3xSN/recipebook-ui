@@ -8,5 +8,34 @@
  * 🟢 You can import this file directly.
  */
 
-// This file is empty because there are no enums in the schema.
-export {};
+export const Visibility = {
+  PUBLIC: 'PUBLIC',
+  FRIENDS_ONLY: 'FRIENDS_ONLY',
+  PRIVATE: 'PRIVATE',
+} as const;
+
+export type Visibility = (typeof Visibility)[keyof typeof Visibility];
+
+export const Difficulty = {
+  EASY: 'EASY',
+  MEDIUM: 'MEDIUM',
+  HARD: 'HARD',
+} as const;
+
+export type Difficulty = (typeof Difficulty)[keyof typeof Difficulty];
+
+export const FriendRequestStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+} as const;
+
+export type FriendRequestStatus = (typeof FriendRequestStatus)[keyof typeof FriendRequestStatus];
+
+export const NotificationType = {
+  FRIEND_REQUEST: 'FRIEND_REQUEST',
+  COMMENT: 'COMMENT',
+  RATING: 'RATING',
+} as const;
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType];

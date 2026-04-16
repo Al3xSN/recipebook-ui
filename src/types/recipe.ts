@@ -1,7 +1,10 @@
+import type { Visibility, Difficulty } from '@generated/prisma/client';
+
 export interface Ingredient {
   name: string;
   amount: number;
   unit: number;
+  order?: number;
 }
 
 export interface InstructionStep {
@@ -23,10 +26,12 @@ export interface RecipeDto {
   instructions: InstructionStep[];
   tags: number[];
   category: number;
+  visibility: Visibility;
+  difficulty?: Difficulty | null;
+  cuisine?: number | null;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
   servings: number;
-  visibility: number;
   imageUrl: string | null;
   userId: string;
   author: RecipeAuthor;

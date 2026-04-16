@@ -56,7 +56,7 @@ export const ModelName = {
   Rating: 'Rating',
   Comment: 'Comment',
   FriendRequest: 'FriendRequest',
-  Friendship: 'Friendship',
+  Notification: 'Notification',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -114,6 +114,7 @@ export const IngredientScalarFieldEnum = {
   name: 'name',
   amount: 'amount',
   unit: 'unit',
+  order: 'order',
   recipeId: 'recipeId',
 } as const;
 
@@ -155,6 +156,7 @@ export const CommentScalarFieldEnum = {
   recipeId: 'recipeId',
   authorId: 'authorId',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
 } as const;
 
 export type CommentScalarFieldEnum =
@@ -171,13 +173,17 @@ export const FriendRequestScalarFieldEnum = {
 export type FriendRequestScalarFieldEnum =
   (typeof FriendRequestScalarFieldEnum)[keyof typeof FriendRequestScalarFieldEnum];
 
-export const FriendshipScalarFieldEnum = {
-  userAId: 'userAId',
-  userBId: 'userBId',
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  referenceId: 'referenceId',
+  read: 'read',
+  createdAt: 'createdAt',
 } as const;
 
-export type FriendshipScalarFieldEnum =
-  (typeof FriendshipScalarFieldEnum)[keyof typeof FriendshipScalarFieldEnum];
+export type NotificationScalarFieldEnum =
+  (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',

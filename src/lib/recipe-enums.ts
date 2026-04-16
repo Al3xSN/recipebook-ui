@@ -26,10 +26,32 @@ export const TAG_LABELS: Record<number, string> = {
   10: 'Healthy',
 };
 
-export const VISIBILITY_LABELS: Record<number, string> = {
-  1: 'Public',
-  2: 'Friends only',
-  3: 'Private',
+export const VISIBILITY_LABELS: Record<string, string> = {
+  PUBLIC: 'Public',
+  FRIENDS_ONLY: 'Friends only',
+  PRIVATE: 'Private',
+};
+
+export const DIFFICULTY_LABELS: Record<string, string> = {
+  EASY: 'Easy',
+  MEDIUM: 'Medium',
+  HARD: 'Hard',
+};
+
+export const CUISINE_LABELS: Record<number, string> = {
+  0: 'Italian',
+  1: 'Mexican',
+  2: 'Chinese',
+  3: 'Japanese',
+  4: 'Indian',
+  5: 'French',
+  6: 'American',
+  7: 'Mediterranean',
+  8: 'Thai',
+  9: 'Greek',
+  10: 'Middle Eastern',
+  11: 'Bulgarian',
+  12: 'Other',
 };
 
 export const UNIT_LABELS: Record<number, string> = {

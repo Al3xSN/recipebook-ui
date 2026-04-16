@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { cacheLife, cacheTag } from 'next/cache';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma, Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
@@ -31,15 +31,22 @@ async function getExploreRecipes(params: ExploreParams, userId: string): Promise
 
   const { search, sortOrder, category, tags, page, pageSize } = params;
 
-  const friendships = await db.friendship.findMany({
-    where: { OR: [{ userAId: userId }, { userBId: userId }] },
+  const connections = await db.friendRequest.findMany({
+    where: {
+      status: FriendRequestStatus.ACCEPTED,
+      OR: [{ senderId: userId }, { receiverId: userId }],
+    },
   });
-  const friendIds = friendships.map((f) => (f.userAId === userId ? f.userBId : f.userAId));
+  const friendIds = connections.map((c) => (c.senderId === userId ? c.receiverId : c.senderId));
 
   const where: Prisma.RecipeWhereInput = {
     AND: [
       {
-        OR: [{ visibility: 1 }, { visibility: 2, userId: { in: friendIds } }, { userId }],
+        OR: [
+          { visibility: Visibility.PUBLIC },
+          { visibility: Visibility.FRIENDS_ONLY, userId: { in: friendIds } },
+          { userId },
+        ],
       },
       ...(search
         ? [

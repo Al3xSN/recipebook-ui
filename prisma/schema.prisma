@@ -10,6 +10,30 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Visibility {
+  PUBLIC
+  FRIENDS_ONLY
+  PRIVATE
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum NotificationType {
+  FRIEND_REQUEST
+  COMMENT
+  RATING
+}
+
 model User {
   id           String   @id @default(uuid())
   username     String   @unique
@@ -26,25 +50,24 @@ model User {
   comments         Comment[]
   sentRequests     FriendRequest[] @relation("SentRequests")
   receivedRequests FriendRequest[] @relation("ReceivedRequests")
-  friendshipsA     Friendship[]    @relation("FriendA")
-  friendshipsB     Friendship[]    @relation("FriendB")
+  notifications    Notification[]
 }
 
 model Recipe {
-  id              String   @id @default(uuid())
+  id              String      @id @default(uuid())
   title           String
   description     String?
   category        Int
-  visibility      Int
-  difficulty      Int?
+  visibility      Visibility
+  difficulty      Difficulty?
   cuisine         Int?
   prepTimeMinutes Int
   cookTimeMinutes Int
   servings        Int
   imageUrl        String?
   userId          String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
   user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   ingredients  Ingredient[]
@@ -59,6 +82,7 @@ model Ingredient {
   name     String
   amount   Decimal @db.Decimal(10, 2)
   unit     Int
+  order    Int
   recipeId String
 
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
@@ -101,29 +125,32 @@ model Comment {
   recipeId  String
   authorId  String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   author User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
 
 model FriendRequest {
-  id         String   @id @default(uuid())
+  id         String              @id @default(uuid())
   senderId   String
   receiverId String
-  status     Int      @default(0) // 0=Pending, 1=Accepted, 2=Rejected
-  createdAt  DateTime @default(now())
+  status     FriendRequestStatus @default(PENDING)
+  createdAt  DateTime            @default(now())
 
   sender   User @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
   receiver User @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
 }
 
-model Friendship {
-  userAId String
-  userBId String
+model Notification {
+  id          String           @id @default(uuid())
+  userId      String
+  type        NotificationType
+  referenceId String?
+  read        Boolean          @default(false)
+  createdAt   DateTime         @default(now())
 
-  userA User @relation("FriendA", fields: [userAId], references: [id], onDelete: Cascade)
-  userB User @relation("FriendB", fields: [userBId], references: [id], onDelete: Cascade)
-
-  @@id([userAId, userBId])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
