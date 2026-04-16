@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
+import { createNotification, NotificationType } from '@/lib/server/notifications';
 import { FriendRequestStatus } from '@generated/prisma/client';
 
 type Params = { params: Promise<{ id: string }> };
@@ -24,10 +25,21 @@ export async function PUT(req: NextRequest, { params }: Params) {
   const body = await req.json().catch(() => null);
   const accept = body?.accept;
 
-  const updated = await db.friendRequest.update({
-    where: { id },
-    data: { status: accept ? FriendRequestStatus.ACCEPTED : FriendRequestStatus.REJECTED },
-    include: { sender: { select: { username: true } } },
+  const updated = await db.$transaction(async (tx) => {
+    const r = await tx.friendRequest.update({
+      where: { id },
+      data: { status: accept ? FriendRequestStatus.ACCEPTED : FriendRequestStatus.REJECTED },
+      include: { sender: { select: { username: true } } },
+    });
+    if (accept) {
+      await createNotification(tx, {
+        userId: r.senderId,
+        senderId: session.userId,
+        type: NotificationType.FRIEND_ACCEPTED,
+        referenceId: r.id,
+      });
+    }
+    return r;
   });
 
   return NextResponse.json({

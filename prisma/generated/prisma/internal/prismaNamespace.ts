@@ -1228,6 +1228,7 @@ export type FriendRequestScalarFieldEnum =
 export const NotificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  senderId: 'senderId',
   type: 'type',
   referenceId: 'referenceId',
   read: 'read',

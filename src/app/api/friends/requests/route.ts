@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
 import { areFriends } from '@/lib/server/friendship-helpers';
+import { createNotification, NotificationType } from '@/lib/server/notifications';
 import { FriendRequestStatus } from '@generated/prisma/client';
 
 // GET /api/friends/requests — incoming requests, or ?direction=sent for outgoing
@@ -86,9 +87,18 @@ export async function POST(req: NextRequest) {
   });
   if (existing) return apiError(409, 'A pending friend request already exists.');
 
-  const request = await db.friendRequest.create({
-    data: { senderId: session.userId, receiverId: receiver.id },
-    include: { sender: { select: { username: true } } },
+  const request = await db.$transaction(async (tx) => {
+    const r = await tx.friendRequest.create({
+      data: { senderId: session.userId, receiverId: receiver.id },
+      include: { sender: { select: { username: true } } },
+    });
+    await createNotification(tx, {
+      userId: receiver.id,
+      senderId: session.userId,
+      type: NotificationType.FRIEND_REQUEST,
+      referenceId: r.id,
+    });
+    return r;
   });
 
   return NextResponse.json(

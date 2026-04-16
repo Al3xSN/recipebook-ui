@@ -216,6 +216,7 @@ export type UserWhereInput = {
   sentRequests?: Prisma.FriendRequestListRelationFilter;
   receivedRequests?: Prisma.FriendRequestListRelationFilter;
   notifications?: Prisma.NotificationListRelationFilter;
+  sentNotifications?: Prisma.NotificationListRelationFilter;
 };
 
 export type UserOrderByWithRelationInput = {
@@ -234,6 +235,7 @@ export type UserOrderByWithRelationInput = {
   sentRequests?: Prisma.FriendRequestOrderByRelationAggregateInput;
   receivedRequests?: Prisma.FriendRequestOrderByRelationAggregateInput;
   notifications?: Prisma.NotificationOrderByRelationAggregateInput;
+  sentNotifications?: Prisma.NotificationOrderByRelationAggregateInput;
 };
 
 export type UserWhereUniqueInput = Prisma.AtLeast<
@@ -256,6 +258,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
     sentRequests?: Prisma.FriendRequestListRelationFilter;
     receivedRequests?: Prisma.FriendRequestListRelationFilter;
     notifications?: Prisma.NotificationListRelationFilter;
+    sentNotifications?: Prisma.NotificationListRelationFilter;
   },
   'id' | 'username' | 'email'
 >;
@@ -306,6 +309,7 @@ export type UserCreateInput = {
   sentRequests?: Prisma.FriendRequestCreateNestedManyWithoutSenderInput;
   receivedRequests?: Prisma.FriendRequestCreateNestedManyWithoutReceiverInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput;
 };
 
 export type UserUncheckedCreateInput = {
@@ -324,6 +328,7 @@ export type UserUncheckedCreateInput = {
   sentRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutSenderInput;
   receivedRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutReceiverInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput;
 };
 
 export type UserUpdateInput = {
@@ -342,6 +347,7 @@ export type UserUpdateInput = {
   sentRequests?: Prisma.FriendRequestUpdateManyWithoutSenderNestedInput;
   receivedRequests?: Prisma.FriendRequestUpdateManyWithoutReceiverNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserUncheckedUpdateInput = {
@@ -360,6 +366,7 @@ export type UserUncheckedUpdateInput = {
   sentRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutSenderNestedInput;
   receivedRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutReceiverNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserCreateManyInput = {
@@ -590,6 +597,15 @@ export type UserCreateNestedOneWithoutNotificationsInput = {
   connect?: Prisma.UserWhereUniqueInput;
 };
 
+export type UserCreateNestedOneWithoutSentNotificationsInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutSentNotificationsInput,
+    Prisma.UserUncheckedCreateWithoutSentNotificationsInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentNotificationsInput;
+  connect?: Prisma.UserWhereUniqueInput;
+};
+
 export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   create?: Prisma.XOR<
     Prisma.UserCreateWithoutNotificationsInput,
@@ -604,6 +620,23 @@ export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
       Prisma.UserUpdateWithoutNotificationsInput
     >,
     Prisma.UserUncheckedUpdateWithoutNotificationsInput
+  >;
+};
+
+export type UserUpdateOneRequiredWithoutSentNotificationsNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutSentNotificationsInput,
+    Prisma.UserUncheckedCreateWithoutSentNotificationsInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentNotificationsInput;
+  upsert?: Prisma.UserUpsertWithoutSentNotificationsInput;
+  connect?: Prisma.UserWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.UserUpdateToOneWithWhereWithoutSentNotificationsInput,
+      Prisma.UserUpdateWithoutSentNotificationsInput
+    >,
+    Prisma.UserUncheckedUpdateWithoutSentNotificationsInput
   >;
 };
 
@@ -622,6 +655,7 @@ export type UserCreateWithoutRecipesInput = {
   sentRequests?: Prisma.FriendRequestCreateNestedManyWithoutSenderInput;
   receivedRequests?: Prisma.FriendRequestCreateNestedManyWithoutReceiverInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput;
 };
 
 export type UserUncheckedCreateWithoutRecipesInput = {
@@ -639,6 +673,7 @@ export type UserUncheckedCreateWithoutRecipesInput = {
   sentRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutSenderInput;
   receivedRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutReceiverInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput;
 };
 
 export type UserCreateOrConnectWithoutRecipesInput = {
@@ -684,6 +719,7 @@ export type UserUpdateWithoutRecipesInput = {
   sentRequests?: Prisma.FriendRequestUpdateManyWithoutSenderNestedInput;
   receivedRequests?: Prisma.FriendRequestUpdateManyWithoutReceiverNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutRecipesInput = {
@@ -701,6 +737,7 @@ export type UserUncheckedUpdateWithoutRecipesInput = {
   sentRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutSenderNestedInput;
   receivedRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutReceiverNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserCreateWithoutRatingsInput = {
@@ -718,6 +755,7 @@ export type UserCreateWithoutRatingsInput = {
   sentRequests?: Prisma.FriendRequestCreateNestedManyWithoutSenderInput;
   receivedRequests?: Prisma.FriendRequestCreateNestedManyWithoutReceiverInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput;
 };
 
 export type UserUncheckedCreateWithoutRatingsInput = {
@@ -735,6 +773,7 @@ export type UserUncheckedCreateWithoutRatingsInput = {
   sentRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutSenderInput;
   receivedRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutReceiverInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput;
 };
 
 export type UserCreateOrConnectWithoutRatingsInput = {
@@ -780,6 +819,7 @@ export type UserUpdateWithoutRatingsInput = {
   sentRequests?: Prisma.FriendRequestUpdateManyWithoutSenderNestedInput;
   receivedRequests?: Prisma.FriendRequestUpdateManyWithoutReceiverNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutRatingsInput = {
@@ -797,6 +837,7 @@ export type UserUncheckedUpdateWithoutRatingsInput = {
   sentRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutSenderNestedInput;
   receivedRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutReceiverNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserCreateWithoutCommentsInput = {
@@ -814,6 +855,7 @@ export type UserCreateWithoutCommentsInput = {
   sentRequests?: Prisma.FriendRequestCreateNestedManyWithoutSenderInput;
   receivedRequests?: Prisma.FriendRequestCreateNestedManyWithoutReceiverInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput;
 };
 
 export type UserUncheckedCreateWithoutCommentsInput = {
@@ -831,6 +873,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   sentRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutSenderInput;
   receivedRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutReceiverInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput;
 };
 
 export type UserCreateOrConnectWithoutCommentsInput = {
@@ -876,6 +919,7 @@ export type UserUpdateWithoutCommentsInput = {
   sentRequests?: Prisma.FriendRequestUpdateManyWithoutSenderNestedInput;
   receivedRequests?: Prisma.FriendRequestUpdateManyWithoutReceiverNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -893,6 +937,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   sentRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutSenderNestedInput;
   receivedRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutReceiverNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserCreateWithoutSentRequestsInput = {
@@ -910,6 +955,7 @@ export type UserCreateWithoutSentRequestsInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput;
   receivedRequests?: Prisma.FriendRequestCreateNestedManyWithoutReceiverInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput;
 };
 
 export type UserUncheckedCreateWithoutSentRequestsInput = {
@@ -927,6 +973,7 @@ export type UserUncheckedCreateWithoutSentRequestsInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput;
   receivedRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutReceiverInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput;
 };
 
 export type UserCreateOrConnectWithoutSentRequestsInput = {
@@ -952,6 +999,7 @@ export type UserCreateWithoutReceivedRequestsInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput;
   sentRequests?: Prisma.FriendRequestCreateNestedManyWithoutSenderInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput;
 };
 
 export type UserUncheckedCreateWithoutReceivedRequestsInput = {
@@ -969,6 +1017,7 @@ export type UserUncheckedCreateWithoutReceivedRequestsInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput;
   sentRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutSenderInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput;
 };
 
 export type UserCreateOrConnectWithoutReceivedRequestsInput = {
@@ -1014,6 +1063,7 @@ export type UserUpdateWithoutSentRequestsInput = {
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput;
   receivedRequests?: Prisma.FriendRequestUpdateManyWithoutReceiverNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutSentRequestsInput = {
@@ -1031,6 +1081,7 @@ export type UserUncheckedUpdateWithoutSentRequestsInput = {
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput;
   receivedRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutReceiverNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserUpsertWithoutReceivedRequestsInput = {
@@ -1068,6 +1119,7 @@ export type UserUpdateWithoutReceivedRequestsInput = {
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput;
   sentRequests?: Prisma.FriendRequestUpdateManyWithoutSenderNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutReceivedRequestsInput = {
@@ -1085,6 +1137,7 @@ export type UserUncheckedUpdateWithoutReceivedRequestsInput = {
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput;
   sentRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutSenderNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput;
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserCreateWithoutNotificationsInput = {
@@ -1102,6 +1155,7 @@ export type UserCreateWithoutNotificationsInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput;
   sentRequests?: Prisma.FriendRequestCreateNestedManyWithoutSenderInput;
   receivedRequests?: Prisma.FriendRequestCreateNestedManyWithoutReceiverInput;
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput;
 };
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -1119,6 +1173,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput;
   sentRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutSenderInput;
   receivedRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutReceiverInput;
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput;
 };
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -1126,6 +1181,50 @@ export type UserCreateOrConnectWithoutNotificationsInput = {
   create: Prisma.XOR<
     Prisma.UserCreateWithoutNotificationsInput,
     Prisma.UserUncheckedCreateWithoutNotificationsInput
+  >;
+};
+
+export type UserCreateWithoutSentNotificationsInput = {
+  id?: string;
+  username: string;
+  email: string;
+  passwordHash: string;
+  displayName?: string | null;
+  bio?: string | null;
+  avatarUrl?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  recipes?: Prisma.RecipeCreateNestedManyWithoutUserInput;
+  ratings?: Prisma.RatingCreateNestedManyWithoutUserInput;
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput;
+  sentRequests?: Prisma.FriendRequestCreateNestedManyWithoutSenderInput;
+  receivedRequests?: Prisma.FriendRequestCreateNestedManyWithoutReceiverInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+};
+
+export type UserUncheckedCreateWithoutSentNotificationsInput = {
+  id?: string;
+  username: string;
+  email: string;
+  passwordHash: string;
+  displayName?: string | null;
+  bio?: string | null;
+  avatarUrl?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  recipes?: Prisma.RecipeUncheckedCreateNestedManyWithoutUserInput;
+  ratings?: Prisma.RatingUncheckedCreateNestedManyWithoutUserInput;
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput;
+  sentRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutSenderInput;
+  receivedRequests?: Prisma.FriendRequestUncheckedCreateNestedManyWithoutReceiverInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+};
+
+export type UserCreateOrConnectWithoutSentNotificationsInput = {
+  where: Prisma.UserWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutSentNotificationsInput,
+    Prisma.UserUncheckedCreateWithoutSentNotificationsInput
   >;
 };
 
@@ -1164,6 +1263,7 @@ export type UserUpdateWithoutNotificationsInput = {
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput;
   sentRequests?: Prisma.FriendRequestUpdateManyWithoutSenderNestedInput;
   receivedRequests?: Prisma.FriendRequestUpdateManyWithoutReceiverNestedInput;
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -1181,6 +1281,63 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput;
   sentRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutSenderNestedInput;
   receivedRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutReceiverNestedInput;
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput;
+};
+
+export type UserUpsertWithoutSentNotificationsInput = {
+  update: Prisma.XOR<
+    Prisma.UserUpdateWithoutSentNotificationsInput,
+    Prisma.UserUncheckedUpdateWithoutSentNotificationsInput
+  >;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutSentNotificationsInput,
+    Prisma.UserUncheckedCreateWithoutSentNotificationsInput
+  >;
+  where?: Prisma.UserWhereInput;
+};
+
+export type UserUpdateToOneWithWhereWithoutSentNotificationsInput = {
+  where?: Prisma.UserWhereInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateWithoutSentNotificationsInput,
+    Prisma.UserUncheckedUpdateWithoutSentNotificationsInput
+  >;
+};
+
+export type UserUpdateWithoutSentNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  username?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  recipes?: Prisma.RecipeUpdateManyWithoutUserNestedInput;
+  ratings?: Prisma.RatingUpdateManyWithoutUserNestedInput;
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput;
+  sentRequests?: Prisma.FriendRequestUpdateManyWithoutSenderNestedInput;
+  receivedRequests?: Prisma.FriendRequestUpdateManyWithoutReceiverNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput;
+};
+
+export type UserUncheckedUpdateWithoutSentNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  username?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  recipes?: Prisma.RecipeUncheckedUpdateManyWithoutUserNestedInput;
+  ratings?: Prisma.RatingUncheckedUpdateManyWithoutUserNestedInput;
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput;
+  sentRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutSenderNestedInput;
+  receivedRequests?: Prisma.FriendRequestUncheckedUpdateManyWithoutReceiverNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 /**
@@ -1194,6 +1351,7 @@ export type UserCountOutputType = {
   sentRequests: number;
   receivedRequests: number;
   notifications: number;
+  sentNotifications: number;
 };
 
 export type UserCountOutputTypeSelect<
@@ -1205,6 +1363,7 @@ export type UserCountOutputTypeSelect<
   sentRequests?: boolean | UserCountOutputTypeCountSentRequestsArgs;
   receivedRequests?: boolean | UserCountOutputTypeCountReceivedRequestsArgs;
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs;
+  sentNotifications?: boolean | UserCountOutputTypeCountSentNotificationsArgs;
 };
 
 /**
@@ -1273,6 +1432,15 @@ export type UserCountOutputTypeCountNotificationsArgs<
   where?: Prisma.NotificationWhereInput;
 };
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSentNotificationsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.NotificationWhereInput;
+};
+
 export type UserSelect<
   ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetSelect<
@@ -1292,6 +1460,7 @@ export type UserSelect<
     sentRequests?: boolean | Prisma.User$sentRequestsArgs<ExtArgs>;
     receivedRequests?: boolean | Prisma.User$receivedRequestsArgs<ExtArgs>;
     notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>;
+    sentNotifications?: boolean | Prisma.User$sentNotificationsArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['user']
@@ -1366,6 +1535,7 @@ export type UserInclude<
   sentRequests?: boolean | Prisma.User$sentRequestsArgs<ExtArgs>;
   receivedRequests?: boolean | Prisma.User$receivedRequestsArgs<ExtArgs>;
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>;
+  sentNotifications?: boolean | Prisma.User$sentNotificationsArgs<ExtArgs>;
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type UserIncludeCreateManyAndReturn<
@@ -1386,6 +1556,7 @@ export type $UserPayload<
     sentRequests: Prisma.$FriendRequestPayload<ExtArgs>[];
     receivedRequests: Prisma.$FriendRequestPayload<ExtArgs>[];
     notifications: Prisma.$NotificationPayload<ExtArgs>[];
+    sentNotifications: Prisma.$NotificationPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1965,6 +2136,17 @@ export interface Prisma__UserClient<
   >;
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(
     args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$NotificationPayload<ExtArgs>,
+        T,
+        'findMany',
+        GlobalOmitOptions
+      >
+    | Null
+  >;
+  sentNotifications<T extends Prisma.User$sentNotificationsArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$sentNotificationsArgs<ExtArgs>>,
   ): Prisma.PrismaPromise<
     | runtime.Types.Result.GetResult<
         Prisma.$NotificationPayload<ExtArgs>,
@@ -2571,6 +2753,34 @@ export type User$receivedRequestsArgs<
  * User.notifications
  */
 export type User$notificationsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null;
+  where?: Prisma.NotificationWhereInput;
+  orderBy?:
+    | Prisma.NotificationOrderByWithRelationInput
+    | Prisma.NotificationOrderByWithRelationInput[];
+  cursor?: Prisma.NotificationWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[];
+};
+
+/**
+ * User.sentNotifications
+ */
+export type User$sentNotificationsArgs<
   ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
