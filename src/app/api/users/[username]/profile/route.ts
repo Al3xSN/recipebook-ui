@@ -16,12 +16,6 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const target = await db.user.findUnique({ where: { username } });
   if (!target) return apiError(404, 'User not found.');
 
-  // 404 if caller is blocked by target
-  const blocked = await db.block.findUnique({
-    where: { blockerId_blockedId: { blockerId: target.id, blockedId: session.userId } },
-  });
-  if (blocked) return apiError(404, 'User not found.');
-
   const isFriend = await areFriends(session.userId, target.id);
 
   // Determine friendship status

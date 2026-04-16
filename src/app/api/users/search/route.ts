@@ -21,8 +21,6 @@ export async function GET(req: NextRequest) {
     where: {
       username: { contains: query, mode: Prisma.QueryMode.insensitive },
       id: { notIn: excludeIds },
-      blocksReceived: { none: { blockerId: session.userId } },
-      blocksGiven: { none: { blockedId: session.userId } },
     },
     select: { id: true, username: true },
     take: 20,

@@ -28,8 +28,6 @@ model User {
   receivedRequests FriendRequest[] @relation("ReceivedRequests")
   friendshipsA     Friendship[]    @relation("FriendA")
   friendshipsB     Friendship[]    @relation("FriendB")
-  blocksGiven      Block[]         @relation("Blocker")
-  blocksReceived   Block[]         @relation("Blocked")
 }
 
 model Recipe {
@@ -129,12 +127,3 @@ model Friendship {
   @@id([userAId, userBId])
 }
 
-model Block {
-  blockerId String
-  blockedId String
-
-  blocker User @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
-  blocked User @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
-
-  @@id([blockerId, blockedId])
-}

@@ -30,14 +30,6 @@ export default async function PublicProfilePage({
   const target = await getProfileUser(username);
   if (!target) notFound();
 
-  // 404 if caller is blocked by target
-  if (session?.user?.id) {
-    const blocked = await db.block.findUnique({
-      where: { blockerId_blockedId: { blockerId: target.id, blockedId: session.user.id } },
-    });
-    if (blocked) notFound();
-  }
-
   const currentUserId = session?.user?.id;
   const isOwner = currentUserId === target.id;
 

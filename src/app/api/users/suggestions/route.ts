@@ -31,8 +31,6 @@ export async function GET() {
   const suggestions = await db.user.findMany({
     where: {
       id: { in: [...candidateIds], notIn: excludeIds },
-      blocksReceived: { none: { blockerId: session.userId } },
-      blocksGiven: { none: { blockedId: session.userId } },
     },
     select: { id: true, username: true },
     take: 10,
