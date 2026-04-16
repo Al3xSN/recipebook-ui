@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Prisma } from '@/generated/prisma/client';
+import { Prisma, Visibility, Difficulty, FriendRequestStatus } from '@generated/prisma/client';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
@@ -12,9 +12,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
 
   const search = searchParams.get('search') || undefined;
-  const difficulty = searchParams.get('difficulty')
-    ? Number(searchParams.get('difficulty'))
-    : undefined;
+  const difficultyParam = searchParams.get('difficulty') as string | null;
   const cuisine = searchParams.get('cuisine') ? Number(searchParams.get('cuisine')) : undefined;
   const category = searchParams.get('category') ? Number(searchParams.get('category')) : undefined;
   const tagParams = searchParams.getAll('tags').map(Number);
@@ -32,18 +30,23 @@ export async function GET(req: NextRequest) {
   const pageSize = Math.min(100, Math.max(1, Number(searchParams.get('pageSize') || 20)));
 
   // Get friend IDs for friends-visibility recipes
-  const friendships = await db.friendship.findMany({
-    where: { OR: [{ userAId: session.userId }, { userBId: session.userId }] },
+  const connections = await db.friendRequest.findMany({
+    where: {
+      status: FriendRequestStatus.ACCEPTED,
+      OR: [{ senderId: session.userId }, { receiverId: session.userId }],
+    },
   });
-  const friendIds = friendships.map((f) => (f.userAId === session.userId ? f.userBId : f.userAId));
+  const friendIds = connections.map((c) =>
+    c.senderId === session.userId ? c.receiverId : c.senderId,
+  );
 
   const where: Prisma.RecipeWhereInput = {
     AND: [
       // Visibility: public OR (friends + caller is a friend) OR own recipes
       {
         OR: [
-          { visibility: 1 },
-          { visibility: 2, userId: { in: friendIds } },
+          { visibility: Visibility.PUBLIC },
+          { visibility: Visibility.FRIENDS_ONLY, userId: { in: friendIds } },
           { userId: session.userId },
         ],
       },
@@ -54,13 +57,12 @@ export async function GET(req: NextRequest) {
             } as Prisma.RecipeWhereInput,
           ]
         : []),
-      ...(difficulty !== undefined ? [{ difficulty }] : []),
+      ...(difficultyParam && Object.values(Difficulty).includes(difficultyParam as Difficulty)
+        ? [{ difficulty: difficultyParam as Difficulty }]
+        : []),
       ...(cuisine !== undefined ? [{ cuisine }] : []),
       ...(category !== undefined ? [{ category }] : []),
       ...(tagParams.length > 0 ? [{ tags: { some: { tag: { in: tagParams } } } }] : []),
-      ...(maxTotalMinutes !== undefined
-        ? [{ AND: [{ prepTimeMinutes: { lte: maxTotalMinutes } }] } as Prisma.RecipeWhereInput]
-        : []),
       ...(minServings !== undefined ? [{ servings: { gte: minServings } }] : []),
       ...(maxServings !== undefined ? [{ servings: { lte: maxServings } }] : []),
     ],

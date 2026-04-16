@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { apiFetch, ApiRequestError } from '@/lib/api';
+import { CommentListSkeleton } from './CommentListSkeleton';
 
-interface CommentDto {
+interface ICommentDto {
   id: string;
   recipeId: string;
   authorUserId: string;
@@ -14,20 +15,20 @@ interface CommentDto {
   createdAt: string;
 }
 
-interface Props {
+interface ICommentList {
   recipeId: string;
 }
 
-export function CommentList({ recipeId }: Props) {
+export function CommentList({ recipeId }: ICommentList) {
   const { data: session } = useSession();
-  const [comments, setComments] = useState<CommentDto[]>([]);
+  const [comments, setComments] = useState<ICommentDto[]>([]);
   const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    apiFetch<CommentDto[]>(`/api/recipes/${recipeId}/comments`)
+    apiFetch<ICommentDto[]>(`/api/recipes/${recipeId}/comments`)
       .then(setComments)
       .catch(() => {})
       .finally(() => setIsLoading(false));
@@ -40,7 +41,7 @@ export function CommentList({ recipeId }: Props) {
     setIsSubmitting(true);
 
     try {
-      const comment = await apiFetch<CommentDto>(`/api/recipes/${recipeId}/comments`, {
+      const comment = await apiFetch<ICommentDto>(`/api/recipes/${recipeId}/comments`, {
         method: 'POST',
         body: JSON.stringify({ text: text.trim() }),
       });
@@ -77,7 +78,7 @@ export function CommentList({ recipeId }: Props) {
 
       {/* Comment list */}
       {isLoading ? (
-        <p className="mb-6 text-sm text-gray-400">Loading comments…</p>
+        <CommentListSkeleton />
       ) : (
         <div className="mb-6 flex flex-col gap-4">
           {comments.map((comment) => (

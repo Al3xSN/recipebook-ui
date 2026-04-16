@@ -5,6 +5,7 @@ import { cacheLife, cacheTag } from 'next/cache';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { CATEGORY_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
+import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import { RatingStars } from './_components/RatingStars';
 import { CommentList } from './_components/CommentList';
 
@@ -59,18 +60,19 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ i
   const isOwner = recipe.userId === session?.user?.id;
 
   if (!isOwner) {
-    if (recipe.visibility === 0) {
+    if (recipe.visibility === Visibility.PRIVATE) {
       notFound();
-    } else if (recipe.visibility === 2) {
-      const friendship = await db.friendship.findFirst({
+    } else if (recipe.visibility === Visibility.FRIENDS_ONLY) {
+      const connection = await db.friendRequest.findFirst({
         where: {
+          status: FriendRequestStatus.ACCEPTED,
           OR: [
-            { userAId: session!.user!.id, userBId: recipe.userId },
-            { userAId: recipe.userId, userBId: session!.user!.id },
+            { senderId: session!.user!.id, receiverId: recipe.userId },
+            { senderId: recipe.userId, receiverId: session!.user!.id },
           ],
         },
       });
-      if (!friendship) notFound();
+      if (!connection) notFound();
     }
   }
 

@@ -2,20 +2,20 @@
 
 import { createContext, useContext, useEffect, useReducer } from 'react';
 import { getUser, setUser, setTokens, clearTokens } from '@/lib/auth-storage';
-import type { AuthResponseDto, AuthUser } from '@/types/auth';
+import type { IAuthResponseDto, IAuthUser } from '@/interfaces/IAuth';
 
-interface AuthContextValue {
-  user: AuthUser | null;
+interface IAuthContextValue {
+  user: IAuthUser | null;
   isLoading: boolean;
-  login: (data: AuthResponseDto) => void;
+  login: (data: IAuthResponseDto) => void;
   logout: () => void;
-  updateUser: (user: AuthUser, token: string, refreshToken: string) => void;
+  updateUser: (user: IAuthUser, token: string, refreshToken: string) => void;
 }
 
-type AuthState = { user: AuthUser | null; isLoading: boolean };
+type AuthState = { user: IAuthUser | null; isLoading: boolean };
 type AuthAction =
-  | { type: 'HYDRATE'; user: AuthUser | null }
-  | { type: 'SET_USER'; user: AuthUser }
+  | { type: 'HYDRATE'; user: IAuthUser | null }
+  | { type: 'SET_USER'; user: IAuthUser }
   | { type: 'CLEAR_USER' };
 
 function authReducer(state: AuthState, action: AuthAction): AuthState {
@@ -29,7 +29,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
   }
 }
 
-const AuthContext = createContext<AuthContextValue | null>(null);
+const AuthContext = createContext<IAuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [{ user, isLoading }, dispatch] = useReducer(authReducer, {
@@ -41,8 +41,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'HYDRATE', user: getUser() });
   }, []);
 
-  function login(data: AuthResponseDto) {
-    const authUser: AuthUser = { email: data.email, displayName: data.displayName };
+  function login(data: IAuthResponseDto) {
+    const authUser: IAuthUser = { email: data.email, displayName: data.displayName };
     setTokens(data.token, data.refreshToken);
     setUser(authUser);
     dispatch({ type: 'SET_USER', user: authUser });
@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'CLEAR_USER' });
   }
 
-  function updateUser(updatedUser: AuthUser, token: string, refreshToken: string) {
+  function updateUser(updatedUser: IAuthUser, token: string, refreshToken: string) {
     setTokens(token, refreshToken);
     setUser(updatedUser);
     dispatch({ type: 'SET_USER', user: updatedUser });
@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useAuth(): AuthContextValue {
+export function useAuth(): IAuthContextValue {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;

@@ -6,8 +6,9 @@ import { apiFetch } from '@/lib/api';
 import { TabBar } from '@/components/ui/TabBar';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
+import { FriendsPageSkeleton } from './_components/FriendsPageSkeleton';
 
-interface FriendDto {
+interface IFriendDto {
   userId: string;
   username: string;
   displayName: string | null;
@@ -15,7 +16,7 @@ interface FriendDto {
   recipeCount: number;
 }
 
-interface IncomingRequestDto {
+interface IIncomingRequestDto {
   id: string;
   senderId: string;
   senderUsername: string;
@@ -24,7 +25,7 @@ interface IncomingRequestDto {
   createdAt: string;
 }
 
-interface SentRequestDto {
+interface ISentRequestDto {
   id: string;
   senderId: string;
   receiverId: string;
@@ -46,7 +47,7 @@ function FriendList({
   friends,
   onRemove,
 }: {
-  friends: FriendDto[];
+  friends: IFriendDto[];
   onRemove: (userId: string) => void;
 }) {
   if (friends.length === 0) {
@@ -127,7 +128,7 @@ function RequestList({
   onAccept,
   onDecline,
 }: {
-  requests: IncomingRequestDto[];
+  requests: IIncomingRequestDto[];
   onAccept: (id: string) => void;
   onDecline: (id: string) => void;
 }) {
@@ -188,7 +189,7 @@ function SentList({
   requests,
   onCancel,
 }: {
-  requests: SentRequestDto[];
+  requests: ISentRequestDto[];
   onCancel: (id: string) => void;
 }) {
   if (requests.length === 0) {
@@ -238,16 +239,16 @@ function SentList({
 
 export default function FriendsPage() {
   const [activeTab, setActiveTab] = useState('friends');
-  const [friends, setFriends] = useState<FriendDto[]>([]);
-  const [requests, setRequests] = useState<IncomingRequestDto[]>([]);
-  const [sent, setSent] = useState<SentRequestDto[]>([]);
+  const [friends, setFriends] = useState<IFriendDto[]>([]);
+  const [requests, setRequests] = useState<IIncomingRequestDto[]>([]);
+  const [sent, setSent] = useState<ISentRequestDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
-      apiFetch<FriendDto[]>('/api/friends'),
-      apiFetch<IncomingRequestDto[]>('/api/friends/requests'),
-      apiFetch<SentRequestDto[]>('/api/friends/requests?direction=sent'),
+      apiFetch<IFriendDto[]>('/api/friends'),
+      apiFetch<IIncomingRequestDto[]>('/api/friends/requests'),
+      apiFetch<ISentRequestDto[]>('/api/friends/requests?direction=sent'),
     ])
       .then(([f, r, s]) => {
         setFriends(f);
@@ -316,11 +317,7 @@ export default function FriendsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 py-10">
-        <p className="text-sm text-gray-400">Loading…</p>
-      </div>
-    );
+    return <FriendsPageSkeleton />;
   }
 
   return (

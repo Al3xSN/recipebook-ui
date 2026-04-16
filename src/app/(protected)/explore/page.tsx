@@ -1,14 +1,14 @@
 import { Suspense } from 'react';
 import { cacheLife, cacheTag } from 'next/cache';
-import { Prisma } from '@/generated/prisma/client';
+import { Prisma, Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
-import type { RecipeDto } from '@/types/recipe';
+import type { IRecipeDto } from '@/interfaces/IRecipe';
 import { RecipeCard } from '../recipes/_components/RecipeCard';
 import { ExploreFilters } from './_components/ExploreFilters';
 
-interface ExploreParams {
+interface IExploreParams {
   search: string;
   sortOrder: number;
   category: number | undefined;
@@ -17,13 +17,13 @@ interface ExploreParams {
   pageSize: number;
 }
 
-interface ExploreResult {
-  items: RecipeDto[];
+interface IExploreResult {
+  items: IRecipeDto[];
   totalCount: number;
   totalPages: number;
 }
 
-async function getExploreRecipes(params: ExploreParams, userId: string): Promise<ExploreResult> {
+async function getExploreRecipes(params: IExploreParams, userId: string): Promise<IExploreResult> {
   'use cache';
   cacheTag('explore-recipes');
   cacheTag(`explore-recipes-${userId}`);
@@ -31,15 +31,22 @@ async function getExploreRecipes(params: ExploreParams, userId: string): Promise
 
   const { search, sortOrder, category, tags, page, pageSize } = params;
 
-  const friendships = await db.friendship.findMany({
-    where: { OR: [{ userAId: userId }, { userBId: userId }] },
+  const connections = await db.friendRequest.findMany({
+    where: {
+      status: FriendRequestStatus.ACCEPTED,
+      OR: [{ senderId: userId }, { receiverId: userId }],
+    },
   });
-  const friendIds = friendships.map((f) => (f.userAId === userId ? f.userBId : f.userAId));
+  const friendIds = connections.map((c) => (c.senderId === userId ? c.receiverId : c.senderId));
 
   const where: Prisma.RecipeWhereInput = {
     AND: [
       {
-        OR: [{ visibility: 1 }, { visibility: 2, userId: { in: friendIds } }, { userId }],
+        OR: [
+          { visibility: Visibility.PUBLIC },
+          { visibility: Visibility.FRIENDS_ONLY, userId: { in: friendIds } },
+          { userId },
+        ],
       },
       ...(search
         ? [
@@ -94,7 +101,7 @@ export default async function ExplorePage({
 
   const { search = '', sortOrder = '1', category = '', tags = '', page = '1' } = await searchParams;
 
-  const params: ExploreParams = {
+  const params: IExploreParams = {
     search,
     sortOrder: Number(sortOrder),
     category: category ? Number(category) : undefined,

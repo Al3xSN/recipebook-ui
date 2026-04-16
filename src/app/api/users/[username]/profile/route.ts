@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
-import { areFriends, orderedPair } from '@/lib/server/friendship-helpers';
+import { areFriends } from '@/lib/server/friendship-helpers';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
+import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 
 type Params = { params: Promise<{ username: string }> };
 
@@ -16,12 +17,6 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const target = await db.user.findUnique({ where: { username } });
   if (!target) return apiError(404, 'User not found.');
 
-  // 404 if caller is blocked by target
-  const blocked = await db.block.findUnique({
-    where: { blockerId_blockedId: { blockerId: target.id, blockedId: session.userId } },
-  });
-  if (blocked) return apiError(404, 'User not found.');
-
   const isFriend = await areFriends(session.userId, target.id);
 
   // Determine friendship status
@@ -29,24 +24,23 @@ export async function GET(_req: NextRequest, { params }: Params) {
   if (isFriend) {
     friendshipStatus = 3; // Friends
   } else {
-    const [a, b] = orderedPair(session.userId, target.id);
     const pending = await db.friendRequest.findFirst({
       where: {
         OR: [
-          { senderId: session.userId, receiverId: target.id, status: 0 },
-          { senderId: target.id, receiverId: session.userId, status: 0 },
+          { senderId: session.userId, receiverId: target.id, status: FriendRequestStatus.PENDING },
+          { senderId: target.id, receiverId: session.userId, status: FriendRequestStatus.PENDING },
         ],
       },
     });
     if (pending) {
       friendshipStatus = pending.senderId === session.userId ? 1 : 2; // PendingOutgoing : PendingIncoming
     }
-    void a;
-    void b;
   }
 
   // Recipes visible to caller
-  const visibilityFilter = isFriend ? { in: [1, 2] } : { equals: 1 };
+  const visibilityFilter = isFriend
+    ? { in: [Visibility.PUBLIC, Visibility.FRIENDS_ONLY] }
+    : { equals: Visibility.PUBLIC };
 
   const recipes = await db.recipe.findMany({
     where: { userId: target.id, visibility: visibilityFilter },

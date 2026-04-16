@@ -1,18 +1,18 @@
 'use client';
 
-interface Tab {
+interface ITab {
   id: string;
   label: string;
   count?: number;
 }
 
-interface TabBarProps {
-  tabs: Tab[];
+interface ITabBarProps {
+  tabs: ITab[];
   active: string;
   onChange: (id: string) => void;
 }
 
-export function TabBar({ tabs, active, onChange }: TabBarProps) {
+export function TabBar({ tabs, active, onChange }: ITabBarProps) {
   return (
     <div className="flex gap-1 border-b border-gray-200">
       {tabs.map((tab) => (

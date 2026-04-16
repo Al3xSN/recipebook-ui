@@ -4,12 +4,12 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 
-interface ExploreFiltersProps {
+interface IExploreFiltersProps {
   totalCount: number;
   totalPages: number;
 }
 
-export function ExploreFilters({ totalCount, totalPages }: ExploreFiltersProps) {
+export function ExploreFilters({ totalCount, totalPages }: IExploreFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchParamsRef = useRef(searchParams);

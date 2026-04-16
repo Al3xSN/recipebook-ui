@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
-interface UserMenuProps {
+interface IUserMenuProps {
   displayName: string;
   onLogout: () => void;
 }
 
-export function UserMenu({ displayName, onLogout }: UserMenuProps) {
+export function UserMenu({ displayName, onLogout }: IUserMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 

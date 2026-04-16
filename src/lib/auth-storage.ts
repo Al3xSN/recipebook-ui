@@ -1,4 +1,4 @@
-import type { AuthUser } from '@/types/auth';
+import type { IAuthUser } from '@/interfaces/IAuth';
 
 const TOKEN_KEY = 'rb_token';
 const REFRESH_TOKEN_KEY = 'rb_refresh_token';
@@ -27,18 +27,18 @@ export function clearTokens(): void {
   localStorage.removeItem(USER_KEY);
 }
 
-export function getUser(): AuthUser | null {
+export function getUser(): IAuthUser | null {
   if (typeof window === 'undefined') return null;
   const raw = localStorage.getItem(USER_KEY);
   if (!raw) return null;
   try {
-    return JSON.parse(raw) as AuthUser;
+    return JSON.parse(raw) as IAuthUser;
   } catch {
     return null;
   }
 }
 
-export function setUser(user: AuthUser): void {
+export function setUser(user: IAuthUser): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem(USER_KEY, JSON.stringify(user));
 }

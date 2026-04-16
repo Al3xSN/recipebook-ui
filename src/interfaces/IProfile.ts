@@ -1,4 +1,4 @@
-export interface ProfileDto {
+export interface IProfileDto {
   id: string;
   username: string;
   displayName: string | null;
@@ -6,14 +6,14 @@ export interface ProfileDto {
   avatarUrl: string | null;
 }
 
-export interface UpdateProfileInfoRequest {
+export interface IUpdateProfileInfoRequest {
   username: string;
   displayName: string | null;
   bio: string | null;
   avatarUrl: string | null;
 }
 
-export interface UpdateProfileInfoResponse {
+export interface IUpdateProfileInfoResponse {
   username: string;
   displayName: string | null;
   bio: string | null;
@@ -21,12 +21,12 @@ export interface UpdateProfileInfoResponse {
   usernameChanged: boolean;
 }
 
-export interface ChangePasswordRequest {
+export interface IChangePasswordRequest {
   currentPassword: string;
   newPassword: string;
 }
 
-export interface ApiError {
+export interface IApiError {
   status: number;
   detail: string;
 }

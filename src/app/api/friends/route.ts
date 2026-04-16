@@ -1,16 +1,20 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
+import { FriendRequestStatus } from '@generated/prisma/client';
 
 // GET /api/friends — list all accepted friends
 export async function GET() {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
-  const friendships = await db.friendship.findMany({
-    where: { OR: [{ userAId: session.userId }, { userBId: session.userId }] },
+  const accepted = await db.friendRequest.findMany({
+    where: {
+      status: FriendRequestStatus.ACCEPTED,
+      OR: [{ senderId: session.userId }, { receiverId: session.userId }],
+    },
     include: {
-      userA: {
+      sender: {
         select: {
           id: true,
           username: true,
@@ -19,7 +23,7 @@ export async function GET() {
           _count: { select: { recipes: true } },
         },
       },
-      userB: {
+      receiver: {
         select: {
           id: true,
           username: true,
@@ -31,8 +35,8 @@ export async function GET() {
     },
   });
 
-  const friends = friendships.map((f) => {
-    const friend = f.userAId === session.userId ? f.userB : f.userA;
+  const friends = accepted.map((f) => {
+    const friend = f.senderId === session.userId ? f.receiver : f.sender;
     return {
       userId: friend.id,
       username: friend.username,

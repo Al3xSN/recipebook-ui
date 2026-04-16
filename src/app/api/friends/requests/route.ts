@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
 import { areFriends } from '@/lib/server/friendship-helpers';
+import { FriendRequestStatus } from '@generated/prisma/client';
 
 // GET /api/friends/requests — incoming requests, or ?direction=sent for outgoing
 export async function GET(req: NextRequest) {
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest) {
 
   if (direction === 'sent') {
     const requests = await db.friendRequest.findMany({
-      where: { senderId: session.userId, status: 0 },
+      where: { senderId: session.userId, status: FriendRequestStatus.PENDING },
       include: { receiver: { select: { username: true } } },
       orderBy: { createdAt: 'desc' },
     });
@@ -31,7 +32,7 @@ export async function GET(req: NextRequest) {
 
   // Default: incoming pending requests
   const requests = await db.friendRequest.findMany({
-    where: { receiverId: session.userId, status: 0 },
+    where: { receiverId: session.userId, status: FriendRequestStatus.PENDING },
     include: { sender: { select: { username: true } } },
     orderBy: { createdAt: 'desc' },
   });
@@ -67,7 +68,11 @@ export async function POST(req: NextRequest) {
 
   // Auto-delete rejected request to allow re-request
   await db.friendRequest.deleteMany({
-    where: { senderId: session.userId, receiverId: receiver.id, status: 2 },
+    where: {
+      senderId: session.userId,
+      receiverId: receiver.id,
+      status: FriendRequestStatus.REJECTED,
+    },
   });
 
   const existing = await db.friendRequest.findFirst({
@@ -76,13 +81,13 @@ export async function POST(req: NextRequest) {
         { senderId: session.userId, receiverId: receiver.id },
         { senderId: receiver.id, receiverId: session.userId },
       ],
-      status: 0,
+      status: FriendRequestStatus.PENDING,
     },
   });
   if (existing) return apiError(409, 'A pending friend request already exists.');
 
   const request = await db.friendRequest.create({
-    data: { senderId: session.userId, receiverId: receiver.id, status: 0 },
+    data: { senderId: session.userId, receiverId: receiver.id },
     include: { sender: { select: { username: true } } },
   });
 

@@ -7,8 +7,8 @@ import { toRecipeDto } from '@/lib/server/recipe-mapper';
 import { RecipeCard } from '../../recipes/_components/RecipeCard';
 import { PublicProfileHeader } from './_components/PublicProfileHeader';
 import { ProfileStats } from '@/components/ui/ProfileStats';
-import type { PublicProfileData } from './_components/PublicProfileHeader';
-import type { User } from '@/generated/prisma/client';
+import type { IPublicProfileData } from './_components/PublicProfileHeader';
+import { Visibility, FriendRequestStatus, type User } from '@generated/prisma/client';
 import Link from 'next/link';
 
 async function getProfileUser(username: string): Promise<User | null> {
@@ -30,14 +30,6 @@ export default async function PublicProfilePage({
   const target = await getProfileUser(username);
   if (!target) notFound();
 
-  // 404 if caller is blocked by target
-  if (session?.user?.id) {
-    const blocked = await db.block.findUnique({
-      where: { blockerId_blockedId: { blockerId: target.id, blockedId: session.user.id } },
-    });
-    if (blocked) notFound();
-  }
-
   const currentUserId = session?.user?.id;
   const isOwner = currentUserId === target.id;
 
@@ -45,8 +37,11 @@ export default async function PublicProfilePage({
   let friendCount = 0;
 
   if (isOwner) {
-    friendCount = await db.friendship.count({
-      where: { OR: [{ userAId: target.id }, { userBId: target.id }] },
+    friendCount = await db.friendRequest.count({
+      where: {
+        status: FriendRequestStatus.ACCEPTED,
+        OR: [{ senderId: target.id }, { receiverId: target.id }],
+      },
     });
   } else {
     const isFriend = currentUserId ? await areFriends(currentUserId, target.id) : false;
@@ -56,8 +51,8 @@ export default async function PublicProfilePage({
       const pending = await db.friendRequest.findFirst({
         where: {
           OR: [
-            { senderId: currentUserId, receiverId: target.id, status: 0 },
-            { senderId: target.id, receiverId: currentUserId, status: 0 },
+            { senderId: currentUserId, receiverId: target.id, status: FriendRequestStatus.PENDING },
+            { senderId: target.id, receiverId: currentUserId, status: FriendRequestStatus.PENDING },
           ],
         },
       });
@@ -70,8 +65,8 @@ export default async function PublicProfilePage({
   const visibilityFilter = isOwner
     ? undefined
     : friendshipStatus === 3
-      ? { in: [1, 2] as number[] }
-      : { equals: 1 };
+      ? { in: [Visibility.PUBLIC, Visibility.FRIENDS_ONLY] }
+      : { equals: Visibility.PUBLIC };
 
   const recipes = await db.recipe.findMany({
     where: { userId: target.id, ...(visibilityFilter ? { visibility: visibilityFilter } : {}) },
@@ -79,7 +74,7 @@ export default async function PublicProfilePage({
     orderBy: { createdAt: 'desc' },
   });
 
-  const profile: PublicProfileData = {
+  const profile: IPublicProfileData = {
     userId: target.id,
     username: target.username,
     displayName: target.displayName,

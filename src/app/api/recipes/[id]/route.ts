@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
+import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -22,17 +23,18 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
   const isOwner = recipe.userId === session.userId;
   if (!isOwner) {
-    if (recipe.visibility === 0) return apiError(403, 'Access denied.');
-    if (recipe.visibility === 2) {
-      const friendship = await db.friendship.findFirst({
+    if (recipe.visibility === Visibility.PRIVATE) return apiError(403, 'Access denied.');
+    if (recipe.visibility === Visibility.FRIENDS_ONLY) {
+      const connection = await db.friendRequest.findFirst({
         where: {
+          status: FriendRequestStatus.ACCEPTED,
           OR: [
-            { userAId: session.userId, userBId: recipe.userId },
-            { userAId: recipe.userId, userBId: session.userId },
+            { senderId: session.userId, receiverId: recipe.userId },
+            { senderId: recipe.userId, receiverId: session.userId },
           ],
         },
       });
-      if (!friendship) return apiError(403, 'Access denied.');
+      if (!connection) return apiError(403, 'Access denied.');
     }
   }
 

@@ -1,10 +1,10 @@
-import type { ApiError } from '@/types/profile';
+import type { IApiError } from '@/interfaces/IProfile';
 
 export class ApiRequestError extends Error {
   status: number;
   detail: string;
 
-  constructor(error: ApiError) {
+  constructor(error: IApiError) {
     super(error.detail);
     this.name = 'ApiRequestError';
     this.status = error.status;
@@ -14,7 +14,7 @@ export class ApiRequestError extends Error {
 
 async function parseError(res: Response): Promise<ApiRequestError> {
   try {
-    const body = (await res.json()) as ApiError;
+    const body = (await res.json()) as IApiError;
     return new ApiRequestError({
       status: body.status ?? res.status,
       detail: body.detail ?? res.statusText,

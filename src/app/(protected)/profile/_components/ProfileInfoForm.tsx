@@ -6,16 +6,16 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { apiFetch, ApiRequestError } from '@/lib/api';
 import type {
-  ProfileDto,
-  UpdateProfileInfoRequest,
-  UpdateProfileInfoResponse,
-} from '@/types/profile';
+  IProfileDto,
+  IUpdateProfileInfoRequest,
+  IUpdateProfileInfoResponse,
+} from '@/interfaces/IProfile';
 
 export function ProfileInfoForm() {
   const { update: updateSession } = useSession();
 
-  const [profile, setProfile] = useState<ProfileDto | null>(null);
-  const [formData, setFormData] = useState<UpdateProfileInfoRequest>({
+  const [profile, setProfile] = useState<IProfileDto | null>(null);
+  const [formData, setFormData] = useState<IUpdateProfileInfoRequest>({
     username: '',
     displayName: null,
     bio: null,
@@ -31,7 +31,7 @@ export function ProfileInfoForm() {
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const data = await apiFetch<ProfileDto>('/api/profile');
+        const data = await apiFetch<IProfileDto>('/api/profile');
         setProfile(data);
         setFormData({
           username: data.username,
@@ -53,7 +53,7 @@ export function ProfileInfoForm() {
     fetchProfile();
   }, []);
 
-  function handleChange(field: keyof UpdateProfileInfoRequest, value: string) {
+  function handleChange(field: keyof IUpdateProfileInfoRequest, value: string) {
     setFormData((prev) => ({ ...prev, [field]: value || null }));
   }
 
@@ -77,7 +77,7 @@ export function ProfileInfoForm() {
     setIsSaveLoading(true);
 
     try {
-      const response = await apiFetch<UpdateProfileInfoResponse>('/api/profile/info', {
+      const response = await apiFetch<IUpdateProfileInfoResponse>('/api/profile/info', {
         method: 'PUT',
         body: JSON.stringify(formData),
       });

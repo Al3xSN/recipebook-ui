@@ -1,17 +1,12 @@
-'use client';
-
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 
-export function HeroSection() {
-  const { data: session, status } = useSession();
-  const isLoading = status === 'loading';
-  const user = session?.user ?? null;
+interface IHeroSectionProps {
+  user: { displayName?: string | null; username: string } | null;
+}
 
-  if (isLoading) return null;
-
+export function HeroSection({ user }: IHeroSectionProps) {
   return (
-    <section className="bg-gradient-to-b from-orange-50 to-white px-4 pb-24 pt-20 text-center">
+    <section className="bg-gradient-to-b from-orange-50 to-white px-4 py-10 text-center">
       <div className="mx-auto max-w-2xl">
         <div className="mb-6 inline-flex items-center justify-center rounded-2xl bg-orange-500 p-4 text-white shadow-lg">
           <svg

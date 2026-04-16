@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { apiFetch, ApiRequestError } from '@/lib/api';
 
-interface Props {
+interface IRatingStars {
   recipeId: string;
 }
 
-export function RatingStars({ recipeId }: Props) {
+export function RatingStars({ recipeId }: IRatingStars) {
   const [selected, setSelected] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [averageRating, setAverageRating] = useState<number | null>(null);
