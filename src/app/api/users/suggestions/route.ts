@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAuth } from '@/lib/server/require-auth';
 import { FriendRequestStatus } from '@generated/prisma/client';
+import { requireAuth } from '@/lib/server/require-auth';
+import { getUserSuggestions } from '@/lib/server/user';
 
 // GET /api/users/suggestions — friends of friends not already connected
 export async function GET() {
@@ -20,7 +21,6 @@ export async function GET() {
 
   if (friendIds.length === 0) return NextResponse.json([]);
 
-  // Find friends of friends
   const secondDegree = await db.friendRequest.findMany({
     where: {
       status: FriendRequestStatus.ACCEPTED,
@@ -37,13 +37,7 @@ export async function GET() {
   }
 
   const excludeIds = [session.userId, ...friendIds];
-  const suggestions = await db.user.findMany({
-    where: {
-      id: { in: [...candidateIds], notIn: excludeIds },
-    },
-    select: { id: true, username: true },
-    take: 10,
-  });
+  const suggestions = await getUserSuggestions([...candidateIds], excludeIds);
 
   return NextResponse.json(suggestions.map((u) => ({ userId: u.id, username: u.username })));
 }

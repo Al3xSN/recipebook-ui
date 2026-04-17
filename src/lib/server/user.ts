@@ -1,3 +1,4 @@
+import { Prisma } from '@generated/prisma/client';
 import { db } from '@/lib/db';
 import { verifyPassword, hashPassword } from '@/lib/server/password';
 import type { IUserDto, ICreateUserData, IUpdateUserProfileData } from '@/interfaces/IUser';
@@ -97,4 +98,26 @@ export async function updateUserPassword(
   const passwordHash = await hashPassword(newPassword);
   await db.user.update({ where: { id }, data: { passwordHash } });
   return true;
+}
+
+export async function searchUsers(query: string, excludeIds: string[]): Promise<IUserDto[]> {
+  const users = await db.user.findMany({
+    where: {
+      username: { contains: query, mode: Prisma.QueryMode.insensitive },
+      id: { notIn: excludeIds },
+    },
+    take: 20,
+  });
+  return users.map(toDto);
+}
+
+export async function getUserSuggestions(
+  candidateIds: string[],
+  excludeIds: string[],
+): Promise<IUserDto[]> {
+  const users = await db.user.findMany({
+    where: { id: { in: candidateIds, notIn: excludeIds } },
+    take: 10,
+  });
+  return users.map(toDto);
 }
