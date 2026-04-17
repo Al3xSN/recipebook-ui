@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
-import { toRecipeDto } from '@/lib/server/recipe-mapper';
-import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
+import {
+  getRecipeById,
+  canAccessRecipe,
+  updateRecipe,
+  deleteRecipe,
+  RecipeNotFoundError,
+  RecipeAccessError,
+} from '@/lib/server/recipe';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -14,31 +19,16 @@ export const GET = async (_req: NextRequest, { params }: Params) => {
   if (session instanceof Response) return session;
 
   const { id } = await params;
-  const recipe = await db.recipe.findUnique({
-    where: { id },
-    include: { ingredients: true, instructions: true, tags: true, user: true },
-  });
 
-  if (!recipe) return apiError(404, 'Recipe not found.');
-
-  const isOwner = recipe.userId === session.userId;
-  if (!isOwner) {
-    if (recipe.visibility === Visibility.PRIVATE) return apiError(403, 'Access denied.');
-    if (recipe.visibility === Visibility.FRIENDS_ONLY) {
-      const connection = await db.friendRequest.findFirst({
-        where: {
-          status: FriendRequestStatus.ACCEPTED,
-          OR: [
-            { senderId: session.userId, receiverId: recipe.userId },
-            { senderId: recipe.userId, receiverId: session.userId },
-          ],
-        },
-      });
-      if (!connection) return apiError(403, 'Access denied.');
-    }
+  try {
+    const recipe = await getRecipeById(id);
+    await canAccessRecipe(recipe, session.userId);
+    return NextResponse.json(recipe);
+  } catch (e) {
+    if (e instanceof RecipeNotFoundError) return apiError(404, 'Recipe not found.');
+    if (e instanceof RecipeAccessError) return apiError(403, 'Access denied.');
+    throw e;
   }
-
-  return NextResponse.json(toRecipeDto(recipe));
 };
 
 // PUT /api/recipes/[id]
@@ -47,58 +37,53 @@ export const PUT = async (req: NextRequest, { params }: Params) => {
   if (session instanceof Response) return session;
 
   const { id } = await params;
-  const existing = await db.recipe.findUnique({ where: { id } });
-  if (!existing) return apiError(404, 'Recipe not found.');
-  if (existing.userId !== session.userId) return apiError(403, 'Access denied.');
 
-  const body = await req.json().catch(() => null);
-  if (!body) return apiError(400, 'Invalid request body.');
+  try {
+    const existing = await getRecipeById(id);
+    if (existing.userId !== session.userId) return apiError(403, 'Access denied.');
 
-  const {
-    title,
-    description,
-    ingredients = [],
-    instructions = [],
-    tags = [],
-    category,
-    visibility,
-    difficulty,
-    cuisine,
-    prepTimeMinutes,
-    cookTimeMinutes,
-    servings,
-    imageUrl,
-  } = body;
+    const body = await req.json().catch(() => null);
+    if (!body) return apiError(400, 'Invalid request body.');
 
-  if (!title?.trim()) return apiError(422, 'Title is required.');
+    const {
+      title,
+      description,
+      ingredients = [],
+      instructions = [],
+      tags = [],
+      category,
+      visibility,
+      difficulty,
+      cuisine,
+      prepTimeMinutes,
+      cookTimeMinutes,
+      servings,
+      imageUrl,
+    } = body;
 
-  // Full replacement: delete nested entities and re-insert
-  const [, , , recipe] = await db.$transaction([
-    db.ingredient.deleteMany({ where: { recipeId: id } }),
-    db.instructionStep.deleteMany({ where: { recipeId: id } }),
-    db.recipeTag.deleteMany({ where: { recipeId: id } }),
-    db.recipe.update({
-      where: { id },
-      data: {
-        title: title.trim(),
-        description: description?.trim() || null,
-        category,
-        visibility,
-        difficulty: difficulty ?? null,
-        cuisine: cuisine ?? null,
-        prepTimeMinutes,
-        cookTimeMinutes,
-        servings,
-        imageUrl: imageUrl?.trim() || null,
-        ingredients: { create: ingredients },
-        instructions: { create: instructions },
-        tags: { create: tags.map((tag: number) => ({ tag })) },
-      },
-      include: { ingredients: true, instructions: true, tags: true, user: true },
-    }),
-  ]);
+    if (!title?.trim()) return apiError(422, 'Title is required.');
 
-  return NextResponse.json(toRecipeDto(recipe));
+    const recipe = await updateRecipe(id, {
+      title: title.trim(),
+      description: description?.trim() || null,
+      ingredients,
+      instructions,
+      tags,
+      category,
+      visibility,
+      difficulty: difficulty ?? null,
+      cuisine: cuisine ?? null,
+      prepTimeMinutes,
+      cookTimeMinutes,
+      servings,
+      imageUrl: imageUrl?.trim() || null,
+    });
+
+    return NextResponse.json(recipe);
+  } catch (e) {
+    if (e instanceof RecipeNotFoundError) return apiError(404, 'Recipe not found.');
+    throw e;
+  }
 };
 
 // DELETE /api/recipes/[id]
@@ -107,11 +92,14 @@ export const DELETE = async (_req: NextRequest, { params }: Params) => {
   if (session instanceof Response) return session;
 
   const { id } = await params;
-  const existing = await db.recipe.findUnique({ where: { id } });
-  if (!existing) return apiError(404, 'Recipe not found.');
-  if (existing.userId !== session.userId) return apiError(403, 'Access denied.');
 
-  await db.recipe.delete({ where: { id } });
-
-  return new NextResponse(null, { status: 204 });
+  try {
+    const existing = await getRecipeById(id);
+    if (existing.userId !== session.userId) return apiError(403, 'Access denied.');
+    await deleteRecipe(id);
+    return new NextResponse(null, { status: 204 });
+  } catch (e) {
+    if (e instanceof RecipeNotFoundError) return apiError(404, 'Recipe not found.');
+    throw e;
+  }
 };

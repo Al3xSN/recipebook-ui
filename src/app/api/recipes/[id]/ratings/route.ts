@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
-import { createNotification, NotificationType } from '@/lib/server/notifications';
+import { getRecipeById, RecipeNotFoundError } from '@/lib/server/recipe';
+import { upsertRating } from '@/lib/server/recipe/ratings';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -12,42 +13,22 @@ export const POST = async (req: NextRequest, { params }: Params) => {
   if (session instanceof Response) return session;
 
   const { id: recipeId } = await params;
-  const recipe = await db.recipe.findUnique({ where: { id: recipeId } });
-  if (!recipe) return apiError(404, 'Recipe not found.');
 
-  if (recipe.userId === session.userId) return apiError(422, 'You cannot rate your own recipe.');
+  try {
+    const recipe = await getRecipeById(recipeId);
 
-  const body = await req.json().catch(() => null);
-  const value = body?.value;
+    if (recipe.userId === session.userId) return apiError(422, 'You cannot rate your own recipe.');
 
-  if (typeof value !== 'number' || value < 1 || value > 5)
-    return apiError(422, 'Rating value must be between 1 and 5.');
+    const body = await req.json().catch(() => null);
+    const value = body?.value;
 
-  await db.$transaction(async (tx) => {
-    await tx.rating.upsert({
-      where: { recipeId_userId: { recipeId, userId: session.userId } },
-      create: { recipeId, userId: session.userId, value },
-      update: { value },
-    });
-    await createNotification(tx, {
-      userId: recipe.userId,
-      senderId: session.userId,
-      type: NotificationType.RATING,
-      referenceId: recipeId,
-    });
-  });
+    if (typeof value !== 'number' || value < 1 || value > 5)
+      return apiError(422, 'Rating value must be between 1 and 5.');
 
-  const stats = await db.rating.aggregate({
-    where: { recipeId },
-    _avg: { value: true },
-    _count: { value: true },
-  });
-
-  return NextResponse.json({
-    recipeId,
-    userId: session.userId,
-    value,
-    averageRating: stats._avg.value ?? 0,
-    totalCount: stats._count.value,
-  });
+    const result = await upsertRating(recipeId, session.userId, value);
+    return NextResponse.json(result);
+  } catch (e) {
+    if (e instanceof RecipeNotFoundError) return apiError(404, 'Recipe not found.');
+    throw e;
+  }
 };

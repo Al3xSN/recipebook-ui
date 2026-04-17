@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { ImageUpload } from '@/components/ui/ImageUpload';
 import { apiFetch, ApiRequestError } from '@/lib/api';
 import { CATEGORY_LABELS, TAG_LABELS, UNIT_LABELS, VISIBILITY_LABELS } from '@/lib/recipe-enums';
+import type { IRecipeDto } from '@/interfaces/IRecipe';
 
 const NewRecipePage = () => {
   const router = useRouter();
@@ -18,7 +20,8 @@ const NewRecipePage = () => {
   const [cookTimeMinutes, setCookTimeMinutes] = useState('');
   const [servings, setServings] = useState('');
   const [visibility, setVisibility] = useState(1);
-  const [imageUrl, setImageUrl] = useState('');
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+  const [pendingImagePreview, setPendingImagePreview] = useState<string | null>(null);
   const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: 0 }]);
   const [instructions, setInstructions] = useState([{ text: '' }]);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +67,7 @@ const NewRecipePage = () => {
     setIsLoading(true);
 
     try {
-      await apiFetch('/api/recipes', {
+      const created = await apiFetch<IRecipeDto>('/api/recipes', {
         method: 'POST',
         body: JSON.stringify({
           title: title.trim(),
@@ -75,7 +78,6 @@ const NewRecipePage = () => {
           prepTimeMinutes: Number(prepTimeMinutes),
           cookTimeMinutes: Number(cookTimeMinutes),
           servings: Number(servings),
-          imageUrl: imageUrl.trim() || null,
           ingredients: ingredients.map((ing) => ({
             name: ing.name,
             amount: Number(ing.amount),
@@ -87,6 +89,15 @@ const NewRecipePage = () => {
           })),
         }),
       });
+
+      if (pendingImageFile) {
+        const form = new FormData();
+        form.append('image', pendingImageFile);
+        await fetch(`/api/recipes/${created.id}/image`, { method: 'POST', body: form }).catch(
+          () => {},
+        );
+      }
+
       router.push('/recipes');
     } catch (err) {
       if (err instanceof ApiRequestError) {
@@ -135,13 +146,23 @@ const NewRecipePage = () => {
               className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
             />
           </div>
-          <Input
-            id="imageUrl"
-            label="Image URL (optional)"
-            type="url"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-medium text-gray-700">
+              Photo <span className="font-normal text-gray-400">(optional)</span>
+            </span>
+            <ImageUpload
+              currentImageUrl={pendingImagePreview}
+              shape="rectangle"
+              onFileSelect={(file, preview) => {
+                setPendingImageFile(file);
+                setPendingImagePreview(preview);
+              }}
+              onRemove={() => {
+                setPendingImageFile(null);
+                setPendingImagePreview(null);
+              }}
+            />
+          </div>
         </section>
 
         {/* Details */}

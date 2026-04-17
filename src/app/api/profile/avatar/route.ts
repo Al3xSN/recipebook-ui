@@ -36,5 +36,5 @@ export const POST = async (req: NextRequest) => {
 
   await updateUserAvatar(session.userId, blob.url);
 
-  return NextResponse.json({ avatarUrl: blob.url });
+  return NextResponse.json({ url: blob.url });
 };

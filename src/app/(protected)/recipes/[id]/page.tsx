@@ -3,25 +3,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { auth } from '@/auth';
-import { db } from '@/lib/db';
 import { CATEGORY_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
-import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
+import {
+  getRecipeById,
+  canAccessRecipe,
+  RecipeNotFoundError,
+  RecipeAccessError,
+} from '@/lib/server/recipe';
 import { RatingStars } from './_components/RatingStars';
 import { CommentList } from './_components/CommentList';
-
-const getRecipe = async (id: string) => {
-  const recipe = await db.recipe.findUnique({
-    where: { id },
-    include: { ingredients: true, instructions: true, tags: true, user: true },
-  });
-
-  if (!recipe) return null;
-
-  return {
-    ...recipe,
-    ingredients: recipe.ingredients.map((i) => ({ ...i, amount: Number(i.amount) })),
-  };
-};
+import { DeleteRecipeButton } from './_components/DeleteRecipeButton';
 
 const AVATAR_COLORS = [
   'bg-orange-400',
@@ -49,28 +40,16 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
   const session = await auth();
   const { id } = await params;
 
-  const recipe = await getRecipe(id);
-
-  if (!recipe) notFound();
+  let recipe: Awaited<ReturnType<typeof getRecipeById>>;
+  try {
+    recipe = await getRecipeById(id);
+    await canAccessRecipe(recipe, session!.user!.id);
+  } catch (e) {
+    if (e instanceof RecipeNotFoundError || e instanceof RecipeAccessError) notFound();
+    throw e;
+  }
 
   const isOwner = recipe.userId === session?.user?.id;
-
-  if (!isOwner) {
-    if (recipe.visibility === Visibility.PRIVATE) {
-      notFound();
-    } else if (recipe.visibility === Visibility.FRIENDS_ONLY) {
-      const connection = await db.friendRequest.findFirst({
-        where: {
-          status: FriendRequestStatus.ACCEPTED,
-          OR: [
-            { senderId: session!.user!.id, receiverId: recipe.userId },
-            { senderId: recipe.userId, receiverId: session!.user!.id },
-          ],
-        },
-      });
-      if (!connection) notFound();
-    }
-  }
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
@@ -104,27 +83,30 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
           </div>
         )}
 
-        {/* Edit button */}
+        {/* Owner actions */}
         {isOwner && (
-          <Link
-            href={`/recipes/${id}/edit`}
-            className="absolute right-3 top-3 flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-orange-500"
-          >
-            <svg
-              className="h-3.5 w-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+          <div className="absolute right-3 top-3 flex items-center gap-2">
+            <Link
+              href={`/recipes/${id}/edit`}
+              className="flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-orange-500"
             >
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
-            Edit
-          </Link>
+              <svg
+                className="h-3.5 w-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+              Edit
+            </Link>
+            <DeleteRecipeButton recipeId={id} />
+          </div>
         )}
       </div>
 
@@ -139,26 +121,26 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
       {/* Author byline */}
       {!isOwner && (
         <Link
-          href={`/profile/${recipe.user.username ?? ''}`}
+          href={`/profile/${recipe.author.username}`}
           className="mb-4 inline-flex items-center gap-2"
         >
-          {recipe.user.avatarUrl ? (
+          {recipe.author.avatarUrl ? (
             <Image
-              src={recipe.user.avatarUrl}
-              alt={recipe.user.displayName ?? recipe.user.username ?? ''}
+              src={recipe.author.avatarUrl}
+              alt={recipe.author.displayName}
               width={24}
               height={24}
               className="h-6 w-6 rounded-full object-cover"
             />
           ) : (
             <span
-              className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(recipe.user.username ?? '')}`}
+              className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(recipe.author.username)}`}
             >
-              {(recipe.user.displayName ?? recipe.user.username ?? '?').charAt(0).toUpperCase()}
+              {recipe.author.displayName.charAt(0).toUpperCase()}
             </span>
           )}
           <span className="text-sm text-gray-500 hover:text-gray-700">
-            {recipe.user.displayName ?? recipe.user.username}
+            {recipe.author.displayName}
           </span>
         </Link>
       )}
@@ -240,7 +222,7 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
             <li key={i} className="flex items-center justify-between px-4 py-3">
               <span className="text-sm font-medium text-gray-900">{ing.name}</span>
               <span className="text-sm text-gray-500">
-                {Number(ing.amount)} {UNIT_LABELS[ing.unit]}
+                {ing.amount} {UNIT_LABELS[ing.unit]}
               </span>
             </li>
           ))}
