@@ -29,6 +29,16 @@ function toDto(user: {
   };
 }
 
+export async function getUserById(id: string): Promise<IUserDto | null> {
+  const user = await db.user.findUnique({ where: { id } });
+  return user ? toDto(user) : null;
+}
+
+export async function getUserByUsername(username: string): Promise<IUserDto | null> {
+  const user = await db.user.findUnique({ where: { username } });
+  return user ? toDto(user) : null;
+}
+
 export async function getUserByEmail(email: string): Promise<IUserDto | null> {
   const user = await db.user.findUnique({ where: { email } });
   return user ? toDto(user) : null;

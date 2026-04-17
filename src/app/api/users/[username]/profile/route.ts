@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
 import { areFriends } from '@/lib/server/friendship-helpers';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
+import { getUserByUsername } from '@/lib/server/user';
 import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 
 type Params = { params: Promise<{ username: string }> };
@@ -14,7 +15,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   if (session instanceof Response) return session;
 
   const { username } = await params;
-  const target = await db.user.findUnique({ where: { username } });
+  const target = await getUserByUsername(username);
   if (!target) return apiError(404, 'User not found.');
 
   const isFriend = await areFriends(session.userId, target.id);

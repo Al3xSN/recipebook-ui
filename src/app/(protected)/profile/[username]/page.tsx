@@ -4,22 +4,19 @@ import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { areFriends } from '@/lib/server/friendship-helpers';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
+import { getUserByUsername } from '@/lib/server/user';
 import { RecipeCard } from '../../recipes/_components/RecipeCard';
 import { IProfileData, ProfileHeader } from './_components/ProfileHeader';
 import { ProfileStats } from '@/components/ui/ProfileStats';
-import { Visibility, FriendRequestStatus, type User } from '@generated/prisma/client';
+import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import Link from 'next/link';
 import { FriendshipStatus } from '@/enums/FriendshipStatus';
-
-async function getProfileUser(username: string): Promise<User | null> {
-  return db.user.findUnique({ where: { username } });
-}
 
 export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const session = await auth();
   const { username } = await params;
 
-  const profileUser = await getProfileUser(username);
+  const profileUser = await getUserByUsername(username);
 
   if (!profileUser) {
     notFound();
