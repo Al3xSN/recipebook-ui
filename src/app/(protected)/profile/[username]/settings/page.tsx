@@ -5,7 +5,7 @@ import { ProfileInfoForm } from '../../_components/ProfileInfoForm';
 import { ChangePasswordForm } from '../../_components/ChangePasswordForm';
 import { AvatarUpload } from '../../_components/AvatarUpload';
 
-export default async function SettingsPage({ params }: { params: Promise<{ username: string }> }) {
+const SettingsPage = async ({ params }: { params: Promise<{ username: string }> }) => {
   const [session, { username }] = await Promise.all([auth(), params]);
 
   if (!session?.user?.username || session.user.username !== username) {
@@ -69,4 +69,6 @@ export default async function SettingsPage({ params }: { params: Promise<{ usern
       </div>
     </div>
   );
-}
+};
+
+export default SettingsPage;

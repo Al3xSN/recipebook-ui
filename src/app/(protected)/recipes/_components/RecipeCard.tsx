@@ -21,20 +21,20 @@ const AVATAR_COLORS = [
   'bg-yellow-400',
 ];
 
-function getAvatarColor(username: string): string {
+const getAvatarColor = (username: string): string => {
   return AVATAR_COLORS[username.charCodeAt(0) % AVATAR_COLORS.length];
-}
+};
 
-export function RecipeCard({ recipe, showVisibility = false, currentUserId }: IRecipeCardProps) {
+export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IRecipeCardProps) => {
   const totalMinutes = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
   const showAuthor = recipe.userId !== currentUserId;
 
-  function formatTime(minutes: number) {
+  const formatTime = (minutes: number) => {
     if (minutes < 60) return `${minutes}m`;
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
     return m > 0 ? `${h}h ${m}m` : `${h}h`;
-  }
+  };
 
   return (
     <article className="relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
@@ -178,4 +178,4 @@ export function RecipeCard({ recipe, showVisibility = false, currentUserId }: IR
       </div>
     </article>
   );
-}
+};

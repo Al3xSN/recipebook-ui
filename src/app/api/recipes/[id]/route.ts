@@ -9,7 +9,7 @@ import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 type Params = { params: Promise<{ id: string }> };
 
 // GET /api/recipes/[id]
-export async function GET(_req: NextRequest, { params }: Params) {
+export const GET = async (_req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -39,10 +39,10 @@ export async function GET(_req: NextRequest, { params }: Params) {
   }
 
   return NextResponse.json(toRecipeDto(recipe));
-}
+};
 
 // PUT /api/recipes/[id]
-export async function PUT(req: NextRequest, { params }: Params) {
+export const PUT = async (req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -99,10 +99,10 @@ export async function PUT(req: NextRequest, { params }: Params) {
   ]);
 
   return NextResponse.json(toRecipeDto(recipe));
-}
+};
 
 // DELETE /api/recipes/[id]
-export async function DELETE(_req: NextRequest, { params }: Params) {
+export const DELETE = async (_req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -114,4 +114,4 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   await db.recipe.delete({ where: { id } });
 
   return new NextResponse(null, { status: 204 });
-}
+};

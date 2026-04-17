@@ -20,11 +20,11 @@ interface IProfileHeaderProps {
   isOwner?: boolean;
 }
 
-export function ProfileHeader({
+export const ProfileHeader = ({
   profile,
   initialFriendshipStatus,
   isOwner = false,
-}: IProfileHeaderProps) {
+}: IProfileHeaderProps) => {
   const [friendshipStatus, setFriendshipStatus] =
     useState<FriendshipStatus>(initialFriendshipStatus);
   const [isManagingFriend, setIsManagingFriend] = useState(false);
@@ -32,7 +32,7 @@ export function ProfileHeader({
   const displayName = profile.displayName ?? profile.username;
   const initials = displayName.slice(0, 2).toUpperCase();
 
-  async function handleAddFriend() {
+  const handleAddFriend = async () => {
     setIsManagingFriend(true);
     try {
       await apiFetch('/api/friends/requests', {
@@ -46,9 +46,9 @@ export function ProfileHeader({
     } finally {
       setIsManagingFriend(false);
     }
-  }
+  };
 
-  async function handleRemoveFriend() {
+  const handleRemoveFriend = async () => {
     setIsManagingFriend(true);
     try {
       await apiFetch(`/api/friends/${profile.userId}`, { method: 'DELETE' });
@@ -58,7 +58,7 @@ export function ProfileHeader({
     } finally {
       setIsManagingFriend(false);
     }
-  }
+  };
 
   return (
     <div className="mb-8 flex flex-col items-start gap-6 sm:flex-row sm:items-center">
@@ -187,4 +187,4 @@ export function ProfileHeader({
       )}
     </div>
   );
-}
+};

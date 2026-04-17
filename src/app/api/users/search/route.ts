@@ -5,7 +5,7 @@ import { requireAuth } from '@/lib/server/require-auth';
 import { searchUsers } from '@/lib/server/user';
 
 // GET /api/users/search?username=
-export async function GET(req: NextRequest) {
+export const GET = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -25,4 +25,4 @@ export async function GET(req: NextRequest) {
   const users = await searchUsers(query, excludeIds);
 
   return NextResponse.json(users.map((u) => ({ userId: u.id, username: u.username })));
-}
+};

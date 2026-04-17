@@ -10,7 +10,7 @@ import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 type Params = { params: Promise<{ username: string }> };
 
 // GET /api/users/[username]/profile
-export async function GET(_req: NextRequest, { params }: Params) {
+export const GET = async (_req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -58,4 +58,4 @@ export async function GET(_req: NextRequest, { params }: Params) {
     friendshipStatus,
     recipes: recipes.map(toRecipeDto),
   });
-}
+};

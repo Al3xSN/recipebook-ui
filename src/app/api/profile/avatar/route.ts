@@ -8,7 +8,7 @@ import { getUserById, updateUserAvatar } from '@/lib/server/user';
 const MAX_BYTES = 2 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -34,4 +34,4 @@ export async function POST(req: NextRequest) {
   await updateUserAvatar(session.userId, blob.url);
 
   return NextResponse.json({ avatarUrl: blob.url });
-}
+};

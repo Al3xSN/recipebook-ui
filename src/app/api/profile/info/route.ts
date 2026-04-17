@@ -4,7 +4,7 @@ import { apiError } from '@/lib/server/api-error';
 import { getUserById, updateUserProfile, UserConflictError } from '@/lib/server/user';
 
 // PUT /api/profile/info
-export async function PUT(req: NextRequest) {
+export const PUT = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -44,4 +44,4 @@ export async function PUT(req: NextRequest) {
     }
     throw err;
   }
-}
+};

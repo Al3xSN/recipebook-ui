@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/ui/Skeleton';
 import { RecipeCardSkeleton } from '../../recipes/_components/RecipeCardSkeleton';
 
-export default function ProfileLoading() {
+const ProfileLoading = () => {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
       {/* Profile header */}
@@ -33,4 +33,6 @@ export default function ProfileLoading() {
       </div>
     </div>
   );
-}
+};
+
+export default ProfileLoading;

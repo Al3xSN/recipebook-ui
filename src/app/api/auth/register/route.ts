@@ -3,7 +3,7 @@ import { hashPassword } from '@/lib/server/password';
 import { apiError } from '@/lib/server/api-error';
 import { createUser, UserConflictError } from '@/lib/server/user';
 
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest) => {
   const body = await req.json().catch(() => null);
   if (!body) return apiError(400, 'Invalid request body.');
 
@@ -48,4 +48,4 @@ export async function POST(req: NextRequest) {
     }
     throw err;
   }
-}
+};

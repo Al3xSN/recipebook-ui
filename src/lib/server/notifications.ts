@@ -10,13 +10,13 @@ interface CreateNotificationParams {
   referenceId?: string;
 }
 
-export async function createNotification(
+export const createNotification = async (
   tx: NotificationWriter,
   { userId, senderId, type, referenceId }: CreateNotificationParams,
-): Promise<void> {
+): Promise<void> => {
   await tx.notification.create({
     data: { userId, senderId, type, referenceId: referenceId ?? null },
   });
-}
+};
 
 export { NotificationType };

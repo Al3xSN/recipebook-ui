@@ -6,7 +6,7 @@ import { apiError } from '@/lib/server/api-error';
 type Params = { params: Promise<{ id: string }> };
 
 // PUT /api/notifications/[id]/read — mark a single notification as read
-export async function PUT(_req: NextRequest, { params }: Params) {
+export const PUT = async (_req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -19,4 +19,4 @@ export async function PUT(_req: NextRequest, { params }: Params) {
   await db.notification.update({ where: { id }, data: { read: true } });
 
   return new NextResponse(null, { status: 204 });
-}
+};

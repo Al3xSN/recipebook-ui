@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 
-export function RecipeFilters() {
+export const RecipeFilters = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchParamsRef = useRef(searchParams);
@@ -41,7 +41,7 @@ export function RecipeFilters() {
     return () => clearTimeout(t);
   }, [searchInput, router]);
 
-  function setParam(key: string, value: string | null) {
+  const setParam = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParamsRef.current.toString());
     if (value) {
       params.set(key, value);
@@ -49,9 +49,9 @@ export function RecipeFilters() {
       params.delete(key);
     }
     router.replace(`?${params.toString()}`);
-  }
+  };
 
-  function toggleTag(tagValue: number) {
+  const toggleTag = (tagValue: number) => {
     const next = new Set(activeTags);
     if (next.has(tagValue)) {
       next.delete(tagValue);
@@ -59,7 +59,7 @@ export function RecipeFilters() {
       next.add(tagValue);
     }
     setParam('tags', next.size > 0 ? [...next].join(',') : null);
-  }
+  };
 
   const hasFilters = urlSearch !== '' || category !== '' || activeTags.size > 0;
 
@@ -125,4 +125,4 @@ export function RecipeFilters() {
       </div>
     </>
   );
-}
+};

@@ -9,20 +9,20 @@ interface IUserMenuProps {
   onLogout: () => void;
 }
 
-export function UserMenu({ displayName, username, onLogout }: IUserMenuProps) {
+export const UserMenu = ({ displayName, username, onLogout }: IUserMenuProps) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    function handleOutsideClick(e: MouseEvent) {
+    const handleOutsideClick = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
-    }
+    };
 
-    function handleEscape(e: KeyboardEvent) {
+    const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
-    }
+    };
 
     document.addEventListener('mousedown', handleOutsideClick);
     document.addEventListener('keydown', handleEscape);
@@ -32,9 +32,9 @@ export function UserMenu({ displayName, username, onLogout }: IUserMenuProps) {
     };
   }, []);
 
-  function close() {
+  const close = () => {
     setOpen(false);
-  }
+  };
 
   return (
     <div ref={containerRef} className="relative hidden sm:block">
@@ -83,4 +83,4 @@ export function UserMenu({ displayName, username, onLogout }: IUserMenuProps) {
       </div>
     </div>
   );
-}
+};

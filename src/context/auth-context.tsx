@@ -18,7 +18,7 @@ type AuthAction =
   | { type: 'SET_USER'; user: IAuthUser }
   | { type: 'CLEAR_USER' };
 
-function authReducer(state: AuthState, action: AuthAction): AuthState {
+const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
     case 'HYDRATE':
       return { user: action.user, isLoading: false };
@@ -27,11 +27,11 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
     case 'CLEAR_USER':
       return { user: null, isLoading: false };
   }
-}
+};
 
 const AuthContext = createContext<IAuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [{ user, isLoading }, dispatch] = useReducer(authReducer, {
     user: null,
     isLoading: true,
@@ -41,33 +41,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'HYDRATE', user: getUser() });
   }, []);
 
-  function login(data: IAuthResponseDto) {
+  const login = (data: IAuthResponseDto) => {
     const authUser: IAuthUser = { email: data.email, displayName: data.displayName };
     setTokens(data.token, data.refreshToken);
     setUser(authUser);
     dispatch({ type: 'SET_USER', user: authUser });
-  }
+  };
 
-  function logout() {
+  const logout = () => {
     clearTokens();
     dispatch({ type: 'CLEAR_USER' });
-  }
+  };
 
-  function updateUser(updatedUser: IAuthUser, token: string, refreshToken: string) {
+  const updateUser = (updatedUser: IAuthUser, token: string, refreshToken: string) => {
     setTokens(token, refreshToken);
     setUser(updatedUser);
     dispatch({ type: 'SET_USER', user: updatedUser });
-  }
+  };
 
   return (
     <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth(): IAuthContextValue {
+export const useAuth = (): IAuthContextValue => {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
-}
+};

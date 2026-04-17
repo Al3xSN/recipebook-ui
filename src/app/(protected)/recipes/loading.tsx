@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/ui/Skeleton';
 import { RecipeCardSkeleton } from './_components/RecipeCardSkeleton';
 
-export default function RecipesLoading() {
+const RecipesLoading = () => {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
       {/* Header */}
@@ -21,4 +21,6 @@ export default function RecipesLoading() {
       </div>
     </div>
   );
-}
+};
+
+export default RecipesLoading;

@@ -5,7 +5,7 @@ import { requireAuth } from '@/lib/server/require-auth';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
 
 // GET /api/recipes/explore
-export async function GET(req: NextRequest) {
+export const GET = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -107,4 +107,4 @@ export async function GET(req: NextRequest) {
     hasNextPage: page < totalPages,
     hasPreviousPage: page > 1,
   });
-}
+};

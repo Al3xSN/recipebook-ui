@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/Skeleton';
 
-function FriendRowSkeleton() {
+const FriendRowSkeleton = () => {
   return (
     <div className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
       <Skeleton className="h-10 w-10 flex-shrink-0 rounded-full" />
@@ -14,9 +14,9 @@ function FriendRowSkeleton() {
       </div>
     </div>
   );
-}
+};
 
-export function FriendsPageSkeleton() {
+export const FriendsPageSkeleton = () => {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       {/* Title */}
@@ -39,4 +39,4 @@ export function FriendsPageSkeleton() {
       </div>
     </div>
   );
-}
+};

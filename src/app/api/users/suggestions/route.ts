@@ -5,7 +5,7 @@ import { requireAuth } from '@/lib/server/require-auth';
 import { getUserSuggestions } from '@/lib/server/user';
 
 // GET /api/users/suggestions — friends of friends not already connected
-export async function GET() {
+export const GET = async () => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -40,4 +40,4 @@ export async function GET() {
   const suggestions = await getUserSuggestions([...candidateIds], excludeIds);
 
   return NextResponse.json(suggestions.map((u) => ({ userId: u.id, username: u.username })));
-}
+};

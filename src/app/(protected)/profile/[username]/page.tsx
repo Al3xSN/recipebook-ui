@@ -12,7 +12,7 @@ import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import Link from 'next/link';
 import { FriendshipStatus } from '@/enums/FriendshipStatus';
 
-export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
+const ProfilePage = async ({ params }: { params: Promise<{ username: string }> }) => {
   const session = await auth();
   const { username } = await params;
 
@@ -135,4 +135,6 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
       )}
     </div>
   );
-}
+};
+
+export default ProfilePage;

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { apiFetch, ApiRequestError } from '@/lib/api';
 import { CATEGORY_LABELS, TAG_LABELS, UNIT_LABELS, VISIBILITY_LABELS } from '@/lib/recipe-enums';
 
-export default function NewRecipePage() {
+const NewRecipePage = () => {
   const router = useRouter();
 
   const [title, setTitle] = useState('');
@@ -24,41 +24,41 @@ export default function NewRecipePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function toggleTag(tag: number) {
+  const toggleTag = (tag: number) => {
     setTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
-  }
+  };
 
-  function addIngredient() {
+  const addIngredient = () => {
     setIngredients((prev) => [...prev, { name: '', amount: '', unit: 0 }]);
-  }
+  };
 
-  function removeIngredient(index: number) {
+  const removeIngredient = (index: number) => {
     setIngredients((prev) => prev.filter((_, i) => i !== index));
-  }
+  };
 
-  function updateIngredient(
+  const updateIngredient = (
     index: number,
     field: 'name' | 'amount' | 'unit',
     value: string | number,
-  ) {
+  ) => {
     setIngredients((prev) =>
       prev.map((ing, i) => (i === index ? { ...ing, [field]: value } : ing)),
     );
-  }
+  };
 
-  function addInstruction() {
+  const addInstruction = () => {
     setInstructions((prev) => [...prev, { text: '' }]);
-  }
+  };
 
-  function removeInstruction(index: number) {
+  const removeInstruction = (index: number) => {
     setInstructions((prev) => prev.filter((_, i) => i !== index));
-  }
+  };
 
-  function updateInstruction(index: number, value: string) {
+  const updateInstruction = (index: number, value: string) => {
     setInstructions((prev) => prev.map((inst, i) => (i === index ? { text: value } : inst)));
-  }
+  };
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
@@ -97,7 +97,7 @@ export default function NewRecipePage() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
@@ -428,4 +428,6 @@ export default function NewRecipePage() {
       </form>
     </div>
   );
-}
+};
+
+export default NewRecipePage;

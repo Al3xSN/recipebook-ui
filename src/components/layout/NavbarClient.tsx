@@ -12,7 +12,7 @@ interface INavbarClientProps {
   user: { displayName?: string | null; username: string } | null;
 }
 
-export function NavbarClient({ user }: INavbarClientProps) {
+export const NavbarClient = ({ user }: INavbarClientProps) => {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
@@ -24,10 +24,10 @@ export function NavbarClient({ user }: INavbarClientProps) {
       .catch(() => {});
   }, [user]);
 
-  async function handleLogout() {
+  const handleLogout = async () => {
     setMobileMenuOpen(false);
     await signOut({ redirectTo: '/' });
-  }
+  };
 
   // Lock body scroll while mobile menu is open
   useEffect(() => {
@@ -342,4 +342,4 @@ export function NavbarClient({ user }: INavbarClientProps) {
       </div>
     </>
   );
-}
+};

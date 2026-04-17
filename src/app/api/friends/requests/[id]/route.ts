@@ -8,7 +8,7 @@ import { FriendRequestStatus } from '@generated/prisma/client';
 type Params = { params: Promise<{ id: string }> };
 
 // PUT /api/friends/requests/[id] — accept or decline
-export async function PUT(req: NextRequest, { params }: Params) {
+export const PUT = async (req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -50,10 +50,10 @@ export async function PUT(req: NextRequest, { params }: Params) {
     status: updated.status,
     createdAt: updated.createdAt,
   });
-}
+};
 
 // DELETE /api/friends/requests/[id] — cancel a sent request
-export async function DELETE(_req: NextRequest, { params }: Params) {
+export const DELETE = async (_req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -67,4 +67,4 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
   await db.friendRequest.delete({ where: { id } });
   return new NextResponse(null, { status: 204 });
-}
+};

@@ -8,7 +8,7 @@ import { ApiRequestError } from '@/lib/api';
 const MAX_BYTES = 2 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-export function AvatarUpload() {
+export const AvatarUpload = () => {
   const { data: session, update: updateSession } = useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -20,7 +20,7 @@ export function AvatarUpload() {
   const displayName = session?.user?.displayName ?? session?.user?.username ?? '';
   const initials = displayName.slice(0, 2).toUpperCase();
 
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -68,7 +68,7 @@ export function AvatarUpload() {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -136,4 +136,4 @@ export function AvatarUpload() {
       />
     </div>
   );
-}
+};

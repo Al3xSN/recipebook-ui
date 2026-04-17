@@ -7,7 +7,7 @@ import { createNotification, NotificationType } from '@/lib/server/notifications
 type Params = { params: Promise<{ id: string }> };
 
 // POST /api/recipes/[id]/ratings
-export async function POST(req: NextRequest, { params }: Params) {
+export const POST = async (req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -50,4 +50,4 @@ export async function POST(req: NextRequest, { params }: Params) {
     averageRating: stats._avg.value ?? 0,
     totalCount: stats._count.value,
   });
-}
+};

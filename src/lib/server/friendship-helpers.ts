@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { FriendRequestStatus } from '@generated/prisma/client';
 
-export async function areFriends(userAId: string, userBId: string): Promise<boolean> {
+export const areFriends = async (userAId: string, userBId: string): Promise<boolean> => {
   const f = await db.friendRequest.findFirst({
     where: {
       status: FriendRequestStatus.ACCEPTED,
@@ -12,9 +12,9 @@ export async function areFriends(userAId: string, userBId: string): Promise<bool
     },
   });
   return f !== null;
-}
+};
 
-export async function removeFriendship(userAId: string, userBId: string): Promise<void> {
+export const removeFriendship = async (userAId: string, userBId: string): Promise<void> => {
   await db.friendRequest.deleteMany({
     where: {
       status: FriendRequestStatus.ACCEPTED,
@@ -24,4 +24,4 @@ export async function removeFriendship(userAId: string, userBId: string): Promis
       ],
     },
   });
-}
+};

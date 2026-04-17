@@ -5,7 +5,7 @@ import { HeroSection } from '@/components/home/HeroSection';
 
 export const metadata: Metadata = { title: 'RecipeBook — Discover, save, and share recipes' };
 
-export default async function HomePage() {
+const HomePage = async () => {
   const session = await auth();
   const user = session?.user ?? null;
 
@@ -77,9 +77,11 @@ export default async function HomePage() {
       </section>
     </div>
   );
-}
+};
 
-function FeatureCard({
+export default HomePage;
+
+const FeatureCard = ({
   icon,
   title,
   description,
@@ -87,7 +89,7 @@ function FeatureCard({
   icon: React.ReactNode;
   title: string;
   description: string;
-}) {
+}) => {
   return (
     <div className="flex flex-col items-start gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       <div className="flex items-center justify-center rounded-xl bg-orange-50 p-3 text-orange-500">
@@ -99,4 +101,4 @@ function FeatureCard({
       </div>
     </div>
   );
-}
+};

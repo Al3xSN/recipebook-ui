@@ -7,7 +7,7 @@ import { createNotification, NotificationType } from '@/lib/server/notifications
 type Params = { params: Promise<{ id: string }> };
 
 // GET /api/recipes/[id]/comments
-export async function GET(_req: NextRequest, { params }: Params) {
+export const GET = async (_req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -32,10 +32,10 @@ export async function GET(_req: NextRequest, { params }: Params) {
       createdAt: c.createdAt,
     })),
   );
-}
+};
 
 // POST /api/recipes/[id]/comments
-export async function POST(req: NextRequest, { params }: Params) {
+export const POST = async (req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -73,4 +73,4 @@ export async function POST(req: NextRequest, { params }: Params) {
     text: comment.text,
     createdAt: comment.createdAt,
   });
-}
+};

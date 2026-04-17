@@ -4,7 +4,7 @@ import { apiError } from '@/lib/server/api-error';
 import { updateUserPassword } from '@/lib/server/user';
 
 // PUT /api/profile/password
-export async function PUT(req: NextRequest) {
+export const PUT = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -17,4 +17,4 @@ export async function PUT(req: NextRequest) {
   if (!ok) return apiError(422, 'Current password is incorrect.');
 
   return new NextResponse(null, { status: 204 });
-}
+};

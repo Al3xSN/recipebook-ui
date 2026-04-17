@@ -8,7 +8,7 @@ import { getUserByUsername } from '@/lib/server/user';
 import { FriendRequestStatus } from '@generated/prisma/client';
 
 // GET /api/friends/requests — incoming requests, or ?direction=sent for outgoing
-export async function GET(req: NextRequest) {
+export const GET = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -49,10 +49,10 @@ export async function GET(req: NextRequest) {
       createdAt: r.createdAt,
     })),
   );
-}
+};
 
 // POST /api/friends/requests — send a friend request
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -113,4 +113,4 @@ export async function POST(req: NextRequest) {
     },
     { status: 201 },
   );
-}
+};

@@ -34,22 +34,22 @@ interface ISentRequestDto {
   createdAt: string;
 }
 
-function Avatar({ name }: { name: string }) {
+const Avatar = ({ name }: { name: string }) => {
   const initials = name.slice(0, 2).toUpperCase();
   return (
     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-bold text-orange-700">
       {initials}
     </div>
   );
-}
+};
 
-function FriendList({
+const FriendList = ({
   friends,
   onRemove,
 }: {
   friends: IFriendDto[];
   onRemove: (userId: string) => void;
-}) {
+}) => {
   if (friends.length === 0) {
     return (
       <EmptyState
@@ -121,9 +121,9 @@ function FriendList({
       })}
     </div>
   );
-}
+};
 
-function RequestList({
+const RequestList = ({
   requests,
   onAccept,
   onDecline,
@@ -131,7 +131,7 @@ function RequestList({
   requests: IIncomingRequestDto[];
   onAccept: (id: string) => void;
   onDecline: (id: string) => void;
-}) {
+}) => {
   if (requests.length === 0) {
     return (
       <EmptyState
@@ -183,15 +183,15 @@ function RequestList({
       ))}
     </div>
   );
-}
+};
 
-function SentList({
+const SentList = ({
   requests,
   onCancel,
 }: {
   requests: ISentRequestDto[];
   onCancel: (id: string) => void;
-}) {
+}) => {
   if (requests.length === 0) {
     return (
       <EmptyState
@@ -235,9 +235,9 @@ function SentList({
       ))}
     </div>
   );
-}
+};
 
-export default function FriendsPage() {
+const FriendsPage = () => {
   const [activeTab, setActiveTab] = useState('friends');
   const [friends, setFriends] = useState<IFriendDto[]>([]);
   const [requests, setRequests] = useState<IIncomingRequestDto[]>([]);
@@ -259,7 +259,7 @@ export default function FriendsPage() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  async function handleAccept(id: string) {
+  const handleAccept = async (id: string) => {
     try {
       await apiFetch(`/api/friends/requests/${id}`, {
         method: 'PUT',
@@ -284,9 +284,9 @@ export default function FriendsPage() {
     } catch {
       // ignore
     }
-  }
+  };
 
-  async function handleDecline(id: string) {
+  const handleDecline = async (id: string) => {
     try {
       await apiFetch(`/api/friends/requests/${id}`, {
         method: 'PUT',
@@ -296,25 +296,25 @@ export default function FriendsPage() {
     } catch {
       // ignore
     }
-  }
+  };
 
-  async function handleRemoveFriend(userId: string) {
+  const handleRemoveFriend = async (userId: string) => {
     try {
       await apiFetch(`/api/friends/${userId}`, { method: 'DELETE' });
       setFriends((prev) => prev.filter((f) => f.userId !== userId));
     } catch {
       // ignore
     }
-  }
+  };
 
-  async function handleCancelSent(id: string) {
+  const handleCancelSent = async (id: string) => {
     try {
       await apiFetch(`/api/friends/requests/${id}`, { method: 'DELETE' });
       setSent((prev) => prev.filter((r) => r.id !== id));
     } catch {
       // ignore
     }
-  }
+  };
 
   if (isLoading) {
     return <FriendsPageSkeleton />;
@@ -345,4 +345,6 @@ export default function FriendsPage() {
       {activeTab === 'sent' && <SentList requests={sent} onCancel={handleCancelSent} />}
     </div>
   );
-}
+};
+
+export default FriendsPage;

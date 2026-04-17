@@ -1,6 +1,15 @@
 import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
 import prettier from 'eslint-config-prettier';
 
-const eslintConfig = [...nextCoreWebVitals, prettier];
+const eslintConfig = [
+  ...nextCoreWebVitals,
+  prettier,
+  {
+    rules: {
+      'func-style': ['error', 'expression'],
+      'prefer-arrow-callback': 'error',
+    },
+  },
+];
 
 export default eslintConfig;

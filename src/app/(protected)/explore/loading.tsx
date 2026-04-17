@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/ui/Skeleton';
 import { RecipeCardSkeleton } from '../recipes/_components/RecipeCardSkeleton';
 
-export default function ExploreLoading() {
+const ExploreLoading = () => {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
       {/* Header */}
@@ -21,4 +21,6 @@ export default function ExploreLoading() {
       </div>
     </div>
   );
-}
+};
+
+export default ExploreLoading;

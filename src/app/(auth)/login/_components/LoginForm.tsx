@@ -8,7 +8,7 @@ import { AuthCard } from '@/components/auth/AuthCard';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
-export function LoginForm() {
+export const LoginForm = () => {
   const router = useRouter();
 
   const [email, setEmail] = useState('');
@@ -16,7 +16,7 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
@@ -33,7 +33,7 @@ export function LoginForm() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <AuthCard title="Sign in">
@@ -73,4 +73,4 @@ export function LoginForm() {
       </p>
     </AuthCard>
   );
-}
+};

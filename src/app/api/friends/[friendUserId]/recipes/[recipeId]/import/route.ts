@@ -10,7 +10,7 @@ import { Visibility } from '@generated/prisma/client';
 type Params = { params: Promise<{ friendUserId: string; recipeId: string }> };
 
 // POST /api/friends/[friendUserId]/recipes/[recipeId]/import
-export async function POST(_req: NextRequest, { params }: Params) {
+export const POST = async (_req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -69,4 +69,4 @@ export async function POST(_req: NextRequest, { params }: Params) {
   });
 
   return NextResponse.json(toRecipeDto(copy), { status: 201 });
-}
+};

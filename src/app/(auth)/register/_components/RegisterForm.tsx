@@ -8,7 +8,7 @@ import { AuthCard } from '@/components/auth/AuthCard';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
-export function RegisterForm() {
+export const RegisterForm = () => {
   const router = useRouter();
 
   const [username, setUsername] = useState('');
@@ -18,7 +18,7 @@ export function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
@@ -54,7 +54,7 @@ export function RegisterForm() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <AuthCard title="Create an account">
@@ -111,4 +111,4 @@ export function RegisterForm() {
       </p>
     </AuthCard>
   );
-}
+};

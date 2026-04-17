@@ -11,7 +11,7 @@ import type {
   IUpdateProfileInfoResponse,
 } from '@/interfaces/IProfile';
 
-export function ProfileInfoForm() {
+export const ProfileInfoForm = () => {
   const { update: updateSession } = useSession();
 
   const [profile, setProfile] = useState<IProfileDto | null>(null);
@@ -29,7 +29,7 @@ export function ProfileInfoForm() {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
-    async function fetchProfile() {
+    const fetchProfile = async () => {
       try {
         const data = await apiFetch<IProfileDto>('/api/profile');
         setProfile(data);
@@ -48,16 +48,16 @@ export function ProfileInfoForm() {
       } finally {
         setIsFetchLoading(false);
       }
-    }
+    };
 
     fetchProfile();
   }, []);
 
-  function handleChange(field: keyof IUpdateProfileInfoRequest, value: string) {
+  const handleChange = (field: keyof IUpdateProfileInfoRequest, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value || null }));
-  }
+  };
 
-  function handleCancel() {
+  const handleCancel = () => {
     if (profile) {
       setFormData({
         username: profile.username,
@@ -68,9 +68,9 @@ export function ProfileInfoForm() {
     }
     setSaveError(null);
     setIsEditing(false);
-  }
+  };
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaveError(null);
     setSaveSuccess(false);
@@ -110,7 +110,7 @@ export function ProfileInfoForm() {
     } finally {
       setIsSaveLoading(false);
     }
-  }
+  };
 
   if (isFetchLoading) {
     return (
@@ -197,9 +197,9 @@ export function ProfileInfoForm() {
       )}
     </section>
   );
-}
+};
 
-function ProfileField({ label, value }: { label: string; value: string | null | undefined }) {
+const ProfileField = ({ label, value }: { label: string; value: string | null | undefined }) => {
   return (
     <div className="flex flex-col gap-0.5">
       <dt className="font-medium text-gray-500">{label}</dt>
@@ -208,4 +208,4 @@ function ProfileField({ label, value }: { label: string; value: string | null | 
       </dd>
     </div>
   );
-}
+};

@@ -4,7 +4,7 @@ import { apiError } from '@/lib/server/api-error';
 import { getUserById } from '@/lib/server/user';
 
 // GET /api/profile
-export async function GET() {
+export const GET = async () => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -18,4 +18,4 @@ export async function GET() {
     bio: user.bio,
     avatarUrl: user.avatarUrl,
   });
-}
+};

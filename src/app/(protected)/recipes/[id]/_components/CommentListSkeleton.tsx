@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/Skeleton';
 
-function CommentRowSkeleton() {
+const CommentRowSkeleton = () => {
   return (
     <div className="flex gap-3">
       <Skeleton className="h-8 w-8 flex-shrink-0 rounded-full" />
@@ -14,9 +14,9 @@ function CommentRowSkeleton() {
       </div>
     </div>
   );
-}
+};
 
-export function CommentListSkeleton() {
+export const CommentListSkeleton = () => {
   return (
     <div className="mb-6 flex flex-col gap-4">
       <CommentRowSkeleton />
@@ -24,4 +24,4 @@ export function CommentListSkeleton() {
       <CommentRowSkeleton />
     </div>
   );
-}
+};

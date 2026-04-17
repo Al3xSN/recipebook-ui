@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 
 // PUT /api/notifications/read-all — mark all unread notifications as read
-export async function PUT() {
+export const PUT = async () => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -13,4 +13,4 @@ export async function PUT() {
   });
 
   return new NextResponse(null, { status: 204 });
-}
+};

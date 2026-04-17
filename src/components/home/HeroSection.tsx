@@ -4,7 +4,7 @@ interface IHeroSectionProps {
   user: { displayName?: string | null; username: string } | null;
 }
 
-export function HeroSection({ user }: IHeroSectionProps) {
+export const HeroSection = ({ user }: IHeroSectionProps) => {
   return (
     <section className="bg-gradient-to-b from-orange-50 to-white px-4 py-10 text-center">
       <div className="mx-auto max-w-2xl">
@@ -72,4 +72,4 @@ export function HeroSection({ user }: IHeroSectionProps) {
       </div>
     </section>
   );
-}
+};

@@ -6,7 +6,7 @@ interface IProfileStats {
   friendCount: number;
 }
 
-export function ProfileStats({ recipeCount, importedCount, friendCount }: IProfileStats) {
+export const ProfileStats = ({ recipeCount, importedCount, friendCount }: IProfileStats) => {
   return (
     <div className="mb-8 grid grid-cols-3 divide-x divide-gray-200 overflow-hidden rounded-xl border border-gray-200 bg-white">
       <div className="flex flex-col items-center py-5">
@@ -26,4 +26,4 @@ export function ProfileStats({ recipeCount, importedCount, friendCount }: IProfi
       </Link>
     </div>
   );
-}
+};

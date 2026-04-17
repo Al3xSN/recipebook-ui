@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/Skeleton';
 
-function CommentRowSkeleton() {
+const CommentRowSkeleton = () => {
   return (
     <div className="flex gap-3">
       <Skeleton className="h-8 w-8 flex-shrink-0 rounded-full" />
@@ -14,9 +14,9 @@ function CommentRowSkeleton() {
       </div>
     </div>
   );
-}
+};
 
-export default function RecipeDetailLoading() {
+const RecipeDetailLoading = () => {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       {/* Hero image */}
@@ -84,4 +84,6 @@ export default function RecipeDetailLoading() {
       </section>
     </div>
   );
-}
+};
+
+export default RecipeDetailLoading;
