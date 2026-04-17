@@ -1,7 +1,6 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import { db } from '@/lib/db';
-import { verifyPassword } from '@/lib/server/password';
+import { verifyUserPassword } from '@/lib/server/user';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -16,11 +15,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!email || !password) return null;
 
-        const user = await db.user.findUnique({ where: { email } });
+        const user = await verifyUserPassword(email, password);
         if (!user) return null;
-
-        const valid = await verifyPassword(password, user.passwordHash);
-        if (!valid) return null;
 
         return {
           id: user.id,
