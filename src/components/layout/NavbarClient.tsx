@@ -127,6 +127,7 @@ export function NavbarClient({ user }: INavbarClientProps) {
                   {(user.displayName ?? user.username) && (
                     <UserMenu
                       displayName={user.displayName ?? user.username}
+                      username={user.username}
                       onLogout={handleLogout}
                     />
                   )}
@@ -286,7 +287,7 @@ export function NavbarClient({ user }: INavbarClientProps) {
                 Friends
               </Link>
               <Link
-                href="/profile/me"
+                href={`/profile/${user.username}`}
                 className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-orange-50 hover:text-orange-500"
                 onClick={() => setMobileMenuOpen(false)}
               >

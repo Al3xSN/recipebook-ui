@@ -22,6 +22,7 @@ export async function requireAuth(): Promise<AuthSession | Response> {
   if (!session?.user?.id) {
     return apiError(401, 'Authentication required.');
   }
+
   return {
     userId: session.user.id,
     email: session.user.email,

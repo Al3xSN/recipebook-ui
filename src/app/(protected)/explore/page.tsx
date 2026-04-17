@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { cacheLife, cacheTag } from 'next/cache';
+
 import { Prisma, Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
@@ -24,11 +24,6 @@ interface IExploreResult {
 }
 
 async function getExploreRecipes(params: IExploreParams, userId: string): Promise<IExploreResult> {
-  'use cache';
-  cacheTag('explore-recipes');
-  cacheTag(`explore-recipes-${userId}`);
-  cacheLife('minutes');
-
   const { search, sortOrder, category, tags, page, pageSize } = params;
 
   const connections = await db.friendRequest.findMany({

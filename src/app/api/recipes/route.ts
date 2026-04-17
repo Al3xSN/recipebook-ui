@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { updateTag } from 'next/cache';
+
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
@@ -69,9 +69,6 @@ export async function POST(req: NextRequest) {
     },
     include: { ingredients: true, instructions: true, tags: true, user: true },
   });
-
-  updateTag(`user-recipes-${session.userId}`);
-  updateTag('explore-recipes');
 
   return NextResponse.json(toRecipeDto(recipe), { status: 201 });
 }

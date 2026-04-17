@@ -5,10 +5,11 @@ import Link from 'next/link';
 
 interface IUserMenuProps {
   displayName: string;
+  username: string;
   onLogout: () => void;
 }
 
-export function UserMenu({ displayName, onLogout }: IUserMenuProps) {
+export function UserMenu({ displayName, username, onLogout }: IUserMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -64,7 +65,7 @@ export function UserMenu({ displayName, onLogout }: IUserMenuProps) {
         }`}
       >
         <Link
-          href="/profile/me"
+          href={`/profile/${username}`}
           onClick={close}
           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
         >

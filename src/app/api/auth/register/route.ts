@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
   }
 
   const passwordHash = await hashPassword(password);
-  // EB46-126D
+
   const user = await db.user.create({
     data: {
       username: username.trim(),

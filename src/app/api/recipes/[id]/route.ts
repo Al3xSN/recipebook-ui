@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { updateTag } from 'next/cache';
+
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
@@ -98,10 +98,6 @@ export async function PUT(req: NextRequest, { params }: Params) {
     }),
   ]);
 
-  updateTag(`recipe-${id}`);
-  updateTag(`user-recipes-${session.userId}`);
-  updateTag('explore-recipes');
-
   return NextResponse.json(toRecipeDto(recipe));
 }
 
@@ -116,10 +112,6 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   if (existing.userId !== session.userId) return apiError(403, 'Access denied.');
 
   await db.recipe.delete({ where: { id } });
-
-  updateTag(`recipe-${id}`);
-  updateTag(`user-recipes-${existing.userId}`);
-  updateTag('explore-recipes');
 
   return new NextResponse(null, { status: 204 });
 }

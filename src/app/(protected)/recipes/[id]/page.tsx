@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { cacheLife, cacheTag } from 'next/cache';
+
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { CATEGORY_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
@@ -10,10 +10,6 @@ import { RatingStars } from './_components/RatingStars';
 import { CommentList } from './_components/CommentList';
 
 async function getRecipe(id: string) {
-  'use cache';
-  cacheTag(`recipe-${id}`);
-  cacheLife({ stale: 60, revalidate: 300 });
-
   const recipe = await db.recipe.findUnique({
     where: { id },
     include: { ingredients: true, instructions: true, tags: true, user: true },

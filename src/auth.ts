@@ -28,18 +28,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.username,
           username: user.username,
           displayName: user.displayName ?? null,
+          avatarUrl: user.avatarUrl ?? null,
         };
       },
     }),
   ],
   callbacks: {
-    jwt({ token, user }) {
+    jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
-
         token.username = (user as any).username;
-
         token.displayName = (user as any).displayName ?? null;
+        token.avatarUrl = (user as any).avatarUrl ?? null;
+      }
+      if (trigger === 'update' && session?.avatarUrl !== undefined) {
+        token.avatarUrl = session.avatarUrl;
+      }
+      if (trigger === 'update' && session?.username !== undefined) {
+        token.username = session.username;
+        token.displayName = session.displayName ?? null;
       }
       return token;
     },
@@ -47,6 +54,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.id = token.id as string;
       session.user.username = token.username as string;
       session.user.displayName = (token.displayName as string | null) ?? null;
+      session.user.avatarUrl = (token.avatarUrl as string | null) ?? null;
+
       return session;
     },
   },

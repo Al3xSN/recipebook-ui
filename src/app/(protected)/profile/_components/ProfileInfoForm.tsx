@@ -174,13 +174,6 @@ export function ProfileInfoForm() {
             value={formData.bio ?? ''}
             onChange={(e) => handleChange('bio', e.target.value)}
           />
-          <Input
-            id="avatarUrl"
-            label="Avatar URL"
-            type="url"
-            value={formData.avatarUrl ?? ''}
-            onChange={(e) => handleChange('avatarUrl', e.target.value)}
-          />
           <div className="flex gap-3 pt-2">
             <Button type="submit" isLoading={isSaveLoading}>
               Save changes
@@ -200,7 +193,6 @@ export function ProfileInfoForm() {
           <ProfileField label="Username" value={profile?.username} />
           <ProfileField label="Display name" value={profile?.displayName} />
           <ProfileField label="Bio" value={profile?.bio} />
-          <ProfileField label="Avatar URL" value={profile?.avatarUrl} />
         </dl>
       )}
     </section>
