@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { put } from '@vercel/blob';
+import { put, del } from '@vercel/blob';
 
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
@@ -24,11 +24,14 @@ export const POST = async (req: NextRequest) => {
   const user = await getUserById(session.userId);
   if (!user) return apiError(404, 'User not found.');
 
+  if (user.avatarUrl) {
+    await del(user.avatarUrl).catch(() => {});
+  }
+
   const blob = await put(`avatars/${session.userId}`, file, {
     access: 'public',
     contentType: file.type,
-    addRandomSuffix: false,
-    allowOverwrite: true,
+    addRandomSuffix: true,
   });
 
   await updateUserAvatar(session.userId, blob.url);

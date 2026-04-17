@@ -16,15 +16,13 @@ export const AvatarUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const avatarUrl = previewUrl ?? session?.user?.avatarUrl ?? null;
+  const displayUrl = previewUrl ?? session?.user?.avatarUrl ?? null;
   const displayName = session?.user?.displayName ?? session?.user?.username ?? '';
   const initials = displayName.slice(0, 2).toUpperCase();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    setError(null);
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       setError('Only JPEG, PNG, and WebP images are supported.');
@@ -35,8 +33,6 @@ export const AvatarUpload = () => {
       return;
     }
 
-    const objectUrl = URL.createObjectURL(file);
-    setPreviewUrl(objectUrl);
     setIsUploading(true);
 
     try {
@@ -54,10 +50,8 @@ export const AvatarUpload = () => {
 
       await updateSession({ avatarUrl: newUrl });
 
-      URL.revokeObjectURL(objectUrl);
       setPreviewUrl(newUrl);
     } catch (err) {
-      URL.revokeObjectURL(objectUrl);
       setPreviewUrl(null);
       if (err instanceof ApiRequestError) {
         setError(err.detail);
@@ -66,6 +60,7 @@ export const AvatarUpload = () => {
       }
     } finally {
       setIsUploading(false);
+
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -79,9 +74,9 @@ export const AvatarUpload = () => {
         aria-label="Change profile picture"
         className="relative flex h-24 w-24 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-orange-100 text-2xl font-bold text-orange-600 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
       >
-        {avatarUrl ? (
+        {displayUrl ? (
           <Image
-            src={avatarUrl}
+            src={displayUrl}
             alt={displayName}
             width={96}
             height={96}

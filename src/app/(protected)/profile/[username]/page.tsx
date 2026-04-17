@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { areFriends } from '@/lib/server/friendship-helpers';
@@ -12,10 +11,9 @@ import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import Link from 'next/link';
 import { FriendshipStatus } from '@/enums/FriendshipStatus';
 
-const ProfilePage = async ({ params }: { params: Promise<{ username: string }> }) => {
+export default async function ProfilePage(props: PageProps<'/profile/[username]'>) {
   const session = await auth();
-  const { username } = await params;
-
+  const { username } = await props.params;
   const profileUser = await getUserByUsername(username);
 
   if (!profileUser) {
@@ -135,6 +133,4 @@ const ProfilePage = async ({ params }: { params: Promise<{ username: string }> }
       )}
     </div>
   );
-};
-
-export default ProfilePage;
+}
