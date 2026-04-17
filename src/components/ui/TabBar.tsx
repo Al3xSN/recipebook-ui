@@ -12,7 +12,7 @@ interface ITabBarProps {
   onChange: (id: string) => void;
 }
 
-export function TabBar({ tabs, active, onChange }: ITabBarProps) {
+export const TabBar = ({ tabs, active, onChange }: ITabBarProps) => {
   return (
     <div className="flex gap-1 border-b border-gray-200">
       {tabs.map((tab) => (
@@ -40,4 +40,4 @@ export function TabBar({ tabs, active, onChange }: ITabBarProps) {
       ))}
     </div>
   );
-}
+};

@@ -4,10 +4,11 @@ import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
 import { areFriends } from '@/lib/server/friendship-helpers';
 import { createNotification, NotificationType } from '@/lib/server/notifications';
+import { getUserByUsername } from '@/lib/server/user';
 import { FriendRequestStatus } from '@generated/prisma/client';
 
 // GET /api/friends/requests — incoming requests, or ?direction=sent for outgoing
-export async function GET(req: NextRequest) {
+export const GET = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -48,10 +49,10 @@ export async function GET(req: NextRequest) {
       createdAt: r.createdAt,
     })),
   );
-}
+};
 
 // POST /api/friends/requests — send a friend request
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
   const receiverUsername = body?.receiverUsername?.trim();
   if (!receiverUsername) return apiError(422, 'receiverUsername is required.');
 
-  const receiver = await db.user.findUnique({ where: { username: receiverUsername } });
+  const receiver = await getUserByUsername(receiverUsername);
   if (!receiver) return apiError(404, 'User not found.');
   if (receiver.id === session.userId)
     return apiError(422, 'You cannot send a request to yourself.');
@@ -112,4 +113,4 @@ export async function POST(req: NextRequest) {
     },
     { status: 201 },
   );
-}
+};

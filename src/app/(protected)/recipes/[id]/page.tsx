@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { cacheLife, cacheTag } from 'next/cache';
+
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { CATEGORY_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
@@ -9,11 +9,7 @@ import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import { RatingStars } from './_components/RatingStars';
 import { CommentList } from './_components/CommentList';
 
-async function getRecipe(id: string) {
-  'use cache';
-  cacheTag(`recipe-${id}`);
-  cacheLife({ stale: 60, revalidate: 300 });
-
+const getRecipe = async (id: string) => {
   const recipe = await db.recipe.findUnique({
     where: { id },
     include: { ingredients: true, instructions: true, tags: true, user: true },
@@ -25,7 +21,7 @@ async function getRecipe(id: string) {
     ...recipe,
     ingredients: recipe.ingredients.map((i) => ({ ...i, amount: Number(i.amount) })),
   };
-}
+};
 
 const AVATAR_COLORS = [
   'bg-orange-400',
@@ -38,18 +34,18 @@ const AVATAR_COLORS = [
   'bg-yellow-400',
 ];
 
-function getAvatarColor(username: string): string {
+const getAvatarColor = (username: string): string => {
   return AVATAR_COLORS[username.charCodeAt(0) % AVATAR_COLORS.length];
-}
+};
 
-function formatTime(minutes: number) {
+const formatTime = (minutes: number) => {
   if (minutes < 60) return `${minutes}m`;
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
-}
+};
 
-export default async function RecipeDetailPage({ params }: { params: Promise<{ id: string }> }) {
+const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const session = await auth();
   const { id } = await params;
 
@@ -286,4 +282,6 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ i
       </section>
     </div>
   );
-}
+};
+
+export default RecipeDetailPage;

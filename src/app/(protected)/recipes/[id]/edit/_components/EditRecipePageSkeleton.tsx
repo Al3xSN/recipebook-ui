@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/Skeleton';
 
-function SectionSkeleton() {
+const SectionSkeleton = () => {
   return (
     <div className="flex flex-col gap-4">
       <Skeleton className="h-5 w-24" />
@@ -8,9 +8,9 @@ function SectionSkeleton() {
       <Skeleton className="h-10 w-full rounded-lg" />
     </div>
   );
-}
+};
 
-export function EditRecipePageSkeleton() {
+export const EditRecipePageSkeleton = () => {
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       {/* Title */}
@@ -32,4 +32,4 @@ export function EditRecipePageSkeleton() {
       </div>
     </div>
   );
-}
+};

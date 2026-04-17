@@ -15,14 +15,14 @@ const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
     'hover:bg-gray-100 text-gray-700 focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2',
 };
 
-export function Button({
+export const Button = ({
   variant = 'primary',
   isLoading,
   children,
   className = '',
   disabled,
   ...rest
-}: ButtonProps) {
+}: ButtonProps) => {
   return (
     <button
       disabled={disabled || isLoading}
@@ -55,4 +55,4 @@ export function Button({
       {children}
     </button>
   );
-}
+};

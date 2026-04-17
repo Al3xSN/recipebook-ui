@@ -12,7 +12,7 @@ interface INavbarClientProps {
   user: { displayName?: string | null; username: string } | null;
 }
 
-export function NavbarClient({ user }: INavbarClientProps) {
+export const NavbarClient = ({ user }: INavbarClientProps) => {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
@@ -24,10 +24,10 @@ export function NavbarClient({ user }: INavbarClientProps) {
       .catch(() => {});
   }, [user]);
 
-  async function handleLogout() {
+  const handleLogout = async () => {
     setMobileMenuOpen(false);
     await signOut({ redirectTo: '/' });
-  }
+  };
 
   // Lock body scroll while mobile menu is open
   useEffect(() => {
@@ -127,6 +127,7 @@ export function NavbarClient({ user }: INavbarClientProps) {
                   {(user.displayName ?? user.username) && (
                     <UserMenu
                       displayName={user.displayName ?? user.username}
+                      username={user.username}
                       onLogout={handleLogout}
                     />
                   )}
@@ -286,7 +287,7 @@ export function NavbarClient({ user }: INavbarClientProps) {
                 Friends
               </Link>
               <Link
-                href="/profile/me"
+                href={`/profile/${user.username}`}
                 className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-orange-50 hover:text-orange-500"
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -341,4 +342,4 @@ export function NavbarClient({ user }: INavbarClientProps) {
       </div>
     </>
   );
-}
+};

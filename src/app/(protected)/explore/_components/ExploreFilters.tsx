@@ -9,7 +9,7 @@ interface IExploreFiltersProps {
   totalPages: number;
 }
 
-export function ExploreFilters({ totalCount, totalPages }: IExploreFiltersProps) {
+export const ExploreFilters = ({ totalCount, totalPages }: IExploreFiltersProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchParamsRef = useRef(searchParams);
@@ -48,7 +48,7 @@ export function ExploreFilters({ totalCount, totalPages }: IExploreFiltersProps)
     return () => clearTimeout(t);
   }, [searchInput, router]);
 
-  function setParam(key: string, value: string | null) {
+  const setParam = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParamsRef.current.toString());
     if (value) {
       params.set(key, value);
@@ -57,9 +57,9 @@ export function ExploreFilters({ totalCount, totalPages }: IExploreFiltersProps)
     }
     params.delete('page'); // Reset to page 1 on filter change
     router.replace(`?${params.toString()}`);
-  }
+  };
 
-  function setPage(newPage: number) {
+  const setPage = (newPage: number) => {
     const params = new URLSearchParams(searchParamsRef.current.toString());
     if (newPage > 1) {
       params.set('page', String(newPage));
@@ -67,7 +67,7 @@ export function ExploreFilters({ totalCount, totalPages }: IExploreFiltersProps)
       params.delete('page');
     }
     router.replace(`?${params.toString()}`);
-  }
+  };
 
   return (
     <>
@@ -177,4 +177,4 @@ export function ExploreFilters({ totalCount, totalPages }: IExploreFiltersProps)
       )}
     </>
   );
-}
+};

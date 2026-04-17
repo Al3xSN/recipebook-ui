@@ -14,7 +14,7 @@ interface INotification {
   senderDisplayName: string | null;
 }
 
-function notificationMessage(n: INotification): string {
+const notificationMessage = (n: INotification): string => {
   const name = n.senderDisplayName ?? n.senderUsername;
   switch (n.type) {
     case 'FRIEND_REQUEST':
@@ -28,9 +28,9 @@ function notificationMessage(n: INotification): string {
     case 'RECIPE_IMPORTED':
       return `${name} imported one of your recipes.`;
   }
-}
+};
 
-function NotificationIcon({ type }: { type: INotification['type'] }) {
+const NotificationIcon = ({ type }: { type: INotification['type'] }) => {
   if (type === 'FRIEND_REQUEST') {
     return (
       <svg
@@ -121,9 +121,9 @@ function NotificationIcon({ type }: { type: INotification['type'] }) {
       <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29" />
     </svg>
   );
-}
+};
 
-export default function NotificationsPage() {
+const NotificationsPage = () => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -134,15 +134,15 @@ export default function NotificationsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  async function markAllRead() {
+  const markAllRead = async () => {
     await apiFetch('/api/notifications/read-all', { method: 'PUT' }).catch(() => {});
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  }
+  };
 
-  async function markRead(id: string) {
+  const markRead = async (id: string) => {
     await apiFetch(`/api/notifications/${id}/read`, { method: 'PUT' }).catch(() => {});
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
-  }
+  };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -210,4 +210,6 @@ export default function NotificationsPage() {
       )}
     </div>
   );
-}
+};
+
+export default NotificationsPage;

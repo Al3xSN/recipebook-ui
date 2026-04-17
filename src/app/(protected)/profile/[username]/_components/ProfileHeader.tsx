@@ -4,8 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { apiFetch } from '@/lib/api';
+import { FriendshipStatus } from '@/enums/FriendshipStatus';
 
-export interface IPublicProfileData {
+export interface IProfileData {
   userId: string;
   username: string;
   displayName: string | null;
@@ -13,61 +14,61 @@ export interface IPublicProfileData {
   avatarUrl: string | null;
 }
 
-// 0=NotFriends, 1=PendingOutgoing, 2=PendingIncoming, 3=Friends
-type TFriendshipStatus = 0 | 1 | 2 | 3;
-
-interface IPublicProfileHeader {
-  profile: IPublicProfileData;
-  initialFriendshipStatus: TFriendshipStatus;
+interface IProfileHeaderProps {
+  profile: IProfileData;
+  initialFriendshipStatus: FriendshipStatus;
   isOwner?: boolean;
 }
 
-export function PublicProfileHeader({
+export const ProfileHeader = ({
   profile,
   initialFriendshipStatus,
   isOwner = false,
-}: IPublicProfileHeader) {
-  const [status, setStatus] = useState<TFriendshipStatus>(initialFriendshipStatus);
-  const [isActing, setIsActing] = useState(false);
+}: IProfileHeaderProps) => {
+  const [friendshipStatus, setFriendshipStatus] =
+    useState<FriendshipStatus>(initialFriendshipStatus);
+  const [isManagingFriend, setIsManagingFriend] = useState(false);
 
   const displayName = profile.displayName ?? profile.username;
   const initials = displayName.slice(0, 2).toUpperCase();
 
-  async function handleAddFriend() {
-    setIsActing(true);
+  const handleAddFriend = async () => {
+    setIsManagingFriend(true);
     try {
       await apiFetch('/api/friends/requests', {
         method: 'POST',
         body: JSON.stringify({ receiverUsername: profile.username }),
       });
-      setStatus(1);
+
+      setFriendshipStatus(FriendshipStatus.PendingOutgoing);
     } catch {
       // silently ignore
     } finally {
-      setIsActing(false);
+      setIsManagingFriend(false);
     }
-  }
+  };
 
-  async function handleRemoveFriend() {
-    setIsActing(true);
+  const handleRemoveFriend = async () => {
+    setIsManagingFriend(true);
     try {
       await apiFetch(`/api/friends/${profile.userId}`, { method: 'DELETE' });
-      setStatus(0);
+      setFriendshipStatus(FriendshipStatus.NotFriends);
     } catch {
       // silently ignore
     } finally {
-      setIsActing(false);
+      setIsManagingFriend(false);
     }
-  }
+  };
 
   return (
     <div className="mb-8 flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-      {/* Avatar */}
       <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-2xl font-bold text-orange-600">
         {profile.avatarUrl ? (
           <Image
             src={profile.avatarUrl}
             alt={displayName}
+            placeholder="empty"
+            loading="eager"
             width={96}
             height={96}
             className="h-24 w-24 rounded-full object-cover"
@@ -77,17 +78,15 @@ export function PublicProfileHeader({
         )}
       </div>
 
-      {/* Info */}
       <div className="flex-1">
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">{displayName}</h1>
         <p className="text-sm text-gray-500">@{profile.username}</p>
         {profile.bio && <p className="mt-2 text-sm text-gray-600">{profile.bio}</p>}
       </div>
 
-      {/* Owner: settings button */}
       {isOwner && (
         <Link
-          href="/profile/me/settings"
+          href={`/profile/${profile.username}/settings`}
           className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition-colors hover:border-gray-300 hover:bg-gray-50"
         >
           <svg
@@ -107,12 +106,11 @@ export function PublicProfileHeader({
         </Link>
       )}
 
-      {/* Friendship action */}
-      {!isOwner && status === 0 && (
+      {!isOwner && friendshipStatus === FriendshipStatus.NotFriends && (
         <button
           type="button"
           onClick={handleAddFriend}
-          disabled={isActing}
+          disabled={isManagingFriend}
           className="flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
         >
           <svg
@@ -134,7 +132,7 @@ export function PublicProfileHeader({
         </button>
       )}
 
-      {!isOwner && status === 1 && (
+      {!isOwner && friendshipStatus === FriendshipStatus.PendingOutgoing && (
         <button
           type="button"
           disabled
@@ -157,17 +155,17 @@ export function PublicProfileHeader({
         </button>
       )}
 
-      {!isOwner && status === 2 && (
+      {!isOwner && friendshipStatus === FriendshipStatus.PendingIncoming && (
         <span className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-medium text-orange-700">
           Sent you a request — check Friends page
         </span>
       )}
 
-      {!isOwner && status === 3 && (
+      {!isOwner && friendshipStatus === FriendshipStatus.Friends && (
         <button
           type="button"
           onClick={handleRemoveFriend}
-          disabled={isActing}
+          disabled={isManagingFriend}
           className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
         >
           <svg
@@ -189,4 +187,4 @@ export function PublicProfileHeader({
       )}
     </div>
   );
-}
+};

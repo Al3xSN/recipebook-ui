@@ -7,7 +7,7 @@ interface IRatingStars {
   recipeId: string;
 }
 
-export function RatingStars({ recipeId }: IRatingStars) {
+export const RatingStars = ({ recipeId }: IRatingStars) => {
   const [selected, setSelected] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [averageRating, setAverageRating] = useState<number | null>(null);
@@ -15,7 +15,7 @@ export function RatingStars({ recipeId }: IRatingStars) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleRate(value: number) {
+  const handleRate = async (value: number) => {
     setSelected(value);
     setError(null);
     setIsSubmitting(true);
@@ -36,7 +36,7 @@ export function RatingStars({ recipeId }: IRatingStars) {
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div>
@@ -101,4 +101,4 @@ export function RatingStars({ recipeId }: IRatingStars) {
       {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
     </div>
   );
-}
+};

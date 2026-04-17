@@ -4,7 +4,7 @@ import { requireAuth } from '@/lib/server/require-auth';
 import { FriendRequestStatus } from '@generated/prisma/client';
 
 // GET /api/friends — list all accepted friends
-export async function GET() {
+export const GET = async () => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -47,4 +47,4 @@ export async function GET() {
   });
 
   return NextResponse.json(friends);
-}
+};

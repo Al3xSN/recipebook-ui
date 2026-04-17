@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Prisma, FriendRequestStatus } from '@generated/prisma/client';
 import { db } from '@/lib/db';
+import { FriendRequestStatus } from '@generated/prisma/client';
 import { requireAuth } from '@/lib/server/require-auth';
+import { searchUsers } from '@/lib/server/user';
 
 // GET /api/users/search?username=
-export async function GET(req: NextRequest) {
+export const GET = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -21,15 +22,7 @@ export async function GET(req: NextRequest) {
   );
 
   const excludeIds = [session.userId, ...friendIds];
-
-  const users = await db.user.findMany({
-    where: {
-      username: { contains: query, mode: Prisma.QueryMode.insensitive },
-      id: { notIn: excludeIds },
-    },
-    select: { id: true, username: true },
-    take: 20,
-  });
+  const users = await searchUsers(query, excludeIds);
 
   return NextResponse.json(users.map((u) => ({ userId: u.id, username: u.username })));
-}
+};

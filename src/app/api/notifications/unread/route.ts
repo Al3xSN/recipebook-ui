@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 
 // GET /api/notifications/unread — { hasUnread: boolean } for the navbar dot
-export async function GET() {
+export const GET = async () => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -13,4 +13,4 @@ export async function GET() {
   });
 
   return NextResponse.json({ hasUnread: !!exists });
-}
+};

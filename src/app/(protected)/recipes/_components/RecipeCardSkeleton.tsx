@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/Skeleton';
 
-export function RecipeCardSkeleton() {
+export const RecipeCardSkeleton = () => {
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
       {/* Image */}
@@ -38,4 +38,4 @@ export function RecipeCardSkeleton() {
       </div>
     </div>
   );
-}
+};

@@ -12,7 +12,7 @@ export class ApiRequestError extends Error {
   }
 }
 
-async function parseError(res: Response): Promise<ApiRequestError> {
+const parseError = async (res: Response): Promise<ApiRequestError> => {
   try {
     const body = (await res.json()) as IApiError;
     return new ApiRequestError({
@@ -22,18 +22,14 @@ async function parseError(res: Response): Promise<ApiRequestError> {
   } catch {
     return new ApiRequestError({ status: res.status, detail: res.statusText });
   }
-}
+};
 
-async function parseResponse<T>(res: Response): Promise<T> {
+const parseResponse = async <T>(res: Response): Promise<T> => {
   if (res.status === 204) return null as T;
   return res.json() as Promise<T>;
-}
+};
 
-/**
- * Fetch wrapper for all API routes (/api/*).
- * Session cookie is sent automatically for same-origin requests.
- */
-export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+export const apiFetch = async <T>(path: string, options?: RequestInit): Promise<T> => {
   const res = await fetch(path, {
     ...options,
     headers: {
@@ -44,4 +40,4 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
 
   if (!res.ok) throw await parseError(res);
   return parseResponse<T>(res);
-}
+};

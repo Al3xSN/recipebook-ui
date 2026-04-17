@@ -13,7 +13,7 @@ type RecipeWithRelations = Recipe & {
   user: User;
 };
 
-export function toRecipeDto(recipe: RecipeWithRelations) {
+export const toRecipeDto = (recipe: RecipeWithRelations) => {
   return {
     id: recipe.id,
     title: recipe.title,
@@ -46,4 +46,4 @@ export function toRecipeDto(recipe: RecipeWithRelations) {
     createdAt: recipe.createdAt instanceof Date ? recipe.createdAt.toISOString() : recipe.createdAt,
     updatedAt: recipe.updatedAt instanceof Date ? recipe.updatedAt.toISOString() : recipe.updatedAt,
   };
-}
+};

@@ -8,7 +8,7 @@ import { toRecipeDto } from '@/lib/server/recipe-mapper';
 type Params = { params: Promise<{ friendUserId: string }> };
 
 // GET /api/friends/[friendUserId]/recipes
-export async function GET(_req: NextRequest, { params }: Params) {
+export const GET = async (_req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -24,4 +24,4 @@ export async function GET(_req: NextRequest, { params }: Params) {
   });
 
   return NextResponse.json(recipes.map(toRecipeDto));
-}
+};

@@ -6,7 +6,7 @@ import { apiError } from '@/lib/server/api-error';
 type Params = { params: Promise<{ id: string; commentId: string }> };
 
 // DELETE /api/recipes/[id]/comments/[commentId]
-export async function DELETE(_req: NextRequest, { params }: Params) {
+export const DELETE = async (_req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -25,4 +25,4 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
   await db.comment.delete({ where: { id: commentId } });
   return new NextResponse(null, { status: 204 });
-}
+};

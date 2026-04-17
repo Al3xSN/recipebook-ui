@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
 import { hashPassword } from '@/lib/server/password';
 import { apiError } from '@/lib/server/api-error';
+import { createUser, UserConflictError } from '@/lib/server/user';
 
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest) => {
   const body = await req.json().catch(() => null);
   if (!body) return apiError(400, 'Invalid request body.');
 
@@ -26,29 +26,26 @@ export async function POST(req: NextRequest) {
   if (displayName && displayName.length > 100)
     return apiError(422, 'Display name must be 100 characters or fewer.');
 
-  const existing = await db.user.findFirst({
-    where: { OR: [{ email: email.toLowerCase() }, { username: username.trim() }] },
-  });
-
-  if (existing) {
-    if (existing.email === email.toLowerCase())
-      return apiError(422, 'An account with this email already exists.');
-    return apiError(422, 'This username is already taken.');
-  }
-
   const passwordHash = await hashPassword(password);
-  // EB46-126D
-  const user = await db.user.create({
-    data: {
+
+  try {
+    const user = await createUser({
       username: username.trim(),
       email: email.toLowerCase(),
       passwordHash,
       displayName: displayName?.trim() || null,
-    },
-  });
+    });
 
-  return NextResponse.json(
-    { id: user.id, username: user.username, email: user.email, displayName: user.displayName },
-    { status: 201 },
-  );
-}
+    return NextResponse.json(
+      { id: user.id, username: user.username, email: user.email, displayName: user.displayName },
+      { status: 201 },
+    );
+  } catch (err) {
+    if (err instanceof UserConflictError) {
+      return err.field === 'email'
+        ? apiError(422, 'An account with this email already exists.')
+        : apiError(422, 'This username is already taken.');
+    }
+    throw err;
+  }
+};

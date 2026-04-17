@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { cacheLife, cacheTag } from 'next/cache';
+
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
@@ -8,24 +8,20 @@ import type { IRecipeDto } from '@/interfaces/IRecipe';
 import { RecipeCard } from './_components/RecipeCard';
 import { RecipeFilters } from './_components/RecipeFilters';
 
-async function getUserRecipes(userId: string): Promise<IRecipeDto[]> {
-  'use cache';
-  cacheTag(`user-recipes-${userId}`);
-  cacheLife({ stale: 30, revalidate: 60 });
-
+const getUserRecipes = async (userId: string): Promise<IRecipeDto[]> => {
   const recipes = await db.recipe.findMany({
     where: { userId },
     include: { ingredients: true, instructions: true, tags: true, user: true },
     orderBy: { createdAt: 'desc' },
   });
   return recipes.map(toRecipeDto);
-}
+};
 
-export default async function RecipesPage({
+const RecipesPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ search?: string; category?: string; tags?: string }>;
-}) {
+}) => {
   const session = await auth();
   const userId = session!.user!.id;
 
@@ -134,4 +130,6 @@ export default async function RecipesPage({
       )}
     </div>
   );
-}
+};
+
+export default RecipesPage;

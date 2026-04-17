@@ -1,14 +1,22 @@
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { auth } from '@/auth';
 import { ProfileInfoForm } from '../../_components/ProfileInfoForm';
 import { ChangePasswordForm } from '../../_components/ChangePasswordForm';
+import { AvatarUpload } from '../../_components/AvatarUpload';
 
-export default function SettingsPage() {
+const SettingsPage = async ({ params }: { params: Promise<{ username: string }> }) => {
+  const [session, { username }] = await Promise.all([auth(), params]);
+
+  if (!session?.user?.username || session.user.username !== username) {
+    redirect(`/profile/${username}`);
+  }
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
-      {/* Header */}
       <div className="mb-8 flex items-center gap-3">
         <Link
-          href="/profile/me"
+          href={`/profile/${username}`}
           className="flex items-center gap-1 text-sm text-gray-500 transition-colors hover:text-orange-500"
         >
           <svg
@@ -29,7 +37,16 @@ export default function SettingsPage() {
       </div>
 
       <div className="flex flex-col gap-6">
-        {/* Profile section */}
+        <section className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+          <div className="border-b border-gray-100 px-6 py-4">
+            <h2 className="text-base font-semibold text-gray-900">Profile picture</h2>
+            <p className="text-sm text-gray-500">Click your avatar to upload a new photo.</p>
+          </div>
+          <div className="flex justify-center px-6 py-6">
+            <AvatarUpload />
+          </div>
+        </section>
+
         <section className="overflow-hidden rounded-xl border border-gray-200 bg-white">
           <div className="border-b border-gray-100 px-6 py-4">
             <h2 className="text-base font-semibold text-gray-900">Profile</h2>
@@ -40,7 +57,6 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        {/* Account section */}
         <section className="overflow-hidden rounded-xl border border-gray-200 bg-white">
           <div className="border-b border-gray-100 px-6 py-4">
             <h2 className="text-base font-semibold text-gray-900">Account</h2>
@@ -53,4 +69,6 @@ export default function SettingsPage() {
       </div>
     </div>
   );
-}
+};
+
+export default SettingsPage;

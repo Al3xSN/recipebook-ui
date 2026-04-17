@@ -17,15 +17,16 @@ export type AuthSession = {
  *   if (result instanceof Response) return result;
  *   const { userId } = result;
  */
-export async function requireAuth(): Promise<AuthSession | Response> {
+export const requireAuth = async (): Promise<AuthSession | Response> => {
   const session = await auth();
   if (!session?.user?.id) {
     return apiError(401, 'Authentication required.');
   }
+
   return {
     userId: session.user.id,
     email: session.user.email,
     username: session.user.username,
     displayName: session.user.displayName,
   };
-}
+};

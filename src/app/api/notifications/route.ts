@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 
 // GET /api/notifications — unread or created within the last 7 days
-export async function GET() {
+export const GET = async () => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -32,4 +32,4 @@ export async function GET() {
       senderDisplayName: n.sender.displayName,
     })),
   );
-}
+};

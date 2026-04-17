@@ -5,23 +5,24 @@ import Link from 'next/link';
 
 interface IUserMenuProps {
   displayName: string;
+  username: string;
   onLogout: () => void;
 }
 
-export function UserMenu({ displayName, onLogout }: IUserMenuProps) {
+export const UserMenu = ({ displayName, username, onLogout }: IUserMenuProps) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    function handleOutsideClick(e: MouseEvent) {
+    const handleOutsideClick = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
-    }
+    };
 
-    function handleEscape(e: KeyboardEvent) {
+    const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
-    }
+    };
 
     document.addEventListener('mousedown', handleOutsideClick);
     document.addEventListener('keydown', handleEscape);
@@ -31,9 +32,9 @@ export function UserMenu({ displayName, onLogout }: IUserMenuProps) {
     };
   }, []);
 
-  function close() {
+  const close = () => {
     setOpen(false);
-  }
+  };
 
   return (
     <div ref={containerRef} className="relative hidden sm:block">
@@ -64,7 +65,7 @@ export function UserMenu({ displayName, onLogout }: IUserMenuProps) {
         }`}
       >
         <Link
-          href="/profile/me"
+          href={`/profile/${username}`}
           onClick={close}
           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
         >
@@ -82,4 +83,4 @@ export function UserMenu({ displayName, onLogout }: IUserMenuProps) {
       </div>
     </div>
   );
-}
+};

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { updateTag } from 'next/cache';
+
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
 
 // GET /api/recipes — list all recipes owned by the authenticated user
-export async function GET() {
+export const GET = async () => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -17,10 +17,10 @@ export async function GET() {
   });
 
   return NextResponse.json(recipes.map(toRecipeDto));
-}
+};
 
 // POST /api/recipes — create a new recipe
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -70,8 +70,5 @@ export async function POST(req: NextRequest) {
     include: { ingredients: true, instructions: true, tags: true, user: true },
   });
 
-  updateTag(`user-recipes-${session.userId}`);
-  updateTag('explore-recipes');
-
   return NextResponse.json(toRecipeDto(recipe), { status: 201 });
-}
+};

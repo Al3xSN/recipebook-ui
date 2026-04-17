@@ -4,7 +4,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
 }
 
-export function Input({ label, error, id, className = '', ...rest }: InputProps) {
+export const Input = ({ label, error, id, className = '', ...rest }: InputProps) => {
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor={id} className="text-sm font-medium text-gray-700">
@@ -28,4 +28,4 @@ export function Input({ label, error, id, className = '', ...rest }: InputProps)
       )}
     </div>
   );
-}
+};

@@ -19,7 +19,7 @@ interface ICommentList {
   recipeId: string;
 }
 
-export function CommentList({ recipeId }: ICommentList) {
+export const CommentList = ({ recipeId }: ICommentList) => {
   const { data: session } = useSession();
   const [comments, setComments] = useState<ICommentDto[]>([]);
   const [text, setText] = useState('');
@@ -34,7 +34,7 @@ export function CommentList({ recipeId }: ICommentList) {
       .finally(() => setIsLoading(false));
   }, [recipeId]);
 
-  async function handlePost(e: React.FormEvent) {
+  const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
     setError(null);
@@ -53,16 +53,16 @@ export function CommentList({ recipeId }: ICommentList) {
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
-  async function handleDelete(commentId: string) {
+  const handleDelete = async (commentId: string) => {
     try {
       await apiFetch(`/api/recipes/${recipeId}/comments/${commentId}`, { method: 'DELETE' });
       setComments((prev) => prev.filter((c) => c.id !== commentId));
     } catch {
       // ignore
     }
-  }
+  };
 
   const currentUserId = session?.user?.id;
   const initials = (username: string) => username.slice(0, 2).toUpperCase();
@@ -144,4 +144,4 @@ export function CommentList({ recipeId }: ICommentList) {
       </form>
     </div>
   );
-}
+};

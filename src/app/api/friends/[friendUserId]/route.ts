@@ -7,7 +7,7 @@ import { areFriends, removeFriendship } from '@/lib/server/friendship-helpers';
 type Params = { params: Promise<{ friendUserId: string }> };
 
 // DELETE /api/friends/[friendUserId] — remove a friend
-export async function DELETE(_req: NextRequest, { params }: Params) {
+export const DELETE = async (_req: NextRequest, { params }: Params) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -18,4 +18,4 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
   await removeFriendship(session.userId, friendUserId);
   return new NextResponse(null, { status: 204 });
-}
+};

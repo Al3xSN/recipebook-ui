@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
+import { getUserById } from '@/lib/server/user';
 
 // GET /api/profile
-export async function GET() {
+export const GET = async () => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
-  const user = await db.user.findUnique({ where: { id: session.userId } });
+  const user = await getUserById(session.userId);
   if (!user) return apiError(404, 'User not found.');
 
   return NextResponse.json({
@@ -18,4 +18,4 @@ export async function GET() {
     bio: user.bio,
     avatarUrl: user.avatarUrl,
   });
-}
+};

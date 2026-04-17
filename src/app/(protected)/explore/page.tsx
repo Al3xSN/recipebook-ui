@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { cacheLife, cacheTag } from 'next/cache';
+
 import { Prisma, Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
@@ -23,12 +23,10 @@ interface IExploreResult {
   totalPages: number;
 }
 
-async function getExploreRecipes(params: IExploreParams, userId: string): Promise<IExploreResult> {
-  'use cache';
-  cacheTag('explore-recipes');
-  cacheTag(`explore-recipes-${userId}`);
-  cacheLife('minutes');
-
+const getExploreRecipes = async (
+  params: IExploreParams,
+  userId: string,
+): Promise<IExploreResult> => {
   const { search, sortOrder, category, tags, page, pageSize } = params;
 
   const connections = await db.friendRequest.findMany({
@@ -83,9 +81,9 @@ async function getExploreRecipes(params: IExploreParams, userId: string): Promis
     totalCount,
     totalPages: Math.ceil(totalCount / pageSize),
   };
-}
+};
 
-export default async function ExplorePage({
+const ExplorePage = async ({
   searchParams,
 }: {
   searchParams: Promise<{
@@ -95,7 +93,7 @@ export default async function ExplorePage({
     tags?: string;
     page?: string;
   }>;
-}) {
+}) => {
   const session = await auth();
   const userId = session!.user!.id;
 
@@ -138,4 +136,6 @@ export default async function ExplorePage({
       )}
     </div>
   );
-}
+};
+
+export default ExplorePage;

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { apiFetch, ApiRequestError } from '@/lib/api';
 
-export function ChangePasswordForm() {
+export const ChangePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -13,7 +13,7 @@ export function ChangePasswordForm() {
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(false);
@@ -43,7 +43,7 @@ export function ChangePasswordForm() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <section className="rounded-2xl border border-gray-200 bg-white p-6">
@@ -96,4 +96,4 @@ export function ChangePasswordForm() {
       </form>
     </section>
   );
-}
+};
