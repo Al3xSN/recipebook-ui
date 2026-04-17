@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
 
-import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
+import { getUserById, updateUserAvatar } from '@/lib/server/user';
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     return apiError(422, 'Only JPEG, PNG, and WebP images are supported.');
   if (file.size > MAX_BYTES) return apiError(422, 'File must be 2 MB or smaller.');
 
-  const user = await db.user.findUnique({ where: { id: session.userId } });
+  const user = await getUserById(session.userId);
   if (!user) return apiError(404, 'User not found.');
 
   const blob = await put(`avatars/${session.userId}`, file, {
@@ -31,10 +31,7 @@ export async function POST(req: NextRequest) {
     allowOverwrite: true,
   });
 
-  await db.user.update({
-    where: { id: session.userId },
-    data: { avatarUrl: blob.url },
-  });
+  await updateUserAvatar(session.userId, blob.url);
 
   return NextResponse.json({ avatarUrl: blob.url });
 }

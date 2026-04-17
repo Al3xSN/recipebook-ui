@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
-import { verifyPassword } from '@/lib/server/password';
-import type { IUserDto } from '@/interfaces/IUser';
+import { verifyPassword, hashPassword } from '@/lib/server/password';
+import type { IUserDto, ICreateUserData, IUpdateUserProfileData } from '@/interfaces/IUser';
 
 export class UserConflictError extends Error {
   constructor(public field: 'email' | 'username') {
@@ -52,4 +52,49 @@ export async function verifyUserPassword(
   if (!user) return null;
   const valid = await verifyPassword(password, user.passwordHash);
   return valid ? toDto(user) : null;
+}
+
+export async function createUser(data: ICreateUserData): Promise<IUserDto> {
+  const existing = await db.user.findFirst({
+    where: {
+      OR: [{ email: data.email }, { username: data.username }],
+    },
+  });
+  if (existing) {
+    throw new UserConflictError(existing.email === data.email ? 'email' : 'username');
+  }
+  const user = await db.user.create({ data });
+  return toDto(user);
+}
+
+export async function updateUserProfile(
+  id: string,
+  data: IUpdateUserProfileData,
+): Promise<IUserDto> {
+  if (data.username) {
+    const conflict = await db.user.findFirst({
+      where: { username: data.username, NOT: { id } },
+    });
+    if (conflict) throw new UserConflictError('username');
+  }
+  const user = await db.user.update({ where: { id }, data });
+  return toDto(user);
+}
+
+export async function updateUserAvatar(id: string, avatarUrl: string): Promise<void> {
+  await db.user.update({ where: { id }, data: { avatarUrl } });
+}
+
+export async function updateUserPassword(
+  id: string,
+  currentPassword: string,
+  newPassword: string,
+): Promise<boolean> {
+  const user = await db.user.findUnique({ where: { id } });
+  if (!user) return false;
+  const valid = await verifyPassword(currentPassword, user.passwordHash);
+  if (!valid) return false;
+  const passwordHash = await hashPassword(newPassword);
+  await db.user.update({ where: { id }, data: { passwordHash } });
+  return true;
 }
