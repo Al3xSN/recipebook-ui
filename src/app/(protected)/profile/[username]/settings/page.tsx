@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { ProfileInfoForm } from '../../_components/ProfileInfoForm';
 import { ChangePasswordForm } from '../../_components/ChangePasswordForm';
 import { AvatarUpload } from '../../_components/AvatarUpload';
+import { SignOutButton } from '@/components/ui/SignOutButton';
 
 const SettingsPage = async ({ params }: { params: Promise<{ username: string }> }) => {
   const [session, { username }] = await Promise.all([auth(), params]);
@@ -66,6 +67,8 @@ const SettingsPage = async ({ params }: { params: Promise<{ username: string }> 
             <ChangePasswordForm />
           </div>
         </section>
+
+        <SignOutButton />
       </div>
     </div>
   );

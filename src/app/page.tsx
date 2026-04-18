@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { auth } from '@/auth';
-import { Navbar } from '@/components/layout/Navbar';
 import { HeroSection } from '@/components/home/HeroSection';
 
 export const metadata: Metadata = { title: 'RecipeBook — Discover, save, and share recipes' };
@@ -10,9 +9,7 @@ const HomePage = async () => {
   const user = session?.user ?? null;
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
-
+    <div style={{ minHeight: '100dvh', background: 'var(--bg)' }}>
       <HeroSection user={user} />
 
       {/* Feature highlights */}
