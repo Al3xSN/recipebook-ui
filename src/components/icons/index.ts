@@ -5,6 +5,7 @@ export { ChevronDownIcon } from './ChevronDownIcon';
 export { ClockIcon } from './ClockIcon';
 export { CookTimerIcon } from './CookTimerIcon';
 export { EditIcon } from './EditIcon';
+export { EyeIcon } from './EyeIcon';
 export { MenuIcon } from './MenuIcon';
 export { SettingsIcon } from './SettingsIcon';
 export { SpinnerIcon } from './SpinnerIcon';

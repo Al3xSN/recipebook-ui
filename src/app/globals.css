@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
 @import 'tailwindcss';
 
 :root {
@@ -10,7 +10,7 @@
   --text3: #b89880;
   --border: #e4d0b8;
   --card: #ffffff;
-  --font-display: 'Playfair Display', Georgia, serif;
+  --font-display: 'DM Sans', system-ui, sans-serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
   --nav-h: 68px;
 }
