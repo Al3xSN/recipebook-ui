@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { ApiRequestError } from '@/lib/api';
+import { SpinnerIcon } from '@/components/icons';
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -11,14 +12,15 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 export const AvatarUpload = () => {
   const { data: session, update: updateSession } = useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const avatarUrl = previewUrl ?? session?.user?.avatarUrl ?? null;
   const displayName = session?.user?.displayName ?? session?.user?.username ?? '';
   const initials = displayName.slice(0, 2).toUpperCase();
+  const avatarUrl = localPreviewUrl ?? session?.user?.avatarUrl ?? null;
+
+  const triggerUpload = () => fileInputRef.current?.click();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -28,42 +30,35 @@ export const AvatarUpload = () => {
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       setError('Only JPEG, PNG, and WebP images are supported.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
     if (file.size > MAX_BYTES) {
       setError('File must be 2 MB or smaller.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
 
     const objectUrl = URL.createObjectURL(file);
-    setPreviewUrl(objectUrl);
+    setLocalPreviewUrl(objectUrl);
     setIsUploading(true);
 
     try {
       const form = new FormData();
-      form.append('avatar', file);
-
+      form.append('image', file);
       const res = await fetch('/api/profile/avatar', { method: 'POST', body: form });
-
       if (!res.ok) {
         const body = await res.json().catch(() => ({ detail: res.statusText }));
         throw new ApiRequestError({ status: res.status, detail: body.detail ?? res.statusText });
       }
-
-      const { avatarUrl: newUrl } = (await res.json()) as { avatarUrl: string };
-
-      await updateSession({ avatarUrl: newUrl });
-
+      const { url } = (await res.json()) as { url: string };
       URL.revokeObjectURL(objectUrl);
-      setPreviewUrl(newUrl);
+      setLocalPreviewUrl(url);
+      await updateSession({ avatarUrl: url });
     } catch (err) {
+      setLocalPreviewUrl(null);
       URL.revokeObjectURL(objectUrl);
-      setPreviewUrl(null);
-      if (err instanceof ApiRequestError) {
-        setError(err.detail);
-      } else {
-        setError('Upload failed. Please try again.');
-      }
+      setError(err instanceof ApiRequestError ? err.detail : 'Upload failed. Please try again.');
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -71,60 +66,44 @@ export const AvatarUpload = () => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex items-center gap-4">
       <button
         type="button"
-        onClick={() => fileInputRef.current?.click()}
+        onClick={triggerUpload}
         disabled={isUploading}
-        aria-label="Change profile picture"
-        className="relative flex h-24 w-24 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-orange-100 text-2xl font-bold text-orange-600 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
+        aria-label="Change photo"
+        className="relative flex h-16 w-16 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-orange-100 text-xl font-bold text-orange-600 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
       >
         {avatarUrl ? (
           <Image
             src={avatarUrl}
-            alt={displayName}
-            width={96}
-            height={96}
-            className="h-24 w-24 object-cover"
+            alt="Profile photo"
+            width={64}
+            height={64}
+            className="h-16 w-16 object-cover"
           />
         ) : (
           initials
         )}
-
         {isUploading && (
-          <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40">
-            <svg
-              className="h-6 w-6 animate-spin text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-              />
-            </svg>
+          <span className="absolute inset-0 flex items-center justify-center bg-black/40">
+            <SpinnerIcon className="h-5 w-5 animate-spin text-white" />
           </span>
         )}
       </button>
 
-      <p className="text-xs text-gray-500">JPEG, PNG, or WebP — max 2 MB</p>
-
-      {error && (
-        <p role="alert" className="text-xs text-red-600">
-          {error}
-        </p>
-      )}
+      <div>
+        <p className="font-semibold text-[var(--text)]">{displayName}</p>
+        <button
+          type="button"
+          onClick={triggerUpload}
+          disabled={isUploading}
+          className="mt-1.5 rounded-lg border border-[var(--border)] bg-white px-3 py-1.5 text-sm font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
+        >
+          Change photo
+        </button>
+        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      </div>
 
       <input
         ref={fileInputRef}

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 import { Visibility } from '@generated/prisma/client';
 import type { IRecipeDto } from '@/interfaces/IRecipe';
+import { BookIcon, ClockIcon, UsersIcon } from '@/components/icons';
 
 interface IRecipeCardProps {
   recipe: IRecipeDto;
@@ -60,18 +61,7 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-orange-50">
-            <svg
-              className="h-10 w-10 text-orange-200"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-            </svg>
+            <BookIcon className="h-10 w-10 text-orange-200" strokeWidth={1.5} />
           </div>
         )}
       </div>
@@ -95,37 +85,11 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
         {/* Meta: time + servings */}
         <div className="flex items-center gap-3 text-xs text-gray-500">
           <span className="flex items-center gap-1">
-            <svg
-              className="h-3.5 w-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
+            <ClockIcon className="h-3.5 w-3.5" />
             {formatTime(totalMinutes)}
           </span>
           <span className="flex items-center gap-1">
-            <svg
-              className="h-3.5 w-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
+            <UsersIcon className="h-3.5 w-3.5" />
             {recipe.servings} serving{recipe.servings !== 1 ? 's' : ''}
           </span>
         </div>

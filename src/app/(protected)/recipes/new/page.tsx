@@ -2,83 +2,62 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import { apiFetch, ApiRequestError } from '@/lib/api';
-import { CATEGORY_LABELS, TAG_LABELS, UNIT_LABELS, VISIBILITY_LABELS } from '@/lib/recipe-enums';
+import type { IRecipeDto } from '@/interfaces/IRecipe';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { DetailsStep } from './steps/DetailsStep';
+import { IngredientsStep } from './steps/IngredientsStep';
+import { StepsStep } from './steps/StepsStep';
+import { PublishStep } from './steps/PublishStep';
+
+type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
+type Visibility = 'PUBLIC' | 'FRIENDS_ONLY' | 'PRIVATE';
+
+const STEP_LABELS = ['DETAILS', 'INGREDIENTS', 'STEPS', 'PUBLISH'] as const;
 
 const NewRecipePage = () => {
   const router = useRouter();
 
+  const [step, setStep] = useState(1);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState(0);
+  const [category, setCategory] = useState(-1);
   const [tags, setTags] = useState<number[]>([]);
+  const [difficulty, setDifficulty] = useState<Difficulty>('EASY');
   const [prepTimeMinutes, setPrepTimeMinutes] = useState('');
   const [cookTimeMinutes, setCookTimeMinutes] = useState('');
   const [servings, setServings] = useState('');
-  const [visibility, setVisibility] = useState(1);
-  const [imageUrl, setImageUrl] = useState('');
+  const [visibility, setVisibility] = useState<Visibility>('PUBLIC');
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+  const [pendingImagePreview, setPendingImagePreview] = useState<string | null>(null);
   const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: 0 }]);
   const [instructions, setInstructions] = useState([{ text: '' }]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const toggleTag = (tag: number) => {
-    setTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
-  };
-
-  const addIngredient = () => {
-    setIngredients((prev) => [...prev, { name: '', amount: '', unit: 0 }]);
-  };
-
-  const removeIngredient = (index: number) => {
-    setIngredients((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const updateIngredient = (
-    index: number,
-    field: 'name' | 'amount' | 'unit',
-    value: string | number,
-  ) => {
-    setIngredients((prev) =>
-      prev.map((ing, i) => (i === index ? { ...ing, [field]: value } : ing)),
-    );
-  };
-
-  const addInstruction = () => {
-    setInstructions((prev) => [...prev, { text: '' }]);
-  };
-
-  const removeInstruction = (index: number) => {
-    setInstructions((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const updateInstruction = (index: number, value: string) => {
-    setInstructions((prev) => prev.map((inst, i) => (i === index ? { text: value } : inst)));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const handlePublish = async () => {
+    setSubmitError(null);
     setIsLoading(true);
 
     try {
-      await apiFetch('/api/recipes', {
+      const created = await apiFetch<IRecipeDto>('/api/recipes', {
         method: 'POST',
         body: JSON.stringify({
           title: title.trim(),
           description: description.trim() || null,
           category,
           visibility,
+          difficulty,
           tags,
-          prepTimeMinutes: Number(prepTimeMinutes),
-          cookTimeMinutes: Number(cookTimeMinutes),
-          servings: Number(servings),
-          imageUrl: imageUrl.trim() || null,
+          prepTimeMinutes: Number(prepTimeMinutes) || 0,
+          cookTimeMinutes: Number(cookTimeMinutes) || 0,
+          servings: Number(servings) || 1,
           ingredients: ingredients.map((ing) => ({
             name: ing.name,
-            amount: Number(ing.amount),
+            amount: Number(ing.amount) || 0,
             unit: ing.unit,
           })),
           instructions: instructions.map((inst, i) => ({
@@ -87,12 +66,21 @@ const NewRecipePage = () => {
           })),
         }),
       });
+
+      if (pendingImageFile) {
+        const form = new FormData();
+        form.append('image', pendingImageFile);
+        await fetch(`/api/recipes/${created.id}/image`, { method: 'POST', body: form }).catch(
+          () => {},
+        );
+      }
+
       router.push('/recipes');
     } catch (err) {
       if (err instanceof ApiRequestError) {
-        setError(err.detail);
+        setSubmitError(err.detail);
       } else {
-        setError('Failed to create recipe. Please try again.');
+        setSubmitError('Failed to create recipe. Please try again.');
       }
     } finally {
       setIsLoading(false);
@@ -100,332 +88,130 @@ const NewRecipePage = () => {
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">New recipe</h1>
+    <div className="mx-auto max-w-lg px-4 py-6">
+      {/* Header */}
+      <div className="mb-6 flex items-center justify-between">
+        <h1
+          className="text-xl font-bold"
+          style={{ color: 'var(--text)', fontFamily: 'var(--font-display)' }}
+        >
+          New Recipe
+        </h1>
+        <button
+          type="button"
+          onClick={() => setShowCancelModal(true)}
+          className="text-sm transition-colors hover:opacity-70"
+          style={{ color: 'var(--text2)' }}
+        >
+          Cancel
+        </button>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-8">
-        {error && (
-          <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
-            {error}
-          </p>
-        )}
+      {/* Progress bar */}
+      <div className="mb-8 flex">
+        {STEP_LABELS.map((label, i) => {
+          const stepNum = i + 1;
+          const isActive = step === stepNum;
+          const isDone = step > stepNum;
+          return (
+            <div key={label} className="flex flex-1 flex-col items-center gap-1">
+              <span
+                className="text-[9px] font-semibold tracking-widest"
+                style={{
+                  color: isActive ? 'var(--accent)' : isDone ? 'var(--text2)' : 'var(--text3)',
+                }}
+              >
+                {label}
+              </span>
+              <div
+                className="h-0.5 w-full"
+                style={{
+                  backgroundColor: isActive || isDone ? 'var(--accent)' : 'var(--border)',
+                }}
+              />
+            </div>
+          );
+        })}
+      </div>
 
-        {/* Basic info */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-base font-semibold text-gray-900">Basic info</h2>
-          <Input
-            id="title"
-            label="Title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-          <div className="flex flex-col gap-1">
-            <label htmlFor="description" className="text-sm font-medium text-gray-700">
-              Description <span className="font-normal text-gray-400">(optional)</span>
-            </label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
-            />
-          </div>
-          <Input
-            id="imageUrl"
-            label="Image URL (optional)"
-            type="url"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
-        </section>
+      {/* Steps */}
+      {step === 1 && (
+        <DetailsStep
+          title={title}
+          setTitle={setTitle}
+          description={description}
+          setDescription={setDescription}
+          category={category}
+          setCategory={setCategory}
+          tags={tags}
+          setTags={setTags}
+          difficulty={difficulty}
+          setDifficulty={setDifficulty}
+          prepTimeMinutes={prepTimeMinutes}
+          setPrepTimeMinutes={setPrepTimeMinutes}
+          cookTimeMinutes={cookTimeMinutes}
+          setCookTimeMinutes={setCookTimeMinutes}
+          servings={servings}
+          setServings={setServings}
+          pendingImagePreview={pendingImagePreview}
+          onImageSelect={(file, preview) => {
+            setPendingImageFile(file);
+            setPendingImagePreview(preview);
+          }}
+          onImageRemove={() => {
+            setPendingImageFile(null);
+            setPendingImagePreview(null);
+          }}
+          onContinue={() => setStep(2)}
+        />
+      )}
 
-        {/* Details */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-base font-semibold text-gray-900">Details</h2>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="category" className="text-sm font-medium text-gray-700">
-              Category
-            </label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(Number(e.target.value))}
-              className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
-            >
-              {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="visibility" className="text-sm font-medium text-gray-700">
-              Visibility
-            </label>
-            <select
-              id="visibility"
-              value={visibility}
-              onChange={(e) => setVisibility(Number(e.target.value))}
-              className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
-            >
-              {Object.entries(VISIBILITY_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            <Input
-              id="prepTime"
-              label="Prep time (min)"
-              type="number"
-              min="0"
-              value={prepTimeMinutes}
-              onChange={(e) => setPrepTimeMinutes(e.target.value)}
-              required
-            />
-            <Input
-              id="cookTime"
-              label="Cook time (min)"
-              type="number"
-              min="0"
-              value={cookTimeMinutes}
-              onChange={(e) => setCookTimeMinutes(e.target.value)}
-              required
-            />
-            <Input
-              id="servings"
-              label="Servings"
-              type="number"
-              min="1"
-              value={servings}
-              onChange={(e) => setServings(e.target.value)}
-              required
-            />
-          </div>
-        </section>
+      {step === 2 && (
+        <IngredientsStep
+          ingredients={ingredients}
+          setIngredients={setIngredients}
+          onBack={() => setStep(1)}
+          onContinue={() => setStep(3)}
+        />
+      )}
 
-        {/* Tags */}
-        <section className="flex flex-col gap-3">
-          <h2 className="text-base font-semibold text-gray-900">Tags</h2>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(TAG_LABELS).map(([value, label]) => {
-              const tagNum = Number(value);
-              const active = tags.includes(tagNum);
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => toggleTag(tagNum)}
-                  className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
-                    active
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-        </section>
+      {step === 3 && (
+        <StepsStep
+          instructions={instructions}
+          setInstructions={setInstructions}
+          onBack={() => setStep(2)}
+          onContinue={() => setStep(4)}
+        />
+      )}
 
-        {/* Ingredients */}
-        <section className="flex flex-col gap-3">
-          <h2 className="text-base font-semibold text-gray-900">Ingredients</h2>
-          <div className="flex flex-col gap-2">
-            {ingredients.map((ing, index) => (
-              <div key={index} className="flex items-end gap-2">
-                <div className="flex-1">
-                  {index === 0 && (
-                    <label
-                      htmlFor={`ing-name-${index}`}
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
-                      Name
-                    </label>
-                  )}
-                  <input
-                    id={`ing-name-${index}`}
-                    type="text"
-                    value={ing.name}
-                    onChange={(e) => updateIngredient(index, 'name', e.target.value)}
-                    placeholder="e.g. flour"
-                    className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
-                  />
-                </div>
-                <div className="w-24">
-                  {index === 0 && (
-                    <label
-                      htmlFor={`ing-amount-${index}`}
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
-                      Amount
-                    </label>
-                  )}
-                  <input
-                    id={`ing-amount-${index}`}
-                    type="number"
-                    min="0"
-                    step="any"
-                    value={ing.amount}
-                    onChange={(e) => updateIngredient(index, 'amount', e.target.value)}
-                    placeholder="1"
-                    className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
-                  />
-                </div>
-                <div className="w-28">
-                  {index === 0 && (
-                    <label
-                      htmlFor={`ing-unit-${index}`}
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
-                      Unit
-                    </label>
-                  )}
-                  <select
-                    id={`ing-unit-${index}`}
-                    value={ing.unit}
-                    onChange={(e) => updateIngredient(index, 'unit', Number(e.target.value))}
-                    className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
-                  >
-                    {Object.entries(UNIT_LABELS).map(([val, lbl]) => (
-                      <option key={val} value={val}>
-                        {lbl}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeIngredient(index)}
-                  disabled={ingredients.length === 1}
-                  className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40"
-                  aria-label="Remove ingredient"
-                >
-                  <svg
-                    className="h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={addIngredient}
-            className="flex w-fit items-center gap-1.5 rounded-lg border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-500 transition-colors hover:border-orange-400 hover:text-orange-500"
-          >
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Add ingredient
-          </button>
-        </section>
+      {step === 4 && (
+        <PublishStep
+          title={title}
+          category={category}
+          prepTimeMinutes={prepTimeMinutes}
+          cookTimeMinutes={cookTimeMinutes}
+          servings={servings}
+          difficulty={difficulty}
+          ingredientCount={ingredients.length}
+          stepCount={instructions.length}
+          visibility={visibility}
+          setVisibility={setVisibility}
+          onBack={() => setStep(3)}
+          onPublish={handlePublish}
+          isLoading={isLoading}
+          error={submitError}
+        />
+      )}
 
-        {/* Instructions */}
-        <section className="flex flex-col gap-3">
-          <h2 className="text-base font-semibold text-gray-900">Instructions</h2>
-          <div className="flex flex-col gap-3">
-            {instructions.map((inst, index) => (
-              <div key={index} className="flex items-start gap-3">
-                <span className="mt-2.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">
-                  {index + 1}
-                </span>
-                <textarea
-                  value={inst.text}
-                  onChange={(e) => updateInstruction(index, e.target.value)}
-                  rows={2}
-                  placeholder={`Step ${index + 1}…`}
-                  className="flex-1 rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeInstruction(index)}
-                  disabled={instructions.length === 1}
-                  className="mt-2 rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40"
-                  aria-label="Remove step"
-                >
-                  <svg
-                    className="h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={addInstruction}
-            className="flex w-fit items-center gap-1.5 rounded-lg border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-500 transition-colors hover:border-orange-400 hover:text-orange-500"
-          >
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Add step
-          </button>
-        </section>
-
-        {/* Actions */}
-        <div className="flex gap-3 border-t border-gray-200 pt-6">
-          <Button type="submit" isLoading={isLoading}>
-            Save recipe
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => router.push('/recipes')}
-            disabled={isLoading}
-          >
-            Cancel
-          </Button>
-        </div>
-      </form>
+      <ConfirmModal
+        isOpen={showCancelModal}
+        title="Discard recipe?"
+        message="You'll lose all the details you've entered."
+        confirmLabel="Discard"
+        cancelLabel="Keep editing"
+        onConfirm={() => router.push('/recipes')}
+        onCancel={() => setShowCancelModal(false)}
+      />
     </div>
   );
 };

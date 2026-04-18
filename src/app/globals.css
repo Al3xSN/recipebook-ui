@@ -1,12 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
 @import 'tailwindcss';
 
 :root {
-  --background: #fffbf7;
-  --foreground: #171717;
+  --bg: #fdf6ec;
+  --bg2: #f3e8d4;
+  --accent: #c8602a;
+  --text: #3d2b1f;
+  --text2: #7a5c48;
+  --text3: #b89880;
+  --border: #e4d0b8;
+  --card: #ffffff;
+  --font-display: 'DM Sans', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --nav-h: 68px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
 }

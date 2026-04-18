@@ -1,22 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
-import { toRecipeDto } from '@/lib/server/recipe-mapper';
+import { getRecipesByUserId, createRecipe } from '@/lib/server/recipe';
 
 // GET /api/recipes — list all recipes owned by the authenticated user
 export const GET = async () => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
-  const recipes = await db.recipe.findMany({
-    where: { userId: session.userId },
-    include: { ingredients: true, instructions: true, tags: true, user: true },
-    orderBy: { createdAt: 'desc' },
-  });
+  const recipes = await getRecipesByUserId(session.userId);
 
-  return NextResponse.json(recipes.map(toRecipeDto));
+  return NextResponse.json(recipes);
 };
 
 // POST /api/recipes — create a new recipe
@@ -50,25 +45,21 @@ export const POST = async (req: NextRequest) => {
   if (cookTimeMinutes === undefined) return apiError(422, 'Cook time is required.');
   if (servings === undefined) return apiError(422, 'Servings is required.');
 
-  const recipe = await db.recipe.create({
-    data: {
-      title: title.trim(),
-      description: description?.trim() || null,
-      category,
-      visibility,
-      difficulty: difficulty ?? null,
-      cuisine: cuisine ?? null,
-      prepTimeMinutes,
-      cookTimeMinutes,
-      servings,
-      imageUrl: imageUrl?.trim() || null,
-      userId: session.userId,
-      ingredients: { create: ingredients },
-      instructions: { create: instructions },
-      tags: { create: tags.map((tag: number) => ({ tag })) },
-    },
-    include: { ingredients: true, instructions: true, tags: true, user: true },
+  const recipe = await createRecipe(session.userId, {
+    title: title.trim(),
+    description: description?.trim() || null,
+    ingredients,
+    instructions,
+    tags,
+    category,
+    visibility,
+    difficulty: difficulty ?? null,
+    cuisine: cuisine ?? null,
+    prepTimeMinutes,
+    cookTimeMinutes,
+    servings,
+    imageUrl: imageUrl?.trim() || null,
   });
 
-  return NextResponse.json(toRecipeDto(recipe), { status: 201 });
+  return NextResponse.json(recipe, { status: 201 });
 };

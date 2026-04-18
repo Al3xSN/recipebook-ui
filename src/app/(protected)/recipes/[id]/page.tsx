@@ -3,25 +3,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { auth } from '@/auth';
-import { db } from '@/lib/db';
 import { CATEGORY_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
-import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
+import { BookIcon, ClockIcon, CookTimerIcon, EditIcon, UsersIcon } from '@/components/icons';
+import {
+  getRecipeById,
+  canAccessRecipe,
+  RecipeNotFoundError,
+  RecipeAccessError,
+} from '@/lib/server/recipe';
 import { RatingStars } from './_components/RatingStars';
 import { CommentList } from './_components/CommentList';
-
-const getRecipe = async (id: string) => {
-  const recipe = await db.recipe.findUnique({
-    where: { id },
-    include: { ingredients: true, instructions: true, tags: true, user: true },
-  });
-
-  if (!recipe) return null;
-
-  return {
-    ...recipe,
-    ingredients: recipe.ingredients.map((i) => ({ ...i, amount: Number(i.amount) })),
-  };
-};
+import { DeleteRecipeButton } from './_components/DeleteRecipeButton';
 
 const AVATAR_COLORS = [
   'bg-orange-400',
@@ -49,28 +41,16 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
   const session = await auth();
   const { id } = await params;
 
-  const recipe = await getRecipe(id);
-
-  if (!recipe) notFound();
+  let recipe: Awaited<ReturnType<typeof getRecipeById>>;
+  try {
+    recipe = await getRecipeById(id);
+    await canAccessRecipe(recipe, session!.user!.id);
+  } catch (e) {
+    if (e instanceof RecipeNotFoundError || e instanceof RecipeAccessError) notFound();
+    throw e;
+  }
 
   const isOwner = recipe.userId === session?.user?.id;
-
-  if (!isOwner) {
-    if (recipe.visibility === Visibility.PRIVATE) {
-      notFound();
-    } else if (recipe.visibility === Visibility.FRIENDS_ONLY) {
-      const connection = await db.friendRequest.findFirst({
-        where: {
-          status: FriendRequestStatus.ACCEPTED,
-          OR: [
-            { senderId: session!.user!.id, receiverId: recipe.userId },
-            { senderId: recipe.userId, receiverId: session!.user!.id },
-          ],
-        },
-      });
-      if (!connection) notFound();
-    }
-  }
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
@@ -89,42 +69,22 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
           </div>
         ) : (
           <div className="flex h-72 w-full items-center justify-center bg-orange-50">
-            <svg
-              className="h-16 w-16 text-orange-200"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-            </svg>
+            <BookIcon className="h-16 w-16 text-orange-200" strokeWidth={1.5} />
           </div>
         )}
 
-        {/* Edit button */}
+        {/* Owner actions */}
         {isOwner && (
-          <Link
-            href={`/recipes/${id}/edit`}
-            className="absolute right-3 top-3 flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-orange-500"
-          >
-            <svg
-              className="h-3.5 w-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+          <div className="absolute right-3 top-3 flex items-center gap-2">
+            <Link
+              href={`/recipes/${id}/edit`}
+              className="flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-orange-500"
             >
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
-            Edit
-          </Link>
+              <EditIcon className="h-3.5 w-3.5" />
+              Edit
+            </Link>
+            <DeleteRecipeButton recipeId={id} />
+          </div>
         )}
       </div>
 
@@ -139,26 +99,26 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
       {/* Author byline */}
       {!isOwner && (
         <Link
-          href={`/profile/${recipe.user.username ?? ''}`}
+          href={`/profile/${recipe.author.username}`}
           className="mb-4 inline-flex items-center gap-2"
         >
-          {recipe.user.avatarUrl ? (
+          {recipe.author.avatarUrl ? (
             <Image
-              src={recipe.user.avatarUrl}
-              alt={recipe.user.displayName ?? recipe.user.username ?? ''}
+              src={recipe.author.avatarUrl}
+              alt={recipe.author.displayName}
               width={24}
               height={24}
               className="h-6 w-6 rounded-full object-cover"
             />
           ) : (
             <span
-              className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(recipe.user.username ?? '')}`}
+              className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(recipe.author.username)}`}
             >
-              {(recipe.user.displayName ?? recipe.user.username ?? '?').charAt(0).toUpperCase()}
+              {recipe.author.displayName.charAt(0).toUpperCase()}
             </span>
           )}
           <span className="text-sm text-gray-500 hover:text-gray-700">
-            {recipe.user.displayName ?? recipe.user.username}
+            {recipe.author.displayName}
           </span>
         </Link>
       )}
@@ -166,59 +126,21 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
       {/* Meta row */}
       <div className="mb-6 flex flex-wrap gap-6 text-sm text-gray-500">
         <span className="flex items-center gap-1.5">
-          <svg
-            className="h-4 w-4 text-orange-400"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
+          <ClockIcon className="h-4 w-4 text-orange-400" />
           <span>
             <span className="font-medium text-gray-700">Prep</span>{' '}
             {formatTime(recipe.prepTimeMinutes)}
           </span>
         </span>
         <span className="flex items-center gap-1.5">
-          <svg
-            className="h-4 w-4 text-orange-400"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10z" />
-            <path d="M12 6v6l4 2" />
-          </svg>
+          <CookTimerIcon className="h-4 w-4 text-orange-400" />
           <span>
             <span className="font-medium text-gray-700">Cook</span>{' '}
             {formatTime(recipe.cookTimeMinutes)}
           </span>
         </span>
         <span className="flex items-center gap-1.5">
-          <svg
-            className="h-4 w-4 text-orange-400"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
+          <UsersIcon className="h-4 w-4 text-orange-400" />
           <span>
             <span className="font-medium text-gray-700">Serves</span> {recipe.servings}
           </span>
@@ -240,7 +162,7 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
             <li key={i} className="flex items-center justify-between px-4 py-3">
               <span className="text-sm font-medium text-gray-900">{ing.name}</span>
               <span className="text-sm text-gray-500">
-                {Number(ing.amount)} {UNIT_LABELS[ing.unit]}
+                {ing.amount} {UNIT_LABELS[ing.unit]}
               </span>
             </li>
           ))}

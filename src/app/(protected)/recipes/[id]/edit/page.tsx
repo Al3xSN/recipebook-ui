@@ -4,6 +4,7 @@ import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { ImageUpload } from '@/components/ui/ImageUpload';
 import { apiFetch, ApiRequestError } from '@/lib/api';
 import { CATEGORY_LABELS, TAG_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
 import type { IRecipeDto } from '@/interfaces/IRecipe';
@@ -23,7 +24,7 @@ const EditRecipePage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [prepTimeMinutes, setPrepTimeMinutes] = useState('');
   const [cookTimeMinutes, setCookTimeMinutes] = useState('');
   const [servings, setServings] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: 0 }]);
   const [instructions, setInstructions] = useState([{ text: '' }]);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +40,7 @@ const EditRecipePage = ({ params }: { params: Promise<{ id: string }> }) => {
         setPrepTimeMinutes(String(r.prepTimeMinutes));
         setCookTimeMinutes(String(r.cookTimeMinutes));
         setServings(String(r.servings));
-        setImageUrl(r.imageUrl ?? '');
+        setImageUrl(r.imageUrl ?? null);
         setIngredients(
           r.ingredients.map((i) => ({ name: i.name, amount: String(i.amount), unit: i.unit })),
         );
@@ -102,7 +103,7 @@ const EditRecipePage = ({ params }: { params: Promise<{ id: string }> }) => {
           prepTimeMinutes: Number(prepTimeMinutes),
           cookTimeMinutes: Number(cookTimeMinutes),
           servings: Number(servings),
-          imageUrl: imageUrl.trim() || null,
+          imageUrl: imageUrl || null,
           visibility: 3, // keep Private on edit — user can change via dedicated field later
           ingredients: ingredients.map((ing) => ({
             name: ing.name,
@@ -172,13 +173,21 @@ const EditRecipePage = ({ params }: { params: Promise<{ id: string }> }) => {
               className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
             />
           </div>
-          <Input
-            id="imageUrl"
-            label="Image URL (optional)"
-            type="url"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-medium text-gray-700">
+              Photo <span className="font-normal text-gray-400">(optional)</span>
+            </span>
+            <ImageUpload
+              uploadUrl={`/api/recipes/${id}/image`}
+              currentImageUrl={imageUrl}
+              shape="rectangle"
+              onSuccess={(url) => setImageUrl(url)}
+              onRemove={async () => {
+                await fetch(`/api/recipes/${id}/image`, { method: 'DELETE' }).catch(() => {});
+                setImageUrl(null);
+              }}
+            />
+          </div>
         </section>
 
         {/* Details */}

@@ -1,75 +1,160 @@
 import Link from 'next/link';
+import { BookIcon } from '@/components/icons';
 
 interface IHeroSectionProps {
   user: { displayName?: string | null; username: string } | null;
 }
 
 export const HeroSection = ({ user }: IHeroSectionProps) => {
-  return (
-    <section className="bg-gradient-to-b from-orange-50 to-white px-4 py-10 text-center">
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-6 inline-flex items-center justify-center rounded-2xl bg-orange-500 p-4 text-white shadow-lg">
-          <svg
-            className="h-10 w-10"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.75"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-          </svg>
-        </div>
+  if (user) {
+    return (
+      <section style={{ background: 'var(--bg)' }} className="px-5 py-10 text-center">
+        <h1
+          style={{ color: 'var(--text)', fontSize: 30, fontWeight: 700 }}
+          className="mb-3 leading-tight"
+        >
+          Welcome back,{' '}
+          <span style={{ color: 'var(--accent)' }}>{user.displayName ?? user.username}</span>
+        </h1>
+        <p style={{ color: 'var(--text2)' }} className="mb-8 text-sm">
+          Pick up where you left off — your collection is waiting.
+        </p>
+        <Link
+          href="/recipes"
+          style={{ background: 'var(--accent)', borderRadius: 12 }}
+          className="inline-flex w-full max-w-sm items-center justify-center py-3.5 text-sm font-semibold text-white"
+        >
+          My recipes
+        </Link>
+      </section>
+    );
+  }
 
-        {user ? (
-          <>
-            <h1 className="mb-4 text-5xl font-bold tracking-tight text-gray-900">
-              Welcome back,
-              <br />
-              <span className="text-orange-500">{user.displayName ?? user.username}.</span>
-            </h1>
-            <p className="mb-10 text-lg text-gray-500">
-              Pick up where you left off — your collection is waiting.
-            </p>
-            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link
-                href="/recipes"
-                className="inline-flex items-center justify-center rounded-lg bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
-              >
-                My recipes
-              </Link>
-            </div>
-          </>
-        ) : (
-          <>
-            <h1 className="mb-4 text-5xl font-bold tracking-tight text-gray-900">
-              Your recipes,
-              <br />
-              <span className="text-orange-500">all in one place.</span>
-            </h1>
-            <p className="mb-10 text-lg text-gray-500">
-              Discover new dishes, save your favourites, and share them with friends — from a
-              single, beautiful collection.
-            </p>
-            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link
-                href="/register"
-                className="inline-flex items-center justify-center rounded-lg bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
-              >
-                Get started — it&apos;s free
-              </Link>
-              <Link
-                href="/login"
-                className="inline-flex items-center justify-center rounded-lg border border-gray-300 px-6 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
-              >
-                Sign in
-              </Link>
-            </div>
-          </>
-        )}
+  return (
+    <>
+      <div
+        style={{ background: 'var(--accent)' }}
+        className="flex h-52 flex-col items-center justify-center"
+      >
+        <div
+          style={{ background: 'rgba(255,255,255,0.18)', borderRadius: 18 }}
+          className="mb-2.5 flex h-14 w-14 items-center justify-center"
+        >
+          <BookIcon className="h-8 w-8 text-white" strokeWidth={1.75} />
+        </div>
+        <span className="text-base font-semibold text-white">RecipeBook</span>
       </div>
-    </section>
+
+      <section style={{ background: 'var(--bg)' }} className="px-5 py-8">
+        <h1
+          style={{ color: 'var(--text)', fontSize: 30, fontWeight: 700 }}
+          className="mb-3 leading-tight"
+        >
+          Your personal recipe book, elevated.
+        </h1>
+        <p style={{ color: 'var(--text2)' }} className="mb-7 text-sm leading-relaxed">
+          Discover, create, and share recipes with a community of passionate home cooks.
+        </p>
+
+        <ul className="mb-8 flex flex-col gap-4">
+          <FeatureBullet
+            icon={<SearchIcon />}
+            text="Thousands of recipes from home cooks worldwide"
+          />
+          <FeatureBullet icon={<ListIcon />} text="Step-by-step instructions with smart scaling" />
+          <FeatureBullet icon={<StarIcon />} text="Rate, review, and save your favourites" />
+        </ul>
+
+        <div className="flex flex-col gap-3">
+          <Link
+            href="/register"
+            style={{
+              background: 'var(--accent)',
+              borderRadius: 12,
+              boxShadow: '0 4px 18px color-mix(in oklch, var(--accent) 45%, transparent)',
+            }}
+            className="flex w-full items-center justify-center py-3.5 text-sm font-semibold text-white transition-transform active:scale-[0.97]"
+          >
+            Create free account
+          </Link>
+          <Link
+            href="/login"
+            style={{
+              border: '1px solid var(--border)',
+              borderRadius: 12,
+              color: 'var(--text)',
+              background: 'var(--card)',
+            }}
+            className="flex w-full items-center justify-center py-3.5 text-sm font-semibold transition-transform active:scale-[0.97]"
+          >
+            Log in
+          </Link>
+        </div>
+      </section>
+    </>
   );
 };
+
+const FeatureBullet = ({ icon, text }: { icon: React.ReactNode; text: string }) => (
+  <li className="flex items-center gap-3">
+    <div
+      style={{ background: 'var(--bg2)', borderRadius: 10, flexShrink: 0 }}
+      className="flex h-9 w-9 items-center justify-center"
+    >
+      {icon}
+    </div>
+    <span style={{ color: 'var(--text2)' }} className="text-sm leading-snug">
+      {text}
+    </span>
+  </li>
+);
+
+const SearchIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="var(--accent)"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="11" cy="11" r="8" />
+    <path d="m21 21-4.35-4.35" />
+  </svg>
+);
+
+const ListIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="var(--accent)"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <path d="M9 8h6M9 12h6M9 16h4" />
+  </svg>
+);
+
+const StarIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="var(--accent)"
+    stroke="var(--accent)"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  </svg>
+);

@@ -46,9 +46,7 @@ export const ChangePasswordForm = () => {
   };
 
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-6">
-      <h2 className="mb-4 text-lg font-semibold text-gray-900">Change password</h2>
-
+    <div>
       {success && (
         <p role="status" className="mb-4 rounded-lg bg-green-50 px-4 py-2 text-sm text-green-700">
           Password changed successfully.
@@ -94,6 +92,6 @@ export const ChangePasswordForm = () => {
           </Button>
         </div>
       </form>
-    </section>
+    </div>
   );
 };

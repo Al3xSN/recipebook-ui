@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
+import {
+  deleteComment,
+  CommentNotFoundError,
+  CommentAccessError,
+} from '@/lib/server/recipe/comments';
 
 type Params = { params: Promise<{ id: string; commentId: string }> };
 
@@ -12,17 +17,12 @@ export const DELETE = async (_req: NextRequest, { params }: Params) => {
 
   const { id: recipeId, commentId } = await params;
 
-  const comment = await db.comment.findUnique({
-    where: { id: commentId },
-    include: { recipe: { select: { userId: true } } },
-  });
-
-  if (!comment || comment.recipeId !== recipeId) return apiError(404, 'Comment not found.');
-
-  const isAuthor = comment.authorId === session.userId;
-  const isRecipeOwner = comment.recipe.userId === session.userId;
-  if (!isAuthor && !isRecipeOwner) return apiError(403, 'Access denied.');
-
-  await db.comment.delete({ where: { id: commentId } });
-  return new NextResponse(null, { status: 204 });
+  try {
+    await deleteComment(commentId, recipeId, session.userId);
+    return new NextResponse(null, { status: 204 });
+  } catch (e) {
+    if (e instanceof CommentNotFoundError) return apiError(404, 'Comment not found.');
+    if (e instanceof CommentAccessError) return apiError(403, 'Access denied.');
+    throw e;
+  }
 };

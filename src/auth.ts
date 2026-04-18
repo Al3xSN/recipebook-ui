@@ -30,7 +30,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
         token.username = (user as any).username;
@@ -46,7 +46,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token;
     },
-    session({ session, token }) {
+    async session({ session, token }) {
       session.user.id = token.id as string;
       session.user.username = token.username as string;
       session.user.displayName = (token.displayName as string | null) ?? null;

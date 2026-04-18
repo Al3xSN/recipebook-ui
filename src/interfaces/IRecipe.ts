@@ -1,5 +1,23 @@
 import type { Visibility, Difficulty } from '@generated/prisma/client';
 
+export interface ICreateRecipeData {
+  title: string;
+  description?: string | null;
+  ingredients?: IIngredient[];
+  instructions?: IInstructionStep[];
+  tags?: number[];
+  category: number;
+  visibility: Visibility;
+  difficulty?: Difficulty | null;
+  cuisine?: number | null;
+  prepTimeMinutes: number;
+  cookTimeMinutes: number;
+  servings: number;
+  imageUrl?: string | null;
+}
+
+export type IUpdateRecipeData = ICreateRecipeData;
+
 export interface IIngredient {
   name: string;
   amount: number;

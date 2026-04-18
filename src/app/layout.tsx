@@ -1,13 +1,6 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: {
@@ -30,7 +23,7 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en">
       <body>
         <SessionProvider>{children}</SessionProvider>
       </body>

@@ -1,21 +1,17 @@
 import { notFound } from 'next/navigation';
-
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { areFriends } from '@/lib/server/friendship-helpers';
 import { toRecipeDto } from '@/lib/server/recipe-mapper';
 import { getUserByUsername } from '@/lib/server/user';
-import { RecipeCard } from '../../recipes/_components/RecipeCard';
-import { IProfileData, ProfileHeader } from './_components/ProfileHeader';
-import { ProfileStats } from '@/components/ui/ProfileStats';
 import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
-import Link from 'next/link';
 import { FriendshipStatus } from '@/enums/FriendshipStatus';
+import { ProfileContent } from './_components/ProfileContent';
+import { RecipesTab } from './_components/RecipesTab';
 
-const ProfilePage = async ({ params }: { params: Promise<{ username: string }> }) => {
+export default async function ProfilePage(props: PageProps<'/profile/[username]'>) {
   const session = await auth();
-  const { username } = await params;
-
+  const { username } = await props.params;
   const profileUser = await getUserByUsername(username);
 
   if (!profileUser) {
@@ -25,21 +21,20 @@ const ProfilePage = async ({ params }: { params: Promise<{ username: string }> }
   const currentUserId = session?.user?.id;
   const isOwner = currentUserId === profileUser.id;
 
-  let friendshipStatus = FriendshipStatus.NotFriends;
-  let friendCount = 0;
+  const friendCount = await db.friendRequest.count({
+    where: {
+      status: FriendRequestStatus.ACCEPTED,
+      OR: [{ senderId: profileUser.id }, { receiverId: profileUser.id }],
+    },
+  });
 
-  if (isOwner) {
-    friendCount = await db.friendRequest.count({
-      where: {
-        status: FriendRequestStatus.ACCEPTED,
-        OR: [{ senderId: profileUser.id }, { receiverId: profileUser.id }],
-      },
-    });
-  } else {
-    const isFriend = currentUserId ? await areFriends(currentUserId, profileUser.id) : false;
+  let friendshipStatus = FriendshipStatus.NotFriends;
+
+  if (!isOwner && currentUserId) {
+    const isFriend = await areFriends(currentUserId, profileUser.id);
     if (isFriend) {
       friendshipStatus = FriendshipStatus.Friends;
-    } else if (currentUserId) {
+    } else {
       const pending = await db.friendRequest.findFirst({
         where: {
           OR: [
@@ -81,60 +76,27 @@ const ProfilePage = async ({ params }: { params: Promise<{ username: string }> }
     orderBy: { createdAt: 'desc' },
   });
 
-  const profile: IProfileData = {
+  const recipeDtos = recipes.map(toRecipeDto);
+
+  const profile = {
     userId: profileUser.id,
     username: profileUser.username,
     displayName: profileUser.displayName,
     bio: profileUser.bio,
     avatarUrl: profileUser.avatarUrl,
+    createdAt: profileUser.createdAt.toISOString(),
   };
 
-  const recipeDtos = recipes.map(toRecipeDto);
-
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      <ProfileHeader
-        profile={profile}
-        initialFriendshipStatus={friendshipStatus}
-        isOwner={isOwner}
-      />
-
-      <ProfileStats recipeCount={recipeDtos.length} importedCount={0} friendCount={friendCount} />
-
-      <h2 className="mb-4 text-base font-semibold text-gray-900">
-        {isOwner ? 'My Recipes' : 'Recipes'}
-      </h2>
-
-      {recipeDtos.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {recipeDtos.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              showVisibility={isOwner}
-              currentUserId={currentUserId}
-            />
-          ))}
-        </div>
-      )}
-
-      {recipeDtos.length == 0 && (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-white py-20 text-center">
-          <p className="text-sm text-gray-500">
-            {isOwner ? 'No recipes yet. Add your first recipe!' : 'No recipes to show.'}
-          </p>
-          {isOwner && (
-            <Link
-              href="/recipes/new"
-              className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-600"
-            >
-              Add recipe
-            </Link>
-          )}
-        </div>
-      )}
-    </div>
+    <ProfileContent
+      profile={profile}
+      isOwner={isOwner}
+      initialFriendshipStatus={friendshipStatus}
+      recipeCount={recipeDtos.length}
+      friendCount={friendCount}
+      recipesContent={
+        <RecipesTab recipes={recipeDtos} isOwner={isOwner} currentUserId={currentUserId} />
+      }
+    />
   );
-};
-
-export default ProfilePage;
+}
