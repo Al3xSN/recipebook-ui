@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { UserMenu } from '@/components/layout/UserMenu';
 import { apiFetch } from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import { BookIcon, BellIcon, MenuIcon, XIcon, UserIcon } from '@/components/icons';
 
 interface INavbarClientProps {
   user: { displayName?: string | null; username: string } | null;
@@ -48,18 +49,7 @@ export const NavbarClient = ({ user }: INavbarClientProps) => {
               className="flex items-center gap-2 text-gray-900 transition-colors hover:text-orange-500"
             >
               <div className="flex items-center justify-center rounded-lg bg-orange-500 p-1.5 text-white">
-                <svg
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                </svg>
+                <BookIcon className="h-4 w-4" />
               </div>
               <span className="text-base font-semibold tracking-tight">RecipeBook</span>
             </Link>
@@ -108,18 +98,7 @@ export const NavbarClient = ({ user }: INavbarClientProps) => {
                     className="relative flex items-center justify-center rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
                     aria-label="Notifications"
                   >
-                    <svg
-                      className="h-5 w-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.437L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" />
-                    </svg>
+                    <BellIcon className="h-5 w-5" />
                     {hasUnread && (
                       <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
                     )}
@@ -151,18 +130,7 @@ export const NavbarClient = ({ user }: INavbarClientProps) => {
                 className="relative flex items-center justify-center rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 md:hidden"
                 aria-label="Notifications"
               >
-                <svg
-                  className="h-5 w-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.437L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" />
-                </svg>
+                <BellIcon className="h-5 w-5" />
                 {hasUnread && (
                   <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
                 )}
@@ -175,20 +143,7 @@ export const NavbarClient = ({ user }: INavbarClientProps) => {
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open menu"
             >
-              <svg
-                className="h-5 w-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
+              <MenuIcon className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -218,18 +173,7 @@ export const NavbarClient = ({ user }: INavbarClientProps) => {
             onClick={() => setMobileMenuOpen(false)}
           >
             <div className="flex items-center justify-center rounded-lg bg-orange-500 p-1.5 text-white">
-              <svg
-                className="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-              </svg>
+              <BookIcon className="h-4 w-4" />
             </div>
             <span className="text-base font-semibold tracking-tight">RecipeBook</span>
           </Link>
@@ -238,19 +182,7 @@ export const NavbarClient = ({ user }: INavbarClientProps) => {
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Close menu"
           >
-            <svg
-              className="h-5 w-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <XIcon className="h-5 w-5" />
           </button>
         </div>
 
@@ -291,19 +223,7 @@ export const NavbarClient = ({ user }: INavbarClientProps) => {
                 className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-orange-50 hover:text-orange-500"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <svg
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
+                <UserIcon className="h-4 w-4" />
                 Profile
               </Link>
             </>

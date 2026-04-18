@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { BookIcon } from '@/components/icons';
 
 interface IHeroSectionProps {
   user: { displayName?: string | null; username: string } | null;
@@ -9,18 +10,7 @@ export const HeroSection = ({ user }: IHeroSectionProps) => {
     <section className="bg-gradient-to-b from-orange-50 to-white px-4 py-10 text-center">
       <div className="mx-auto max-w-2xl">
         <div className="mb-6 inline-flex items-center justify-center rounded-2xl bg-orange-500 p-4 text-white shadow-lg">
-          <svg
-            className="h-10 w-10"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.75"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-          </svg>
+          <BookIcon className="h-10 w-10" strokeWidth={1.75} />
         </div>
 
         {user ? (

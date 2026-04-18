@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { ApiRequestError } from '@/lib/api';
+import { SpinnerIcon, CameraIcon } from '@/components/icons';
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -85,45 +86,13 @@ export const ImageUpload = ({
 
   const spinner = (
     <span className="absolute inset-0 flex items-center justify-center bg-black/40">
-      <svg
-        className="h-6 w-6 animate-spin text-white"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <circle
-          className="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          strokeWidth="4"
-        />
-        <path
-          className="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-        />
-      </svg>
+      <SpinnerIcon className="h-6 w-6 animate-spin text-white" />
     </span>
   );
 
   const changeOverlay = (
     <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/40 opacity-0 transition-opacity group-hover/upload:opacity-100">
-      <svg
-        className="h-5 w-5 text-white"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-        <circle cx="12" cy="13" r="4" />
-      </svg>
+      <CameraIcon className="h-5 w-5 text-white" />
       <span className="text-xs font-medium text-white">Change photo</span>
     </span>
   );
@@ -192,19 +161,7 @@ export const ImageUpload = ({
             />
           ) : (
             <span className="flex h-full w-full flex-col items-center justify-center gap-2 border-2 border-dashed border-orange-200 rounded-xl hover:border-orange-400 transition-colors">
-              <svg
-                className="h-10 w-10 text-orange-300"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                <circle cx="12" cy="13" r="4" />
-              </svg>
+              <CameraIcon className="h-10 w-10 text-orange-300" strokeWidth={1.5} />
               <span className="text-sm text-orange-400">Upload photo</span>
             </span>
           )}
