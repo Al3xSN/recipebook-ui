@@ -67,16 +67,6 @@ export const ProfileBanner = ({
 
   return (
     <div className="relative bg-[var(--accent)] px-5 pb-6 pt-11">
-      {isOwner && (
-        <Link
-          href={`/profile/${profile.username}/settings`}
-          className="absolute right-5 top-4 rounded-lg bg-white/20 p-2 backdrop-blur-sm transition-colors hover:bg-white/30"
-          aria-label="Settings"
-        >
-          <SettingsIcon className="h-5 w-5 text-white" />
-        </Link>
-      )}
-
       {!isOwner && (
         <div className="absolute right-5 top-4">
           {friendshipStatus === FriendshipStatus.NotFriends && (
@@ -119,7 +109,7 @@ export const ProfileBanner = ({
         </div>
       )}
 
-      <div className="mb-3 flex items-end gap-3.5">
+      <div className="mb-3 flex items-center gap-3.5">
         <div className="flex h-[72px] w-[72px] flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-white text-2xl font-bold text-[var(--accent)]">
           {profile.avatarUrl ? (
             <Image
@@ -135,14 +125,27 @@ export const ProfileBanner = ({
             initials
           )}
         </div>
-        <div className="text-white">
-          <h2 className="font-playfair text-[21px] font-bold leading-tight">{displayName}</h2>
-          <p className="mt-0.5 text-[13px] text-white/75">@{profile.username}</p>
+
+        <div className="flex items-center justify-between text-white">
+          <div>
+            <h2 className="font-playfair text-[21px] font-bold leading-tight">{displayName}</h2>
+            <p className="mt-0.5 text-[13px] text-white/75">@{profile.username}</p>
+          </div>
         </div>
+
+        {isOwner && (
+          <Link
+            href={`/profile/${profile.username}/settings`}
+            className="ml-auto rounded-lg border border-white/30 bg-white/20 p-2 backdrop-blur-sm transition-colors hover:bg-white/30"
+            aria-label="Settings"
+          >
+            <SettingsIcon className="h-4 w-4 text-white" />
+          </Link>
+        )}
       </div>
 
       {profile.bio && (
-        <p className="mb-4 text-[13px] leading-[1.55] text-white/80">{profile.bio}</p>
+        <p className="my-2 text-[13px] leading-[1.55] text-white/80">{profile.bio}</p>
       )}
 
       <div className="flex gap-7">

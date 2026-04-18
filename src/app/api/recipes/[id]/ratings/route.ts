@@ -4,8 +4,28 @@ import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
 import { getRecipeById, RecipeNotFoundError } from '@/lib/server/recipe';
 import { upsertRating } from '@/lib/server/recipe/ratings';
+import { db } from '@/lib/db';
 
 type Params = { params: Promise<{ id: string }> };
+
+// GET /api/recipes/[id]/ratings
+export const GET = async (_req: NextRequest, { params }: Params) => {
+  const session = await requireAuth();
+  if (session instanceof Response) return session;
+
+  const { id: recipeId } = await params;
+
+  const stats = await db.rating.aggregate({
+    where: { recipeId },
+    _avg: { value: true },
+    _count: { value: true },
+  });
+
+  return NextResponse.json({
+    averageRating: stats._avg.value,
+    totalCount: stats._count.value,
+  });
+};
 
 // POST /api/recipes/[id]/ratings
 export const POST = async (req: NextRequest, { params }: Params) => {

@@ -3,17 +3,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { auth } from '@/auth';
-import { CATEGORY_LABELS, UNIT_LABELS } from '@/lib/recipe-enums';
-import { BookIcon, ClockIcon, CookTimerIcon, EditIcon, UsersIcon } from '@/components/icons';
+import { CATEGORY_LABELS, DIFFICULTY_LABELS } from '@/lib/recipe-enums';
+import { BookIcon, EditIcon, StarIcon } from '@/components/icons';
 import {
   getRecipeById,
   canAccessRecipe,
   RecipeNotFoundError,
   RecipeAccessError,
 } from '@/lib/server/recipe';
-import { RatingStars } from './_components/RatingStars';
-import { CommentList } from './_components/CommentList';
+import { db } from '@/lib/db';
 import { DeleteRecipeButton } from './_components/DeleteRecipeButton';
+import { RecipeHeroActions } from './_components/RecipeHeroActions';
+import { RecipeDetailTabs } from './_components/RecipeDetailTabs';
 
 const AVATAR_COLORS = [
   'bg-orange-400',
@@ -26,9 +27,8 @@ const AVATAR_COLORS = [
   'bg-yellow-400',
 ];
 
-const getAvatarColor = (username: string): string => {
-  return AVATAR_COLORS[username.charCodeAt(0) % AVATAR_COLORS.length];
-};
+const getAvatarColor = (username: string) =>
+  AVATAR_COLORS[username.charCodeAt(0) % AVATAR_COLORS.length];
 
 const formatTime = (minutes: number) => {
   if (minutes < 60) return `${minutes}m`;
@@ -52,30 +52,45 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
 
   const isOwner = recipe.userId === session?.user?.id;
 
+  const [ratingStats, commentCount] = await Promise.all([
+    db.rating.aggregate({
+      where: { recipeId: id },
+      _avg: { value: true },
+      _count: { value: true },
+    }),
+    db.comment.count({ where: { recipeId: id } }),
+  ]);
+
+  const averageRating = ratingStats._avg.value;
+  const totalRatings = ratingStats._count.value;
+  const totalTime = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
+
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
+    <div className="mx-auto max-w-lg">
       {/* Hero image */}
-      <div className="relative mb-6 overflow-hidden rounded-2xl">
+      <div className="relative">
         {recipe.imageUrl ? (
-          <div className="relative h-72 w-full">
+          <div className="relative h-64 w-full">
             <Image
               src={recipe.imageUrl}
               alt={recipe.title}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, 672px"
+              sizes="(max-width: 512px) 100vw, 512px"
               priority
             />
           </div>
         ) : (
-          <div className="flex h-72 w-full items-center justify-center bg-orange-50">
-            <BookIcon className="h-16 w-16 text-orange-200" strokeWidth={1.5} />
+          <div className="flex h-64 w-full items-center justify-center bg-[#e8d5cc]">
+            <BookIcon className="h-16 w-16 text-[#c4a99a]" strokeWidth={1.5} />
           </div>
         )}
 
-        {/* Owner actions */}
+        <RecipeHeroActions />
+
+        {/* Owner edit/delete */}
         {isOwner && (
-          <div className="absolute right-3 top-3 flex items-center gap-2">
+          <div className="absolute bottom-3 right-3 flex items-center gap-2">
             <Link
               href={`/recipes/${id}/edit`}
               className="flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-orange-500"
@@ -88,120 +103,98 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
         )}
       </div>
 
-      {/* Category + Title */}
-      <div className="mb-2">
-        <span className="inline-block rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-700">
-          {CATEGORY_LABELS[recipe.category] ?? 'Other'}
-        </span>
-      </div>
-      <h1 className="mb-3 text-3xl font-bold tracking-tight text-gray-900">{recipe.title}</h1>
+      {/* Content */}
+      <div className="px-4 pt-4">
+        {/* Category + rating */}
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+            {CATEGORY_LABELS[recipe.category] ?? 'Other'}
+          </span>
+          {averageRating !== null && totalRatings > 0 && (
+            <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <StarIcon
+                    key={star}
+                    className="h-3.5 w-3.5 text-orange-400"
+                    fill={star <= Math.round(averageRating) ? 'currentColor' : 'none'}
+                  />
+                ))}
+              </div>
+              <span className="text-sm font-semibold text-orange-500">
+                {averageRating.toFixed(1)}
+              </span>
+            </div>
+          )}
+        </div>
 
-      {/* Author byline */}
-      {!isOwner && (
-        <Link
-          href={`/profile/${recipe.author.username}`}
-          className="mb-4 inline-flex items-center gap-2"
-        >
-          {recipe.author.avatarUrl ? (
-            <Image
-              src={recipe.author.avatarUrl}
-              alt={recipe.author.displayName}
-              width={24}
-              height={24}
-              className="h-6 w-6 rounded-full object-cover"
-            />
-          ) : (
-            <span
-              className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(recipe.author.username)}`}
-            >
-              {recipe.author.displayName.charAt(0).toUpperCase()}
+        {/* Title */}
+        <h1 className="mb-3 text-2xl font-bold tracking-tight text-gray-900">{recipe.title}</h1>
+
+        {/* Author */}
+        <div className="mb-4 flex items-center justify-between">
+          <Link
+            href={`/profile/${recipe.author.username}`}
+            className="inline-flex items-center gap-2"
+          >
+            {recipe.author.avatarUrl ? (
+              <Image
+                src={recipe.author.avatarUrl}
+                alt={recipe.author.displayName}
+                width={28}
+                height={28}
+                className="h-7 w-7 rounded-full object-cover"
+              />
+            ) : (
+              <span
+                className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(recipe.author.username)}`}
+              >
+                {recipe.author.displayName.charAt(0).toUpperCase()}
+              </span>
+            )}
+            <span className="text-sm text-gray-500 hover:text-gray-700">
+              by {recipe.author.displayName}
+            </span>
+          </Link>
+          {totalRatings > 0 && (
+            <span className="text-xs text-gray-400">
+              {totalRatings} review{totalRatings !== 1 ? 's' : ''}
             </span>
           )}
-          <span className="text-sm text-gray-500 hover:text-gray-700">
-            {recipe.author.displayName}
-          </span>
-        </Link>
-      )}
+        </div>
 
-      {/* Meta row */}
-      <div className="mb-6 flex flex-wrap gap-6 text-sm text-gray-500">
-        <span className="flex items-center gap-1.5">
-          <ClockIcon className="h-4 w-4 text-orange-400" />
-          <span>
-            <span className="font-medium text-gray-700">Prep</span>{' '}
-            {formatTime(recipe.prepTimeMinutes)}
-          </span>
-        </span>
-        <span className="flex items-center gap-1.5">
-          <CookTimerIcon className="h-4 w-4 text-orange-400" />
-          <span>
-            <span className="font-medium text-gray-700">Cook</span>{' '}
-            {formatTime(recipe.cookTimeMinutes)}
-          </span>
-        </span>
-        <span className="flex items-center gap-1.5">
-          <UsersIcon className="h-4 w-4 text-orange-400" />
-          <span>
-            <span className="font-medium text-gray-700">Serves</span> {recipe.servings}
-          </span>
-        </span>
+        {/* Stats row */}
+        <div className="mb-1 grid grid-cols-3 divide-x divide-gray-200 rounded-2xl border border-gray-200 bg-white py-3">
+          <div className="flex flex-col items-center gap-0.5 px-3">
+            <span className="text-base font-bold text-gray-900">{formatTime(totalTime)}</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+              Time
+            </span>
+          </div>
+          <div className="flex flex-col items-center gap-0.5 px-3">
+            <span className="text-base font-bold text-gray-900">{recipe.servings}</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+              Servings
+            </span>
+          </div>
+          <div className="flex flex-col items-center gap-0.5 px-3">
+            <span className="text-base font-bold text-gray-900">
+              {recipe.difficulty ? DIFFICULTY_LABELS[recipe.difficulty] : '—'}
+            </span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+              Level
+            </span>
+          </div>
+        </div>
       </div>
 
-      {/* Description */}
-      {recipe.description && (
-        <p className="mb-8 leading-relaxed text-gray-600">{recipe.description}</p>
-      )}
-
-      <hr className="mb-8 border-gray-200" />
-
-      {/* Ingredients */}
-      <section className="mb-8">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Ingredients</h2>
-        <ul className="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white">
-          {recipe.ingredients.map((ing, i) => (
-            <li key={i} className="flex items-center justify-between px-4 py-3">
-              <span className="text-sm font-medium text-gray-900">{ing.name}</span>
-              <span className="text-sm text-gray-500">
-                {ing.amount} {UNIT_LABELS[ing.unit]}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Instructions */}
-      <section className="mb-8">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Instructions</h2>
-        <ol className="flex flex-col gap-4">
-          {recipe.instructions
-            .sort((a, b) => a.stepNumber - b.stepNumber)
-            .map((step) => (
-              <li key={step.stepNumber} className="flex gap-4">
-                <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-bold text-orange-700">
-                  {step.stepNumber}
-                </span>
-                <p className="pt-0.5 leading-relaxed text-gray-700">{step.text}</p>
-              </li>
-            ))}
-        </ol>
-      </section>
-
-      <hr className="mb-8 border-gray-200" />
-
-      {/* Rating — only show for non-owners */}
-      {!isOwner && (
-        <>
-          <section className="mb-8">
-            <RatingStars recipeId={id} />
-          </section>
-          <hr className="mb-8 border-gray-200" />
-        </>
-      )}
-
-      {/* Comments */}
-      <section>
-        <CommentList recipeId={id} />
-      </section>
+      {/* Tabs */}
+      <RecipeDetailTabs
+        recipe={recipe}
+        recipeId={id}
+        commentCount={commentCount}
+        isOwner={isOwner}
+      />
     </div>
   );
 };

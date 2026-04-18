@@ -1,3 +1,4 @@
+export { ArrowLeftIcon } from './ArrowLeftIcon';
 export { BellIcon } from './BellIcon';
 export { BookIcon } from './BookIcon';
 export { CameraIcon } from './CameraIcon';
@@ -6,6 +7,7 @@ export { ClockIcon } from './ClockIcon';
 export { CookTimerIcon } from './CookTimerIcon';
 export { EditIcon } from './EditIcon';
 export { EyeIcon } from './EyeIcon';
+export { HeartIcon } from './HeartIcon';
 export { MenuIcon } from './MenuIcon';
 export { SettingsIcon } from './SettingsIcon';
 export { SpinnerIcon } from './SpinnerIcon';
