@@ -7,7 +7,7 @@ import { createNotification, NotificationType } from '@/lib/server/notifications
 import { getUserByUsername } from '@/lib/server/user';
 import { FriendRequestStatus } from '@generated/prisma/client';
 
-// GET /api/friends/requests — incoming requests, or ?direction=sent for outgoing
+// GET /api/friends/requests — incoming requests (with sender profile + mutual count)
 export const GET = async (req: NextRequest) => {
   const session = await requireAuth();
   if (session instanceof Response) return session;
@@ -32,23 +32,62 @@ export const GET = async (req: NextRequest) => {
     );
   }
 
-  // Default: incoming pending requests
   const requests = await db.friendRequest.findMany({
     where: { receiverId: session.userId, status: FriendRequestStatus.PENDING },
-    include: { sender: { select: { username: true } } },
+    include: {
+      sender: {
+        select: {
+          id: true,
+          username: true,
+          displayName: true,
+          avatarUrl: true,
+          bio: true,
+        },
+      },
+    },
     orderBy: { createdAt: 'desc' },
   });
 
-  return NextResponse.json(
-    requests.map((r) => ({
-      id: r.id,
-      senderId: r.senderId,
-      senderUsername: r.sender.username,
-      receiverId: r.receiverId,
-      status: r.status,
-      createdAt: r.createdAt,
-    })),
+  const myConnections = await db.friendRequest.findMany({
+    where: {
+      status: FriendRequestStatus.ACCEPTED,
+      OR: [{ senderId: session.userId }, { receiverId: session.userId }],
+    },
+  });
+  const myFriendIds = myConnections.map((c) =>
+    c.senderId === session.userId ? c.receiverId : c.senderId,
   );
+
+  const result = await Promise.all(
+    requests.map(async (r) => {
+      const mutualFriendCount =
+        myFriendIds.length === 0
+          ? 0
+          : await db.friendRequest.count({
+              where: {
+                status: FriendRequestStatus.ACCEPTED,
+                OR: [
+                  { senderId: r.sender.id, receiverId: { in: myFriendIds } },
+                  { receiverId: r.sender.id, senderId: { in: myFriendIds } },
+                ],
+              },
+            });
+      return {
+        id: r.id,
+        senderId: r.senderId,
+        senderUsername: r.sender.username,
+        senderDisplayName: r.sender.displayName,
+        senderAvatarUrl: r.sender.avatarUrl,
+        senderBio: r.sender.bio,
+        receiverId: r.receiverId,
+        status: r.status,
+        createdAt: r.createdAt,
+        mutualFriendCount,
+      };
+    }),
+  );
+
+  return NextResponse.json(result);
 };
 
 // POST /api/friends/requests — send a friend request

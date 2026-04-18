@@ -153,10 +153,17 @@ export const ProfileBanner = ({
           <div className="font-playfair text-[20px] font-bold">{recipeCount}</div>
           <div className="mt-0.5 text-[11px] text-white/65">Recipes</div>
         </div>
-        <div className="text-white">
-          <div className="font-playfair text-[20px] font-bold">{friendCount}</div>
-          <div className="mt-0.5 text-[11px] text-white/65">Friends</div>
-        </div>
+        {isOwner ? (
+          <Link href="/friends" className="text-white transition-opacity hover:opacity-80">
+            <div className="font-playfair text-[20px] font-bold">{friendCount}</div>
+            <div className="mt-0.5 text-[11px] text-white/65">Friends</div>
+          </Link>
+        ) : (
+          <div className="text-white">
+            <div className="font-playfair text-[20px] font-bold">{friendCount}</div>
+            <div className="mt-0.5 text-[11px] text-white/65">Friends</div>
+          </div>
+        )}
       </div>
     </div>
   );
