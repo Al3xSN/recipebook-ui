@@ -1,22 +1,31 @@
 import { Skeleton } from '@/components/ui/Skeleton';
-import { RecipeCardSkeleton } from '../recipes/_components/RecipeCardSkeleton';
 
 const ExploreLoading = () => {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
+    <div className="min-h-screen px-4 py-8">
       {/* Header */}
-      <div className="mb-8">
-        <Skeleton className="h-7 w-40" />
-        <Skeleton className="mt-2 h-4 w-56" />
+      <Skeleton className="mb-5 h-9 w-36" />
+
+      {/* Search bar */}
+      <Skeleton className="mb-5 h-12 w-full rounded-2xl" />
+
+      {/* Trending label */}
+      <Skeleton className="mb-3 h-3 w-32" />
+
+      {/* Trending pills */}
+      <div className="mb-7 flex flex-wrap gap-2">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-8 w-24 rounded-full" />
+        ))}
       </div>
 
-      {/* Filter bar */}
-      <Skeleton className="mb-8 h-32 w-full rounded-xl" />
+      {/* Category label */}
+      <Skeleton className="mb-3 h-3 w-40" />
 
-      {/* Recipe grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Category grid */}
+      <div className="grid grid-cols-2 gap-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <RecipeCardSkeleton key={i} />
+          <Skeleton key={i} className="h-40 rounded-2xl" />
         ))}
       </div>
     </div>

@@ -24,5 +24,30 @@ export const GET = async (req: NextRequest) => {
   const excludeIds = [session.userId, ...friendIds];
   const users = await searchUsers(query, excludeIds);
 
-  return NextResponse.json(users.map((u) => ({ userId: u.id, username: u.username })));
+  const result = await Promise.all(
+    users.map(async (u) => {
+      const mutualFriendCount =
+        friendIds.length === 0
+          ? 0
+          : await db.friendRequest.count({
+              where: {
+                status: FriendRequestStatus.ACCEPTED,
+                OR: [
+                  { senderId: u.id, receiverId: { in: friendIds } },
+                  { receiverId: u.id, senderId: { in: friendIds } },
+                ],
+              },
+            });
+      return {
+        userId: u.id,
+        username: u.username,
+        displayName: u.displayName,
+        avatarUrl: u.avatarUrl,
+        bio: u.bio,
+        mutualFriendCount,
+      };
+    }),
+  );
+
+  return NextResponse.json(result);
 };

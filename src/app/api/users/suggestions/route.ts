@@ -39,5 +39,27 @@ export const GET = async () => {
   const excludeIds = [session.userId, ...friendIds];
   const suggestions = await getUserSuggestions([...candidateIds], excludeIds);
 
-  return NextResponse.json(suggestions.map((u) => ({ userId: u.id, username: u.username })));
+  const result = await Promise.all(
+    suggestions.map(async (u) => {
+      const mutualFriendCount = await db.friendRequest.count({
+        where: {
+          status: FriendRequestStatus.ACCEPTED,
+          OR: [
+            { senderId: u.id, receiverId: { in: friendIds } },
+            { receiverId: u.id, senderId: { in: friendIds } },
+          ],
+        },
+      });
+      return {
+        userId: u.id,
+        username: u.username,
+        displayName: u.displayName,
+        avatarUrl: u.avatarUrl,
+        bio: u.bio,
+        mutualFriendCount,
+      };
+    }),
+  );
+
+  return NextResponse.json(result);
 };

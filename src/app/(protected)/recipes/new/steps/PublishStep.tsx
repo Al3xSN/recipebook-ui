@@ -21,6 +21,8 @@ interface PublishStepProps {
   onPublish: () => void;
   isLoading: boolean;
   error: string | null;
+  submitLabel?: string;
+  infoBanner?: string | null;
 }
 
 const DIFFICULTY_DISPLAY: Record<Difficulty, string> = {
@@ -50,6 +52,8 @@ export const PublishStep = ({
   onPublish,
   isLoading,
   error,
+  submitLabel = 'Publish Recipe',
+  infoBanner = '🎉 Your recipe is ready to publish. It will appear in the feed and be discoverable via search.',
 }: PublishStepProps) => {
   const categoryLabel = category >= 0 ? (CATEGORY_LABELS[category] ?? '?') : '?';
 
@@ -108,13 +112,14 @@ export const PublishStep = ({
       </div>
 
       {/* Info banner */}
-      <div
-        className="rounded-xl px-4 py-3 text-sm"
-        style={{ backgroundColor: 'var(--bg2)', color: 'var(--text2)' }}
-      >
-        🎉 Your recipe is ready to publish. It will appear in the feed and be discoverable via
-        search.
-      </div>
+      {infoBanner && (
+        <div
+          className="rounded-xl px-4 py-3 text-sm"
+          style={{ backgroundColor: 'var(--bg2)', color: 'var(--text2)' }}
+        >
+          {infoBanner}
+        </div>
+      )}
 
       {/* Error */}
       {error && (
@@ -142,7 +147,7 @@ export const PublishStep = ({
           style={{ backgroundColor: 'var(--accent)' }}
         >
           {isLoading && <SpinnerIcon className="mr-2 h-4 w-4 animate-spin" />}
-          Publish Recipe
+          {submitLabel}
         </button>
       </div>
     </div>

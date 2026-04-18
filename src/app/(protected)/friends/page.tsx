@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
-import { TabBar } from '@/components/ui/TabBar';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { Button } from '@/components/ui/Button';
 import { FriendsPageSkeleton } from './_components/FriendsPageSkeleton';
 
 interface IFriendDto {
@@ -13,117 +12,303 @@ interface IFriendDto {
   username: string;
   displayName: string | null;
   avatarUrl: string | null;
+  bio: string | null;
   recipeCount: number;
+  mutualFriendCount: number;
 }
 
 interface IIncomingRequestDto {
   id: string;
   senderId: string;
   senderUsername: string;
+  senderDisplayName: string | null;
+  senderAvatarUrl: string | null;
+  senderBio: string | null;
   receiverId: string;
   status: number;
   createdAt: string;
+  mutualFriendCount: number;
+}
+
+interface IUserSuggestionDto {
+  userId: string;
+  username: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  bio: string | null;
+  mutualFriendCount: number;
 }
 
 interface ISentRequestDto {
   id: string;
-  senderId: string;
   receiverId: string;
   receiverUsername: string;
-  status: number;
-  createdAt: string;
 }
 
-const Avatar = ({ name }: { name: string }) => {
+type Tab = 'my-friends' | 'find-people' | 'requests';
+
+const UserAvatar = ({ name, avatarUrl }: { name: string; avatarUrl: string | null }) => {
   const initials = name.slice(0, 2).toUpperCase();
+  if (avatarUrl) {
+    return (
+      <Image
+        src={avatarUrl}
+        alt={name}
+        width={44}
+        height={44}
+        className="h-11 w-11 flex-shrink-0 rounded-full object-cover"
+      />
+    );
+  }
   return (
-    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-bold text-orange-700">
+    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[var(--bg2)] text-sm font-semibold text-[var(--text)]">
       {initials}
     </div>
   );
 };
 
-const FriendList = ({
+const UserRow = ({
+  name,
+  username,
+  bio,
+  avatarUrl,
+  mutualFriendCount,
+  actions,
+}: {
+  name: string;
+  username: string;
+  bio: string | null;
+  avatarUrl: string | null;
+  mutualFriendCount: number;
+  actions: React.ReactNode;
+}) => (
+  <div className="flex items-center gap-3 py-3.5">
+    <UserAvatar name={name} avatarUrl={avatarUrl} />
+    <div className="min-w-0 flex-1">
+      <p className="text-[15px] font-semibold text-[var(--text)]">{name}</p>
+      <p className="text-[13px] text-[var(--text2)]">@{username}</p>
+      {bio && <p className="truncate text-[13px] text-[var(--text2)]">{bio}</p>}
+      {mutualFriendCount > 0 && (
+        <p className="text-[12px] font-medium text-[var(--accent)]">
+          {mutualFriendCount} mutual friend{mutualFriendCount !== 1 ? 's' : ''}
+        </p>
+      )}
+    </div>
+    <div className="flex flex-shrink-0 items-center gap-2">{actions}</div>
+  </div>
+);
+
+const SearchInput = ({
+  placeholder,
+  value,
+  onChange,
+}: {
+  placeholder: string;
+  value: string;
+  onChange: (v: string) => void;
+}) => (
+  <div className="relative mb-4">
+    <svg
+      className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text3)]"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.35-4.35" />
+    </svg>
+    <input
+      type="text"
+      placeholder={placeholder}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full rounded-full border border-[var(--border)] bg-white py-2.5 pl-10 pr-4 text-[14px] text-[var(--text)] placeholder-[var(--text3)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
+    />
+  </div>
+);
+
+const MyFriendsTab = ({
   friends,
   onRemove,
 }: {
   friends: IFriendDto[];
   onRemove: (userId: string) => void;
 }) => {
-  if (friends.length === 0) {
+  const [search, setSearch] = useState('');
+
+  const filtered = friends.filter((f) => {
+    const q = search.toLowerCase();
     return (
-      <EmptyState
-        icon={
-          <svg
-            className="h-6 w-6"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-        }
-        title="No friends yet"
-        description="Find people to follow by exploring the community."
-        action={
-          <Link
-            href="/explore"
-            className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-600"
-          >
-            Explore
-          </Link>
-        }
-      />
+      (f.displayName ?? f.username).toLowerCase().includes(q) ||
+      f.username.toLowerCase().includes(q)
     );
-  }
+  });
 
   return (
-    <div className="flex flex-col gap-2">
-      {friends.map((friend) => {
-        const displayName = friend.displayName ?? friend.username;
-        return (
-          <div
-            key={friend.userId}
-            className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
-          >
-            <Avatar name={displayName} />
-            <div className="min-w-0 flex-1">
-              <p className="font-medium text-gray-900">{displayName}</p>
-              <p className="text-sm text-gray-500">
-                @{friend.username} · {friend.recipeCount} recipe
-                {friend.recipeCount !== 1 ? 's' : ''}
-              </p>
-            </div>
-            <div className="flex flex-shrink-0 gap-2">
-              <Link
-                href={`/profile/${friend.username}`}
-                className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-orange-500"
-              >
-                View profile
-              </Link>
-              <button
-                type="button"
-                onClick={() => onRemove(friend.userId)}
-                className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-400 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-500"
-              >
-                Remove
-              </button>
-            </div>
-          </div>
-        );
-      })}
+    <div>
+      <SearchInput placeholder="Search your friends..." value={search} onChange={setSearch} />
+      {filtered.length === 0 ? (
+        <p className="py-10 text-center text-sm text-[var(--text3)]">
+          {search ? 'No friends match your search.' : "You haven't added any friends yet."}
+        </p>
+      ) : (
+        <div className="divide-y divide-[var(--border)]">
+          {filtered.map((f) => {
+            const name = f.displayName ?? f.username;
+            return (
+              <UserRow
+                key={f.userId}
+                name={name}
+                username={f.username}
+                bio={f.bio}
+                avatarUrl={f.avatarUrl}
+                mutualFriendCount={f.mutualFriendCount}
+                actions={
+                  <>
+                    <Link
+                      href={`/profile/${f.username}`}
+                      className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-[13px] font-medium text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                    >
+                      Recipes
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => onRemove(f.userId)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text3)] transition-colors hover:border-red-300 hover:text-red-400"
+                      aria-label="Remove friend"
+                    >
+                      <svg
+                        className="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        aria-hidden="true"
+                      >
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </>
+                }
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
 
-const RequestList = ({
+const FindPeopleTab = ({
+  initialSuggestions,
+  pendingIds,
+  onAdd,
+}: {
+  initialSuggestions: IUserSuggestionDto[];
+  pendingIds: Set<string>;
+  onAdd: (userId: string) => void;
+}) => {
+  const [search, setSearch] = useState('');
+  const [results, setResults] = useState<IUserSuggestionDto[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!search.trim()) {
+      setResults([]);
+      return;
+    }
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const data = await apiFetch<IUserSuggestionDto[]>(
+          `/api/users/search?username=${encodeURIComponent(search.trim())}`,
+        );
+        setResults(data);
+      } catch {
+        setResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+  }, [search]);
+
+  const handleAdd = async (username: string, userId: string) => {
+    try {
+      await apiFetch('/api/friends/requests', {
+        method: 'POST',
+        body: JSON.stringify({ receiverUsername: username }),
+      });
+      onAdd(userId);
+    } catch {
+      // ignore
+    }
+  };
+
+  const displayList = search.trim() ? results : initialSuggestions;
+  const showSuggestedLabel = !search.trim() && initialSuggestions.length > 0;
+
+  const renderRow = (u: IUserSuggestionDto) => {
+    const name = u.displayName ?? u.username;
+    const sent = pendingIds.has(u.userId);
+    return (
+      <UserRow
+        key={u.userId}
+        name={name}
+        username={u.username}
+        bio={u.bio}
+        avatarUrl={u.avatarUrl}
+        mutualFriendCount={u.mutualFriendCount}
+        actions={
+          <button
+            type="button"
+            disabled={sent}
+            onClick={() => handleAdd(u.username, u.userId)}
+            className={`rounded-lg px-4 py-1.5 text-[13px] font-medium transition-opacity ${
+              sent
+                ? 'cursor-default border border-[var(--border)] text-[var(--text3)]'
+                : 'bg-[var(--accent)] text-white hover:opacity-90'
+            }`}
+          >
+            {sent ? 'Sent' : '+ Add'}
+          </button>
+        }
+      />
+    );
+  };
+
+  return (
+    <div>
+      <SearchInput
+        placeholder="Search by name or username..."
+        value={search}
+        onChange={setSearch}
+      />
+      {isSearching ? (
+        <p className="py-4 text-center text-sm text-[var(--text3)]">Searching...</p>
+      ) : (
+        <>
+          {showSuggestedLabel && (
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--text3)]">
+              Suggested for you
+            </p>
+          )}
+          {displayList.length === 0 && (
+            <p className="py-10 text-center text-sm text-[var(--text3)]">
+              {search.trim() ? 'No users found.' : 'No suggestions available.'}
+            </p>
+          )}
+          <div className="divide-y divide-[var(--border)]">{displayList.map(renderRow)}</div>
+        </>
+      )}
+    </div>
+  );
+};
+
+const RequestsTab = ({
   requests,
   onAccept,
   onDecline,
@@ -134,130 +319,81 @@ const RequestList = ({
 }) => {
   if (requests.length === 0) {
     return (
-      <EmptyState
-        icon={
-          <svg
-            className="h-6 w-6"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
-            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
-            <line x1="6" y1="1" x2="6" y2="4" />
-            <line x1="10" y1="1" x2="10" y2="4" />
-            <line x1="14" y1="1" x2="14" y2="4" />
-          </svg>
-        }
-        title="No pending requests"
-        description="When someone sends you a friend request, it will appear here."
-      />
+      <p className="py-10 text-center text-sm text-[var(--text3)]">No pending friend requests.</p>
     );
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      {requests.map((req) => (
-        <div
-          key={req.id}
-          className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
-        >
-          <Avatar name={req.senderUsername} />
-          <div className="min-w-0 flex-1">
-            <p className="font-medium text-gray-900">@{req.senderUsername}</p>
-            <p className="text-xs text-gray-400">{new Date(req.createdAt).toLocaleDateString()}</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="primary" onClick={() => onAccept(req.id)}>
-              Accept
-            </Button>
-            <Button variant="secondary" onClick={() => onDecline(req.id)}>
-              Decline
-            </Button>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const SentList = ({
-  requests,
-  onCancel,
-}: {
-  requests: ISentRequestDto[];
-  onCancel: (id: string) => void;
-}) => {
-  if (requests.length === 0) {
-    return (
-      <EmptyState
-        icon={
-          <svg
-            className="h-6 w-6"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <line x1="22" y1="2" x2="11" y2="13" />
-            <polygon points="22 2 15 22 11 13 2 9 22 2" />
-          </svg>
-        }
-        title="No sent requests"
-        description="Friend requests you have sent will appear here."
-      />
-    );
-  }
-
-  return (
-    <div className="flex flex-col gap-2">
-      {requests.map((req) => (
-        <div
-          key={req.id}
-          className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
-        >
-          <Avatar name={req.receiverUsername} />
-          <div className="min-w-0 flex-1">
-            <p className="font-medium text-gray-900">@{req.receiverUsername}</p>
-            <p className="text-xs text-gray-400">{new Date(req.createdAt).toLocaleDateString()}</p>
-          </div>
-          <Button variant="secondary" onClick={() => onCancel(req.id)}>
-            Cancel
-          </Button>
-        </div>
-      ))}
+    <div>
+      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--text3)]">
+        {requests.length} pending
+      </p>
+      <div className="divide-y divide-[var(--border)]">
+        {requests.map((r) => {
+          const name = r.senderDisplayName ?? r.senderUsername;
+          return (
+            <UserRow
+              key={r.id}
+              name={name}
+              username={r.senderUsername}
+              bio={r.senderBio}
+              avatarUrl={r.senderAvatarUrl}
+              mutualFriendCount={r.mutualFriendCount}
+              actions={
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onAccept(r.id)}
+                    className="rounded-lg bg-[var(--accent)] px-4 py-1.5 text-[13px] font-medium text-white transition-opacity hover:opacity-90"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDecline(r.id)}
+                    className="rounded-lg border border-[var(--border)] px-4 py-1.5 text-[13px] font-medium text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  >
+                    Decline
+                  </button>
+                </>
+              }
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };
 
 const FriendsPage = () => {
-  const [activeTab, setActiveTab] = useState('friends');
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<Tab>('my-friends');
   const [friends, setFriends] = useState<IFriendDto[]>([]);
   const [requests, setRequests] = useState<IIncomingRequestDto[]>([]);
-  const [sent, setSent] = useState<ISentRequestDto[]>([]);
+  const [suggestions, setSuggestions] = useState<IUserSuggestionDto[]>([]);
+  const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       apiFetch<IFriendDto[]>('/api/friends'),
       apiFetch<IIncomingRequestDto[]>('/api/friends/requests'),
+      apiFetch<IUserSuggestionDto[]>('/api/users/suggestions'),
       apiFetch<ISentRequestDto[]>('/api/friends/requests?direction=sent'),
     ])
-      .then(([f, r, s]) => {
+      .then(([f, r, s, sent]) => {
         setFriends(f);
         setRequests(r);
-        setSent(s);
+        setSuggestions(s);
+        setPendingIds(new Set(sent.map((sr) => sr.receiverId)));
       })
       .catch(() => {})
       .finally(() => setIsLoading(false));
   }, []);
+
+  const handleAddPending = (userId: string) => {
+    setPendingIds((prev) => new Set(prev).add(userId));
+  };
 
   const handleAccept = async (id: string) => {
     try {
@@ -265,19 +401,19 @@ const FriendsPage = () => {
         method: 'PUT',
         body: JSON.stringify({ accept: true }),
       });
-      // Move from requests to friends (we don't have the friend data yet, so just remove from requests)
       const accepted = requests.find((r) => r.id === id);
       setRequests((prev) => prev.filter((r) => r.id !== id));
       if (accepted) {
-        // Optimistically add to friends list with minimal data
         setFriends((prev) => [
           ...prev,
           {
             userId: accepted.senderId,
             username: accepted.senderUsername,
-            displayName: null,
-            avatarUrl: null,
+            displayName: accepted.senderDisplayName,
+            avatarUrl: accepted.senderAvatarUrl,
+            bio: accepted.senderBio,
             recipeCount: 0,
+            mutualFriendCount: accepted.mutualFriendCount,
           },
         ]);
       }
@@ -307,42 +443,73 @@ const FriendsPage = () => {
     }
   };
 
-  const handleCancelSent = async (id: string) => {
-    try {
-      await apiFetch(`/api/friends/requests/${id}`, { method: 'DELETE' });
-      setSent((prev) => prev.filter((r) => r.id !== id));
-    } catch {
-      // ignore
-    }
-  };
+  if (isLoading) return <FriendsPageSkeleton />;
 
-  if (isLoading) {
-    return <FriendsPageSkeleton />;
-  }
+  const tabs: { id: Tab; label: string; count?: number }[] = [
+    { id: 'my-friends', label: 'My Friends', count: friends.length },
+    { id: 'find-people', label: 'Find People' },
+    { id: 'requests', label: 'Requests', count: requests.length },
+  ];
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Friends</h1>
+    <div className="mx-auto max-w-lg px-4 pb-10 pt-5">
+      <div className="mb-5 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text)] transition-colors hover:bg-[var(--bg2)]"
+            aria-label="Go back"
+          >
+            <svg
+              className="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </button>
+          <h1 className="font-playfair text-[22px] font-bold text-[var(--text)]">Friends</h1>
+        </div>
       </div>
 
-      <div className="mb-6">
-        <TabBar
-          tabs={[
-            { id: 'friends', label: 'Friends', count: friends.length },
-            { id: 'requests', label: 'Requests', count: requests.length },
-            { id: 'sent', label: 'Sent', count: sent.length },
-          ]}
-          active={activeTab}
-          onChange={setActiveTab}
-        />
+      <div className="mb-5 flex border-b border-[var(--border)]">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            className={`relative px-3 pb-3 text-[13px] font-medium transition-colors ${
+              activeTab === tab.id
+                ? "text-[var(--accent)] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[var(--accent)] after:content-['']"
+                : 'text-[var(--text3)] hover:text-[var(--text2)]'
+            }`}
+          >
+            {tab.label}
+
+            {tab.count !== undefined && <span className="ml-1 text-[13px]">({tab.count})</span>}
+          </button>
+        ))}
       </div>
 
-      {activeTab === 'friends' && <FriendList friends={friends} onRemove={handleRemoveFriend} />}
-      {activeTab === 'requests' && (
-        <RequestList requests={requests} onAccept={handleAccept} onDecline={handleDecline} />
+      {activeTab === 'my-friends' && (
+        <MyFriendsTab friends={friends} onRemove={handleRemoveFriend} />
       )}
-      {activeTab === 'sent' && <SentList requests={sent} onCancel={handleCancelSent} />}
+
+      {activeTab === 'find-people' && (
+        <FindPeopleTab
+          initialSuggestions={suggestions}
+          pendingIds={pendingIds}
+          onAdd={handleAddPending}
+        />
+      )}
+
+      {activeTab === 'requests' && (
+        <RequestsTab requests={requests} onAccept={handleAccept} onDecline={handleDecline} />
+      )}
     </div>
   );
 };
