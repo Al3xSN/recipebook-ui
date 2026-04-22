@@ -72,7 +72,13 @@ export default async function ProfilePage(props: PageProps<'/profile/[username]'
       userId: profileUser.id,
       ...(visibilityFilter ? { visibility: visibilityFilter } : {}),
     },
-    include: { ingredients: true, instructions: true, tags: true, user: true },
+    include: {
+      ingredients: true,
+      instructions: true,
+      tags: true,
+      user: true,
+      ratings: { select: { value: true } },
+    },
     orderBy: { createdAt: 'desc' },
   });
 

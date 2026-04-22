@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { CATEGORY_LABELS } from '@/lib/recipe-enums';
 import { apiFetch } from '@/lib/api';
 import type { ISearchRecipesResult } from '@/lib/server/recipe/search';
-import { DiscoverRecipeItem } from './_components/DiscoverRecipeItem';
+import { RecipeListCard } from '@/app/(protected)/recipes/_components/RecipeListCard';
 
 const TRENDING_SEARCHES = [
   'Brown Butter',
@@ -224,7 +224,7 @@ const DiscoverPage = () => {
           ) : results && results.items.length > 0 ? (
             <div className="flex flex-col gap-3">
               {results.items.map((recipe) => (
-                <DiscoverRecipeItem key={recipe.id} recipe={recipe} />
+                <RecipeListCard key={recipe.id} recipe={recipe} showAuthor />
               ))}
             </div>
           ) : (

@@ -55,4 +55,6 @@ export interface IRecipeDto {
   author: IRecipeAuthor;
   createdAt: string;
   updatedAt: string;
+  averageRating: number | null;
+  ratingCount: number;
 }

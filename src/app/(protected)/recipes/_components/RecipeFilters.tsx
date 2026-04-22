@@ -2,7 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
+import { CATEGORY_LABELS } from '@/lib/recipe-enums';
+
+const CATEGORY_PILLS = [
+  { value: '', label: 'All' },
+  ...Object.entries(CATEGORY_LABELS).map(([value, label]) => ({ value, label })),
+];
 
 export const RecipeFilters = () => {
   const router = useRouter();
@@ -15,19 +20,15 @@ export const RecipeFilters = () => {
 
   const urlSearch = searchParams.get('search') ?? '';
   const category = searchParams.get('category') ?? '';
-  const tagsParam = searchParams.get('tags') ?? '';
-  const activeTags = new Set(tagsParam ? tagsParam.split(',').map(Number) : []);
 
   const [searchInput, setSearchInput] = useState(urlSearch);
   const [prevUrlSearch, setPrevUrlSearch] = useState(urlSearch);
 
-  // Derived state: sync input when URL changes via back/forward navigation
   if (urlSearch !== prevUrlSearch) {
     setPrevUrlSearch(urlSearch);
     setSearchInput(urlSearch);
   }
 
-  // Debounce search input → URL
   useEffect(() => {
     const t = setTimeout(() => {
       const params = new URLSearchParams(searchParamsRef.current.toString());
@@ -41,88 +42,110 @@ export const RecipeFilters = () => {
     return () => clearTimeout(t);
   }, [searchInput, router]);
 
-  const setParam = (key: string, value: string | null) => {
+  const setCategory = (value: string) => {
     const params = new URLSearchParams(searchParamsRef.current.toString());
     if (value) {
-      params.set(key, value);
+      params.set('category', value);
     } else {
-      params.delete(key);
+      params.delete('category');
     }
     router.replace(`?${params.toString()}`);
   };
 
-  const toggleTag = (tagValue: number) => {
-    const next = new Set(activeTags);
-    if (next.has(tagValue)) {
-      next.delete(tagValue);
-    } else {
-      next.add(tagValue);
-    }
-    setParam('tags', next.size > 0 ? [...next].join(',') : null);
-  };
-
-  const hasFilters = urlSearch !== '' || category !== '' || activeTags.size > 0;
-
   return (
-    <>
+    <div className="mb-6 flex flex-col gap-3">
       {/* Search */}
-      <div className="mb-4">
+      <div className="relative">
+        <svg
+          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+          style={{ color: 'var(--text3)' }}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
         <input
           type="search"
-          placeholder="Search recipes…"
+          placeholder="Search my recipes…"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
+          style={{
+            width: '100%',
+            borderRadius: 10,
+            border: '1px solid var(--border)',
+            background: 'var(--bg2)',
+            color: 'var(--text)',
+            padding: '10px 12px 10px 36px',
+            fontSize: 14,
+            outline: 'none',
+            transition: 'border-color 150ms',
+          }}
+          onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--accent)')}
+          onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
         />
-      </div>
-
-      {/* Category + Tags */}
-      <div className="mb-8 flex flex-wrap items-center gap-3">
-        <select
-          value={category}
-          onChange={(e) => setParam('category', e.target.value || null)}
-          className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
-        >
-          <option value="">All categories</option>
-          {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-        <div className="flex flex-wrap gap-1.5">
-          {Object.entries(TAG_LABELS).map(([value, label]) => {
-            const tagNum = Number(value);
-            const isActive = activeTags.has(tagNum);
-            return (
-              <button
-                key={value}
-                type="button"
-                onClick={() => toggleTag(tagNum)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  isActive
-                    ? 'bg-orange-500 text-white hover:bg-orange-600'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-        {hasFilters && (
+        {searchInput && (
           <button
             type="button"
-            onClick={() => {
-              setSearchInput('');
-              router.replace('?');
-            }}
-            className="text-sm font-medium text-orange-500 hover:text-orange-600"
+            onClick={() => setSearchInput('')}
+            className="absolute right-3 top-1/2 -translate-y-1/2"
+            style={{ color: 'var(--text3)' }}
+            aria-label="Clear search"
           >
-            Clear filters
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
           </button>
         )}
       </div>
-    </>
+
+      {/* Category pills */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 8,
+          overflowX: 'auto',
+          paddingBottom: 2,
+          scrollbarWidth: 'none',
+        }}
+      >
+        {CATEGORY_PILLS.map(({ value, label }) => {
+          const isActive = category === value;
+          return (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setCategory(value)}
+              style={{
+                flexShrink: 0,
+                borderRadius: 100,
+                padding: '6px 14px',
+                fontSize: 13,
+                fontWeight: 500,
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background 140ms, color 140ms',
+                background: isActive ? 'var(--accent)' : 'var(--bg2)',
+                color: isActive ? '#fff' : 'var(--text2)',
+              }}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 };

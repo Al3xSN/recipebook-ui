@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { IRecipeDto } from '@/interfaces/IRecipe';
-import { RecipeCard } from '@/app/(protected)/recipes/_components/RecipeCard';
+import { RecipeListCard } from '@/app/(protected)/recipes/_components/RecipeListCard';
 
 interface IRecipesTabProps {
   recipes: IRecipeDto[];
@@ -8,17 +8,12 @@ interface IRecipesTabProps {
   currentUserId?: string;
 }
 
-export const RecipesTab = ({ recipes, isOwner, currentUserId }: IRecipesTabProps) => {
+export const RecipesTab = ({ recipes, isOwner }: IRecipesTabProps) => {
   if (recipes.length > 0) {
     return (
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="flex flex-col gap-3">
         {recipes.map((recipe) => (
-          <RecipeCard
-            key={recipe.id}
-            recipe={recipe}
-            showVisibility={isOwner}
-            currentUserId={currentUserId}
-          />
+          <RecipeListCard key={recipe.id} recipe={recipe} showVisibility={isOwner} />
         ))}
       </div>
     );

@@ -101,7 +101,13 @@ export const searchRecipes = async (
     db.recipe.count({ where }),
     db.recipe.findMany({
       where,
-      include: { ingredients: true, instructions: true, tags: true, user: true },
+      include: {
+        ingredients: true,
+        instructions: true,
+        tags: true,
+        user: true,
+        ratings: { select: { value: true } },
+      },
       orderBy,
       skip: (page - 1) * pageSize,
       take: pageSize,

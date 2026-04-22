@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch, ApiRequestError } from '@/lib/api';
 import type { IRecipeDto } from '@/interfaces/IRecipe';
@@ -9,17 +9,22 @@ import { DetailsStep } from './steps/DetailsStep';
 import { IngredientsStep } from './steps/IngredientsStep';
 import { StepsStep } from './steps/StepsStep';
 import { PublishStep } from './steps/PublishStep';
+import { ImportStep, type MockExtractedRecipe } from './steps/ImportStep';
 
 type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
 type Visibility = 'PUBLIC' | 'FRIENDS_ONLY' | 'PRIVATE';
+type Mode = 'manual' | 'import';
 
-const STEP_LABELS = ['DETAILS', 'INGREDIENTS', 'STEPS', 'PUBLISH'] as const;
+const MANUAL_STEP_LABELS = ['DETAILS', 'INGREDIENTS', 'STEPS', 'PUBLISH'] as const;
+const IMPORT_STEP_LABELS = ['IMPORT', 'PUBLISH'] as const;
 
 const NewRecipePage = () => {
   const router = useRouter();
 
+  const [mode, setMode] = useState<Mode>('manual');
   const [step, setStep] = useState(1);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showModeModal, setShowModeModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -37,6 +42,52 @@ const NewRecipePage = () => {
   const [pendingImagePreview, setPendingImagePreview] = useState<string | null>(null);
   const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: 0 }]);
   const [instructions, setInstructions] = useState([{ text: '' }]);
+
+  const hasManualData =
+    title !== '' ||
+    ingredients.some((i) => i.name !== '') ||
+    instructions.some((i) => i.text !== '');
+
+  const handleSwitchToImport = () => {
+    if (hasManualData) {
+      setShowModeModal(true);
+    } else {
+      setMode('import');
+    }
+  };
+
+  const confirmSwitchToImport = () => {
+    setShowModeModal(false);
+    setTitle('');
+    setDescription('');
+    setCategory(-1);
+    setTags([]);
+    setDifficulty('EASY');
+    setPrepTimeMinutes('');
+    setCookTimeMinutes('');
+    setServings('');
+    setPendingImageFile(null);
+    setPendingImagePreview(null);
+    setIngredients([{ name: '', amount: '', unit: 0 }]);
+    setInstructions([{ text: '' }]);
+    setStep(1);
+    setMode('import');
+  };
+
+  const handleImportComplete = useCallback((data: MockExtractedRecipe) => {
+    setTitle(data.title);
+    setDescription(data.description);
+    setCategory(data.category);
+    setDifficulty(data.difficulty);
+    setPrepTimeMinutes(data.prepTimeMinutes);
+    setCookTimeMinutes(data.cookTimeMinutes);
+    setServings(data.servings);
+    setTags(data.tags);
+    setIngredients(data.ingredients);
+    setInstructions(data.instructions);
+    setMode('manual');
+    setStep(1);
+  }, []);
 
   const handlePublish = async () => {
     setSubmitError(null);
@@ -99,7 +150,7 @@ const NewRecipePage = () => {
         </h1>
         <button
           type="button"
-          onClick={() => setShowCancelModal(true)}
+          onClick={() => (hasManualData ? setShowCancelModal(true) : router.push('/recipes'))}
           className="text-sm transition-colors hover:opacity-70"
           style={{ color: 'var(--text2)' }}
         >
@@ -107,35 +158,145 @@ const NewRecipePage = () => {
         </button>
       </div>
 
-      {/* Progress bar */}
-      <div className="mb-8 flex">
-        {STEP_LABELS.map((label, i) => {
-          const stepNum = i + 1;
-          const isActive = step === stepNum;
-          const isDone = step > stepNum;
-          return (
-            <div key={label} className="flex flex-1 flex-col items-center gap-1">
-              <span
-                className="text-[9px] font-semibold tracking-widest"
-                style={{
-                  color: isActive ? 'var(--accent)' : isDone ? 'var(--text2)' : 'var(--text3)',
-                }}
-              >
-                {label}
-              </span>
-              <div
-                className="h-0.5 w-full"
-                style={{
-                  backgroundColor: isActive || isDone ? 'var(--accent)' : 'var(--border)',
-                }}
-              />
-            </div>
-          );
-        })}
+      {/* Mode toggle */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 8,
+          marginBottom: 24,
+          padding: 4,
+          borderRadius: 100,
+          background: 'var(--bg2)',
+          border: '1px solid var(--border)',
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => setMode('manual')}
+          style={{
+            flex: 1,
+            padding: '9px 14px',
+            borderRadius: 100,
+            border: 'none',
+            background: mode === 'manual' ? 'var(--accent)' : 'transparent',
+            color: mode === 'manual' ? '#fff' : 'var(--text2)',
+            fontWeight: 600,
+            fontSize: 14,
+            cursor: 'pointer',
+            transition: 'background 150ms, color 150ms',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          🔥 Manual
+        </button>
+        <button
+          type="button"
+          onClick={handleSwitchToImport}
+          style={{
+            flex: 1,
+            padding: '9px 14px',
+            borderRadius: 100,
+            border: 'none',
+            background: mode === 'import' ? 'var(--accent)' : 'transparent',
+            color: mode === 'import' ? '#fff' : 'var(--text2)',
+            fontWeight: 600,
+            fontSize: 14,
+            cursor: 'pointer',
+            transition: 'background 150ms, color 150ms',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          🪄 Import from video
+        </button>
       </div>
 
-      {/* Steps */}
-      {step === 1 && (
+      {/* Progress bar */}
+      {mode === 'manual' ? (
+        <div className="mb-8 flex">
+          {MANUAL_STEP_LABELS.map((label, i) => {
+            const stepNum = i + 1;
+            const isActive = step === stepNum;
+            const isDone = step > stepNum;
+            return (
+              <div key={label} className="flex flex-1 flex-col items-center gap-1">
+                <span
+                  className="text-[9px] font-semibold tracking-widest"
+                  style={{
+                    color: isActive ? 'var(--accent)' : isDone ? 'var(--text2)' : 'var(--text3)',
+                  }}
+                >
+                  {label}
+                </span>
+                <div
+                  className="h-0.5 w-full"
+                  style={{
+                    backgroundColor: isActive || isDone ? 'var(--accent)' : 'var(--border)',
+                  }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="mb-8 flex">
+          {IMPORT_STEP_LABELS.map((label, i) => {
+            const isActive = i === 0;
+            return (
+              <div key={label} className="flex flex-1 flex-col items-center gap-1">
+                <span
+                  className="text-[9px] font-semibold tracking-widest"
+                  style={{
+                    color: isActive ? 'var(--accent)' : 'var(--text3)',
+                  }}
+                >
+                  {label}
+                </span>
+                <div
+                  className="h-0.5 w-full"
+                  style={{
+                    backgroundColor: isActive ? 'var(--accent)' : 'var(--border)',
+                  }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Import mode */}
+      {mode === 'import' && (
+        <div style={{ position: 'relative' }}>
+          <div style={{ filter: 'blur(3px)', pointerEvents: 'none', userSelect: 'none' }}>
+            <ImportStep onComplete={handleImportComplete} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <span
+              style={{
+                padding: '8px 18px',
+                borderRadius: 100,
+                background: 'var(--accent)',
+                color: '#fff',
+                fontSize: 13,
+                fontWeight: 600,
+                boxShadow: '0 2px 12px rgba(61,43,31,0.18)',
+              }}
+            >
+              Coming soon
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Manual mode steps */}
+      {mode === 'manual' && step === 1 && (
         <DetailsStep
           title={title}
           setTitle={setTitle}
@@ -166,7 +327,7 @@ const NewRecipePage = () => {
         />
       )}
 
-      {step === 2 && (
+      {mode === 'manual' && step === 2 && (
         <IngredientsStep
           ingredients={ingredients}
           setIngredients={setIngredients}
@@ -175,7 +336,7 @@ const NewRecipePage = () => {
         />
       )}
 
-      {step === 3 && (
+      {mode === 'manual' && step === 3 && (
         <StepsStep
           instructions={instructions}
           setInstructions={setInstructions}
@@ -184,7 +345,7 @@ const NewRecipePage = () => {
         />
       )}
 
-      {step === 4 && (
+      {mode === 'manual' && step === 4 && (
         <PublishStep
           title={title}
           category={category}
@@ -211,6 +372,16 @@ const NewRecipePage = () => {
         cancelLabel="Keep editing"
         onConfirm={() => router.push('/recipes')}
         onCancel={() => setShowCancelModal(false)}
+      />
+
+      <ConfirmModal
+        isOpen={showModeModal}
+        title="Switch to import?"
+        message="Your manually entered details will be cleared."
+        confirmLabel="Switch"
+        cancelLabel="Keep editing"
+        onConfirm={confirmSwitchToImport}
+        onCancel={() => setShowModeModal(false)}
       />
     </div>
   );
