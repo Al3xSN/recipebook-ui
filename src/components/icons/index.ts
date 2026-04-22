@@ -1,4 +1,8 @@
 export { ArrowLeftIcon } from './ArrowLeftIcon';
+export { Facebook } from './FacebookIcon';
+export { Instagram } from './InstagramIcon';
+export { TikTok } from './TikTokIcon';
+export { YouTube } from './YouTubeIcon';
 export { BellIcon } from './BellIcon';
 export { BookIcon } from './BookIcon';
 export { CameraIcon } from './CameraIcon';

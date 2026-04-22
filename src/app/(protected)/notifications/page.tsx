@@ -104,7 +104,6 @@ const NotificationIcon = ({ type }: { type: INotification['type'] }) => {
     );
   }
 
-  // RECIPE_IMPORTED
   return (
     <svg
       className="h-5 w-5"
@@ -147,17 +146,37 @@ const NotificationsPage = () => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
+    <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 20px 8px' }}>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Notifications</h1>
-          {unreadCount > 0 && <p className="mt-0.5 text-sm text-gray-500">{unreadCount} unread</p>}
+          <h1
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 26,
+              fontWeight: 700,
+              color: 'var(--text)',
+            }}
+          >
+            Notifications
+          </h1>
+          {unreadCount > 0 && (
+            <p style={{ marginTop: 2, fontSize: 13, color: 'var(--text2)' }}>
+              {unreadCount} unread
+            </p>
+          )}
         </div>
         {unreadCount > 0 && (
           <button
             type="button"
             onClick={markAllRead}
-            className="text-sm font-medium text-orange-500 transition-colors hover:text-orange-600"
+            style={{
+              fontSize: 13,
+              fontWeight: 500,
+              color: 'var(--accent)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+            }}
           >
             Mark all as read
           </button>
@@ -167,12 +186,23 @@ const NotificationsPage = () => {
       {loading ? (
         <div className="flex flex-col gap-2">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-100" />
+            <div
+              key={i}
+              className="animate-pulse"
+              style={{ height: 80, borderRadius: 12, background: 'var(--bg2)' }}
+            />
           ))}
         </div>
       ) : notifications.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-white py-20 text-center">
-          <p className="text-sm text-gray-500">No notifications yet.</p>
+        <div
+          className="py-20 text-center"
+          style={{
+            borderRadius: 16,
+            border: '1px dashed var(--border)',
+            background: 'var(--card)',
+          }}
+        >
+          <p style={{ fontSize: 14, color: 'var(--text2)' }}>No notifications yet.</p>
         </div>
       ) : (
         <div className="flex flex-col gap-2">
@@ -181,19 +211,30 @@ const NotificationsPage = () => {
               key={n.id}
               type="button"
               onClick={() => markRead(n.id)}
-              className={`flex w-full items-start gap-4 rounded-xl border p-4 text-left transition-colors ${
-                n.read
-                  ? 'border-gray-200 bg-white hover:bg-gray-50'
-                  : 'border-orange-100 bg-orange-50 hover:bg-orange-100/50'
-              }`}
+              className="flex w-full items-start gap-4 text-left"
+              style={{
+                borderRadius: 12,
+                border: '1px solid',
+                padding: 16,
+                transition: 'background 0.15s',
+                background: n.read
+                  ? 'var(--card)'
+                  : 'color-mix(in oklch, var(--accent) 8%, var(--bg))',
+                borderColor: n.read
+                  ? 'var(--border)'
+                  : 'color-mix(in oklch, var(--accent) 20%, var(--border))',
+              }}
             >
-              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-500">
+              <div
+                className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full"
+                style={{ background: 'var(--bg2)', color: 'var(--accent)' }}
+              >
                 <NotificationIcon type={n.type} />
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-gray-900">{notificationMessage(n)}</p>
-                <p className="mt-0.5 text-xs text-gray-400">
+                <p style={{ fontSize: 14, color: 'var(--text)' }}>{notificationMessage(n)}</p>
+                <p style={{ marginTop: 2, fontSize: 12, color: 'var(--text3)' }}>
                   {new Date(n.createdAt).toLocaleDateString(undefined, {
                     month: 'short',
                     day: 'numeric',
@@ -203,7 +244,12 @@ const NotificationsPage = () => {
                 </p>
               </div>
 
-              {!n.read && <div className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-orange-500" />}
+              {!n.read && (
+                <div
+                  className="mt-1 h-2 w-2 flex-shrink-0 rounded-full"
+                  style={{ background: 'var(--accent)' }}
+                />
+              )}
             </button>
           ))}
         </div>

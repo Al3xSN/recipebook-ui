@@ -472,7 +472,12 @@ const FriendsPage = () => {
               <path d="m15 18-6-6 6-6" />
             </svg>
           </button>
-          <h1 className="font-playfair text-[22px] font-bold text-[var(--text)]">Friends</h1>
+          <h1
+            className="text-[22px] text-[var(--text)]"
+            style={{ fontFamily: 'var(--font-display)', fontWeight: 700 }}
+          >
+            Friends
+          </h1>
         </div>
       </div>
 

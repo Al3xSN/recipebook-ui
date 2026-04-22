@@ -128,7 +128,12 @@ export const ProfileBanner = ({
 
         <div className="flex items-center justify-between text-white">
           <div>
-            <h2 className="font-playfair text-[21px] font-bold leading-tight">{displayName}</h2>
+            <h2
+              className="text-[21px] leading-tight"
+              style={{ fontFamily: 'var(--font-display)', fontWeight: 700 }}
+            >
+              {displayName}
+            </h2>
             <p className="mt-0.5 text-[13px] text-white/75">@{profile.username}</p>
           </div>
         </div>
@@ -150,17 +155,32 @@ export const ProfileBanner = ({
 
       <div className="flex gap-7">
         <div className="text-white">
-          <div className="font-playfair text-[20px] font-bold">{recipeCount}</div>
+          <div
+            className="text-[20px]"
+            style={{ fontFamily: 'var(--font-display)', fontWeight: 700 }}
+          >
+            {recipeCount}
+          </div>
           <div className="mt-0.5 text-[11px] text-white/65">Recipes</div>
         </div>
         {isOwner ? (
           <Link href="/friends" className="text-white transition-opacity hover:opacity-80">
-            <div className="font-playfair text-[20px] font-bold">{friendCount}</div>
+            <div
+              className="text-[20px]"
+              style={{ fontFamily: 'var(--font-display)', fontWeight: 700 }}
+            >
+              {friendCount}
+            </div>
             <div className="mt-0.5 text-[11px] text-white/65">Friends</div>
           </Link>
         ) : (
           <div className="text-white">
-            <div className="font-playfair text-[20px] font-bold">{friendCount}</div>
+            <div
+              className="text-[20px]"
+              style={{ fontFamily: 'var(--font-display)', fontWeight: 700 }}
+            >
+              {friendCount}
+            </div>
             <div className="mt-0.5 text-[11px] text-white/65">Friends</div>
           </div>
         )}

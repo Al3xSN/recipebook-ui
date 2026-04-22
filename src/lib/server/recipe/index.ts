@@ -18,10 +18,18 @@ export class RecipeAccessError extends Error {
   }
 }
 
+const RECIPE_INCLUDE = {
+  ingredients: true,
+  instructions: true,
+  tags: true,
+  user: true,
+  ratings: { select: { value: true } },
+} as const;
+
 export const getRecipeById = async (id: string): Promise<IRecipeDto> => {
   const recipe = await db.recipe.findUnique({
     where: { id },
-    include: { ingredients: true, instructions: true, tags: true, user: true },
+    include: RECIPE_INCLUDE,
   });
   if (!recipe) throw new RecipeNotFoundError();
   return toRecipeDto(recipe);
@@ -30,7 +38,19 @@ export const getRecipeById = async (id: string): Promise<IRecipeDto> => {
 export const getRecipesByUserId = async (userId: string): Promise<IRecipeDto[]> => {
   const recipes = await db.recipe.findMany({
     where: { userId },
-    include: { ingredients: true, instructions: true, tags: true, user: true },
+    include: RECIPE_INCLUDE,
+    orderBy: { createdAt: 'desc' },
+  });
+  return recipes.map(toRecipeDto);
+};
+
+export const getPublicRecipes = async (category?: number): Promise<IRecipeDto[]> => {
+  const recipes = await db.recipe.findMany({
+    where: {
+      visibility: Visibility.PUBLIC,
+      ...(category !== undefined ? { category } : {}),
+    },
+    include: RECIPE_INCLUDE,
     orderBy: { createdAt: 'desc' },
   });
   return recipes.map(toRecipeDto);
@@ -93,7 +113,7 @@ export const createRecipe = async (
       instructions: { create: instructions },
       tags: { create: tags.map((tag) => ({ tag })) },
     },
-    include: { ingredients: true, instructions: true, tags: true, user: true },
+    include: RECIPE_INCLUDE,
   });
 
   return toRecipeDto(recipe);
@@ -137,7 +157,7 @@ export const updateRecipe = async (id: string, data: IUpdateRecipeData): Promise
         instructions: { create: instructions },
         tags: { create: tags.map((tag) => ({ tag })) },
       },
-      include: { ingredients: true, instructions: true, tags: true, user: true },
+      include: RECIPE_INCLUDE,
     }),
   ]);
 

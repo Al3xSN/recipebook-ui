@@ -3,15 +3,15 @@ import { RecipeCardSkeleton } from '../../recipes/_components/RecipeCardSkeleton
 
 const ProfileLoading = () => {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
+    <div style={{ padding: '20px 20px 8px' }}>
       {/* Profile header */}
-      <div className="mb-6 flex items-start gap-5">
-        <Skeleton className="h-20 w-20 rounded-full" />
+      <div className="mb-6 flex items-start gap-4">
+        <Skeleton className="h-20 w-20 flex-shrink-0 rounded-full" />
         <div className="flex flex-1 flex-col gap-2">
           <Skeleton className="h-6 w-40" />
           <Skeleton className="h-4 w-28" />
           <Skeleton className="mt-1 h-4 w-64" />
-          <Skeleton className="mt-2 h-9 w-28 rounded-lg" />
+          <Skeleton className="mt-2 h-9 w-28 rounded-xl" />
         </div>
       </div>
 
@@ -22,12 +22,9 @@ const ProfileLoading = () => {
         <Skeleton className="h-12 w-24 rounded-xl" />
       </div>
 
-      {/* Section heading */}
-      <Skeleton className="mb-4 h-5 w-24" />
-
-      {/* Recipe grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
+      {/* Recipe list */}
+      <div className="flex flex-col gap-3">
+        {Array.from({ length: 4 }).map((_, i) => (
           <RecipeCardSkeleton key={i} />
         ))}
       </div>

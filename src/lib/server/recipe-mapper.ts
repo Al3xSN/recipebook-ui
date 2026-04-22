@@ -11,9 +11,14 @@ type RecipeWithRelations = Recipe & {
   instructions: InstructionStep[];
   tags: RecipeTag[];
   user: User;
+  ratings: { value: number }[];
 };
 
 export const toRecipeDto = (recipe: RecipeWithRelations) => {
+  const ratingCount = recipe.ratings.length;
+  const averageRating =
+    ratingCount > 0 ? recipe.ratings.reduce((sum, r) => sum + r.value, 0) / ratingCount : null;
+
   return {
     id: recipe.id,
     title: recipe.title,
@@ -45,5 +50,7 @@ export const toRecipeDto = (recipe: RecipeWithRelations) => {
     },
     createdAt: recipe.createdAt instanceof Date ? recipe.createdAt.toISOString() : recipe.createdAt,
     updatedAt: recipe.updatedAt instanceof Date ? recipe.updatedAt.toISOString() : recipe.updatedAt,
+    averageRating,
+    ratingCount,
   };
 };

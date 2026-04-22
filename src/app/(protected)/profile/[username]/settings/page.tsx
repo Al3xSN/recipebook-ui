@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { auth } from '@/auth';
 import { ProfileInfoForm } from '../../_components/ProfileInfoForm';
 import { AvatarUpload } from '../../_components/AvatarUpload';
+import { NotificationsForm } from '../../_components/NotificationsForm';
 import { SignOutButton } from '@/components/ui/SignOutButton';
 import { DeleteAccountButton } from '../../_components/DeleteAccountButton';
 
@@ -49,6 +50,27 @@ const SettingsPage = async ({ params }: { params: Promise<{ username: string }> 
       <hr className="mb-6 border-[var(--border)]" />
 
       <ProfileInfoForm />
+
+      <hr className="my-6 border-[var(--border)]" />
+
+      <div className="mb-6">
+        <h2
+          className="mb-4 text-xs font-semibold uppercase tracking-widest"
+          style={{ color: 'var(--text3)' }}
+        >
+          Notification Preferences
+        </h2>
+        <div
+          style={{
+            borderRadius: 12,
+            border: '1px solid var(--border)',
+            background: 'var(--card)',
+            overflow: 'hidden',
+          }}
+        >
+          <NotificationsForm />
+        </div>
+      </div>
 
       <div className="mt-6 flex flex-col items-center gap-3">
         <SignOutButton />

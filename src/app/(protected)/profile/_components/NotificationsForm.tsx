@@ -31,10 +31,33 @@ export const NotificationsForm = () => {
             role="switch"
             aria-checked={enabled[id]}
             onClick={() => toggle(id)}
-            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 ${enabled[id] ? 'bg-[var(--accent)]' : 'bg-gray-200'}`}
+            style={{
+              position: 'relative',
+              display: 'inline-flex',
+              height: 26,
+              width: 44,
+              flexShrink: 0,
+              cursor: 'pointer',
+              borderRadius: 100,
+              border: 'none',
+              transition: 'background 200ms',
+              background: enabled[id] ? 'var(--accent)' : 'var(--border)',
+              outline: 'none',
+            }}
           >
             <span
-              className={`pointer-events-none inline-block h-5 w-5 translate-y-0.5 rounded-full bg-white shadow transition-transform duration-200 ${enabled[id] ? 'translate-x-5' : 'translate-x-0.5'}`}
+              style={{
+                pointerEvents: 'none',
+                display: 'inline-block',
+                height: 20,
+                width: 20,
+                marginTop: 3,
+                borderRadius: '50%',
+                background: '#fff',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
+                transition: 'transform 200ms',
+                transform: enabled[id] ? 'translateX(21px)' : 'translateX(3px)',
+              }}
             />
           </button>
         </div>

@@ -57,7 +57,13 @@ export const POST = async (_req: NextRequest, { params }: Params) => {
         },
         tags: { create: original.tags.map((t) => ({ tag: t.tag })) },
       },
-      include: { ingredients: true, instructions: true, tags: true, user: true },
+      include: {
+        ingredients: true,
+        instructions: true,
+        tags: true,
+        user: true,
+        ratings: { select: { value: true } },
+      },
     });
     await createNotification(tx, {
       userId: original.userId,
