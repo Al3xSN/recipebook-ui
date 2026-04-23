@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
-import { areFriends } from '@/lib/server/friendship-helpers';
-import { toRecipeDto } from '@/lib/server/recipe-mapper';
+import { areFriends } from '@/lib/server/friends';
+import { toRecipeDto } from '@/lib/server/recipe/mapper';
 import { createNotification, NotificationType } from '@/lib/server/notifications';
 import { Visibility } from '@generated/prisma/client';
 

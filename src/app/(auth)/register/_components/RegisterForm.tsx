@@ -9,7 +9,7 @@ import { EyeIcon } from '@/components/icons';
 
 const fieldLabel = 'mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em]';
 const fieldInput =
-  'w-full rounded-[10px] border px-3 py-3 text-sm outline-none transition-colors focus:ring-2';
+  'w-full rounded-[10px] border px-3 py-3 text-base outline-none transition-colors focus:ring-2';
 
 const getStrength = (pw: string): 0 | 1 | 2 | 3 | 4 => {
   let score = 0;

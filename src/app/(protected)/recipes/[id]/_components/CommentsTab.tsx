@@ -158,7 +158,7 @@ export const CommentsTab = ({ recipeId, isOwner }: ICommentsTab) => {
               placeholder="Share your experience..."
               rows={3}
               maxLength={500}
-              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
             />
             {commentError && <p className="mt-1 text-xs text-red-500">{commentError}</p>}
             <button

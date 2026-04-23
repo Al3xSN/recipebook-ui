@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
-import { areFriends } from '@/lib/server/friendship-helpers';
-import { toRecipeDto } from '@/lib/server/recipe-mapper';
+import { areFriends } from '@/lib/server/friends';
+import { toRecipeDto } from '@/lib/server/recipe/mapper';
 import { getUserByUsername } from '@/lib/server/user';
 import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import { FriendshipStatus } from '@/enums/FriendshipStatus';

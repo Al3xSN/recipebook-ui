@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
 @import 'tailwindcss';
 
 :root {
@@ -12,6 +12,7 @@
   --card: #ffffff;
   --font-display: 'DM Sans', system-ui, sans-serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
   --nav-h: 68px;
 }
 
@@ -19,4 +20,9 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
+}
+
+input[type='password']::-ms-reveal,
+input[type='password']::-ms-clear {
+  display: none;
 }

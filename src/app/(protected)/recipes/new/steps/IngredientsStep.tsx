@@ -17,7 +17,7 @@ interface IngredientsStepProps {
 }
 
 const inputClass =
-  'rounded-lg border px-3 py-2.5 text-sm outline-none transition-colors focus:ring-2';
+  'rounded-lg border px-3 py-2.5 text-base outline-none transition-colors focus:ring-2';
 const inputStyle = { borderColor: 'var(--border)', backgroundColor: 'white', color: 'var(--text)' };
 
 export const IngredientsStep = ({

@@ -16,7 +16,6 @@ export const BottomNav = ({ username }: IBottomNavProps) => {
 
   return (
     <nav
-      className="md:hidden"
       style={{
         position: 'fixed',
         bottom: 0,

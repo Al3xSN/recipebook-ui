@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { verifyPassword, hashPassword } from '@/lib/server/password';
+import { verifyPassword, hashPassword } from '@/lib/server/user/password';
 import type { IUserDto, ICreateUserData, IUpdateUserProfileData } from '@/interfaces/IUser';
 
 export { searchUsers, getUserSuggestions } from './search';

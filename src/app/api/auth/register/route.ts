@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { hashPassword } from '@/lib/server/password';
+import { hashPassword } from '@/lib/server/user/password';
 import { apiError } from '@/lib/server/api-error';
 import { createUser, UserConflictError } from '@/lib/server/user';
 

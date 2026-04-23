@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
+import MobileOnlyGuard from '@/components/ui/MobileOnlyGuard';
 
 export const metadata: Metadata = {
   title: {
@@ -25,6 +26,7 @@ const RootLayout = ({
   return (
     <html lang="en">
       <body>
+        <MobileOnlyGuard />
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
