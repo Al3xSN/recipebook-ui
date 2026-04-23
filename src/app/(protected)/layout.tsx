@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
-import { TopNav } from '@/components/layout/TopNav';
 import { BottomNav } from '@/components/layout/BottomNav';
 
 const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -11,8 +10,7 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--bg)' }}>
-      <TopNav user={user} />
-      <main className="pb-[calc(var(--nav-h)+env(safe-area-inset-bottom,0px)+8px)] md:pb-0">
+      <main className="pb-[calc(var(--nav-h)+env(safe-area-inset-bottom,0px)+8px)]">
         {children}
       </main>
       <BottomNav username={user.username} />

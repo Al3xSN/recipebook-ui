@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { ApiRequestError } from '@/lib/api';
 import { SpinnerIcon, CameraIcon } from '@/components/icons';
 
-const MAX_BYTES = 2 * 1024 * 1024;
+const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 type ImageUploadProps = {
@@ -47,7 +47,7 @@ export const ImageUpload = ({
       return;
     }
     if (file.size > MAX_BYTES) {
-      setError('File must be 2 MB or smaller.');
+      setError('File must be 5 MB or smaller.');
       if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
@@ -121,7 +121,7 @@ export const ImageUpload = ({
           {isUploading ? spinner : null}
         </button>
 
-        <p className="text-xs text-gray-500">JPEG, PNG, or WebP — max 2 MB</p>
+        <p className="text-xs text-gray-500">JPEG, PNG, or WebP — max 5 MB</p>
 
         {error && (
           <p role="alert" className="text-xs text-red-600">
@@ -170,7 +170,7 @@ export const ImageUpload = ({
       </button>
 
       <div className="flex items-center justify-between">
-        <p className="text-xs text-gray-500">JPEG, PNG, or WebP — max 2 MB</p>
+        <p className="text-xs text-gray-500">JPEG, PNG, or WebP — max 5 MB</p>
         {onRemove && displayUrl && (
           <button
             type="button"

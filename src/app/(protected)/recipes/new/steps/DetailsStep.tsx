@@ -30,7 +30,7 @@ interface DetailsStepProps {
 }
 
 const inputClass =
-  'w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition-colors focus:ring-2';
+  'w-full rounded-lg border px-3 py-2.5 text-base outline-none transition-colors focus:ring-2';
 const inputStyle = {
   borderColor: 'var(--border)',
   backgroundColor: 'white',

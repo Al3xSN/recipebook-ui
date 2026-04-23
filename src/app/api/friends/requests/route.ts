@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
-import { areFriends } from '@/lib/server/friendship-helpers';
+import { areFriends } from '@/lib/server/friends';
 import { createNotification, NotificationType } from '@/lib/server/notifications';
 import { getUserByUsername } from '@/lib/server/user';
 import { FriendRequestStatus } from '@generated/prisma/client';

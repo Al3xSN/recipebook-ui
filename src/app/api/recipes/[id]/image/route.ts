@@ -5,7 +5,7 @@ import { apiError } from '@/lib/server/api-error';
 import { RecipeNotFoundError, RecipeAccessError } from '@/lib/server/recipe';
 import { updateRecipeImage, deleteRecipeImage } from '@/lib/server/recipe/image';
 
-const MAX_BYTES = 2 * 1024 * 1024;
+const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 type Params = { params: Promise<{ id: string }> };
@@ -23,7 +23,7 @@ export const POST = async (req: NextRequest, { params }: Params) => {
   if (!(file instanceof File)) return apiError(422, 'No file provided.');
   if (!ALLOWED_TYPES.includes(file.type))
     return apiError(422, 'Only JPEG, PNG, and WebP images are supported.');
-  if (file.size > MAX_BYTES) return apiError(422, 'File must be 2 MB or smaller.');
+  if (file.size > MAX_BYTES) return apiError(422, 'File must be 5 MB or smaller.');
 
   try {
     const url = await updateRecipeImage(id, session.userId, file);

@@ -24,7 +24,7 @@ const FieldLabel = ({ children }: { children: React.ReactNode }) => (
 );
 
 const fieldClass =
-  'w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]';
+  'w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2.5 text-base text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]';
 
 export const ProfileInfoForm = () => {
   const { data: session, update: updateSession } = useSession();
@@ -164,7 +164,7 @@ export const ProfileInfoForm = () => {
             value={formData.username}
             onChange={(e) => handleChange('username', e.target.value)}
             required
-            className="flex-1 bg-transparent px-3 py-2.5 text-sm text-[var(--text)] outline-none"
+            className="flex-1 bg-transparent px-3 py-2.5 text-base text-[var(--text)] outline-none"
           />
         </div>
       </div>
@@ -187,7 +187,7 @@ export const ProfileInfoForm = () => {
           type="email"
           value={session?.user?.email ?? ''}
           readOnly
-          className="w-full cursor-not-allowed rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 py-2.5 text-sm text-[var(--text3)] outline-none"
+          className="w-full cursor-not-allowed rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 py-2.5 text-base text-[var(--text3)] outline-none"
         />
       </div>
 

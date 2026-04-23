@@ -57,7 +57,7 @@ export const StepsStep = ({
               onChange={(e) => update(i, e.target.value)}
               rows={2}
               placeholder={`Step ${i + 1}…`}
-              className="flex-1 resize-none rounded-lg border px-3 py-2.5 text-sm outline-none transition-colors focus:ring-2"
+              className="flex-1 resize-none rounded-lg border px-3 py-2.5 text-base outline-none transition-colors focus:ring-2"
               style={{
                 borderColor: 'var(--border)',
                 backgroundColor: 'white',

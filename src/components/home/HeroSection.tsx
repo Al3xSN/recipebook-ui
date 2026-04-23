@@ -1,16 +1,19 @@
 import Link from 'next/link';
-import { BookIcon } from '@/components/icons';
+import { LogoEditorial } from '@/components/ui/LogoMark';
 
 export const HeroSection = () => (
   <>
-    <div className="bg-[url('/heroimage.png')] bg-cover bg-center h-52 flex flex-col items-center justify-center">
+    <div className="relative bg-[url('/heroimage.png')] bg-cover bg-center h-64 flex flex-col items-center justify-center">
       <div
-        style={{ background: 'rgba(255,255,255,0.18)', borderRadius: 18 }}
-        className="mb-2.5 flex h-14 w-14 items-center justify-center"
-      >
-        <BookIcon className="h-8 w-8 text-white" strokeWidth={1.75} />
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse at center, rgba(28,20,16,0.82) 0%, rgba(28,20,16,0.45) 45%, transparent 72%)',
+        }}
+      />
+      <div className="relative z-10">
+        <LogoEditorial />
       </div>
-      <span className="text-base font-semibold text-white">RecipeBook</span>
     </div>
 
     <section style={{ background: 'var(--bg)' }} className="px-5 py-8">

@@ -82,7 +82,7 @@ export const RecipeFilters = () => {
             background: 'var(--bg2)',
             color: 'var(--text)',
             padding: '10px 12px 10px 36px',
-            fontSize: 14,
+            fontSize: 16,
             outline: 'none',
             transition: 'border-color 150ms',
           }}

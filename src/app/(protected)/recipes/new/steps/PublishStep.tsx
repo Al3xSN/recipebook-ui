@@ -100,7 +100,7 @@ export const PublishStep = ({
           id="visibility"
           value={visibility}
           onChange={(e) => setVisibility(e.target.value as Visibility)}
-          className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition-colors"
+          className="w-full rounded-lg border px-3 py-2.5 text-base outline-none transition-colors"
           style={{ borderColor: 'var(--border)', backgroundColor: 'white', color: 'var(--text)' }}
         >
           {VISIBILITY_OPTIONS.map(({ key, label }) => (
