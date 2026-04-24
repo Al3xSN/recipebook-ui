@@ -37,7 +37,7 @@ export const StepsTab = ({ steps }: IStepsTab) => {
               onClick={() => toggle(step.stepNumber)}
             >
               <span
-                className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
                   done ? 'bg-gray-100 text-gray-400' : 'bg-orange-500 text-white'
                 }`}
               >

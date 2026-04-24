@@ -76,14 +76,13 @@ export const CommentList = ({ recipeId }: ICommentList) => {
         )}
       </h2>
 
-      {/* Comment list */}
       {isLoading ? (
         <CommentListSkeleton />
       ) : (
         <div className="mb-6 flex flex-col gap-4">
           {comments.map((comment) => (
             <div key={comment.id} className="flex gap-3">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">
                 {initials(comment.authorUsername)}
               </div>
               <div className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3">
@@ -116,9 +115,8 @@ export const CommentList = ({ recipeId }: ICommentList) => {
         </div>
       )}
 
-      {/* Add comment form */}
       <form onSubmit={handlePost} className="flex gap-3">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">
           {session?.user?.username ? initials(session.user.username) : 'Me'}
         </div>
         <div className="flex-1">

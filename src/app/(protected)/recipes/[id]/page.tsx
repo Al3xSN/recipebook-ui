@@ -67,15 +67,14 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
 
   return (
     <div className="mx-auto max-w-lg">
-      {/* Hero image */}
       <div className="relative">
         {recipe.imageUrl ? (
-          <div className="relative h-64 w-full">
+          <div className="relative aspect-video w-full bg-(--bg2)">
             <Image
               src={recipe.imageUrl}
               alt={recipe.title}
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="(max-width: 512px) 100vw, 512px"
               priority
             />
@@ -88,7 +87,6 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
 
         <RecipeHeroActions />
 
-        {/* Owner edit/delete */}
         {isOwner && (
           <div className="absolute right-3 bottom-3 flex items-center gap-2">
             <Link
@@ -103,9 +101,7 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
         )}
       </div>
 
-      {/* Content */}
       <div className="px-4 pt-4">
-        {/* Category + rating */}
         <div className="mb-2 flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
             {CATEGORY_LABELS[recipe.category] ?? 'Other'}
@@ -128,10 +124,8 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
           )}
         </div>
 
-        {/* Title */}
         <h1 className="mb-3 text-2xl font-bold tracking-tight text-gray-900">{recipe.title}</h1>
 
-        {/* Author */}
         <div className="mb-4 flex items-center justify-between">
           <Link
             href={`/profile/${recipe.author.username}`}
@@ -147,7 +141,7 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
               />
             ) : (
               <span
-                className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(recipe.author.username)}`}
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(recipe.author.username)}`}
               >
                 {recipe.author.displayName.charAt(0).toUpperCase()}
               </span>

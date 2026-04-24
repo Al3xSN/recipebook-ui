@@ -72,7 +72,7 @@ export const AvatarUpload = () => {
         onClick={triggerUpload}
         disabled={isUploading}
         aria-label="Change photo"
-        className="relative flex h-16 w-16 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-orange-100 text-xl font-bold text-orange-600 transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        className="relative flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-orange-100 text-xl font-bold text-orange-600 transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
         {avatarUrl ? (
           <Image
@@ -93,12 +93,12 @@ export const AvatarUpload = () => {
       </button>
 
       <div>
-        <p className="font-semibold text-[var(--text)]">{displayName}</p>
+        <p className="font-semibold text-(--text)">{displayName}</p>
         <button
           type="button"
           onClick={triggerUpload}
           disabled={isUploading}
-          className="mt-1.5 rounded-lg border border-[var(--border)] bg-white px-3 py-1.5 text-sm font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-1.5 rounded-lg border border-(--border) bg-white px-3 py-1.5 text-sm font-medium text-(--text2) transition-colors hover:bg-(--bg2) focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           Change photo
         </button>

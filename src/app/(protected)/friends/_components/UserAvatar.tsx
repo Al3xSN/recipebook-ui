@@ -9,12 +9,12 @@ const UserAvatar = ({ name, avatarUrl }: { name: string; avatarUrl: string | nul
         alt={name}
         width={44}
         height={44}
-        className="h-11 w-11 flex-shrink-0 rounded-full object-cover"
+        className="h-11 w-11 shrink-0 rounded-full object-cover"
       />
     );
   }
   return (
-    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[var(--bg2)] text-sm font-semibold text-[var(--text)]">
+    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-(--bg2) text-sm font-semibold text-(--text)">
       {initials}
     </div>
   );

@@ -18,16 +18,16 @@ const UserRow = ({
   <div className="flex items-center gap-3 py-3.5">
     <UserAvatar name={name} avatarUrl={avatarUrl} />
     <div className="min-w-0 flex-1">
-      <p className="text-[15px] font-semibold text-[var(--text)]">{name}</p>
-      <p className="text-[13px] text-[var(--text2)]">@{username}</p>
-      {bio && <p className="truncate text-[13px] text-[var(--text2)]">{bio}</p>}
+      <p className="text-[15px] font-semibold text-(--text)">{name}</p>
+      <p className="text-[13px] text-(--text2)">@{username}</p>
+      {bio && <p className="truncate text-[13px] text-(--text2)">{bio}</p>}
       {mutualFriendCount > 0 && (
-        <p className="text-[12px] font-medium text-[var(--accent)]">
+        <p className="text-[12px] font-medium text-(--accent)">
           {mutualFriendCount} mutual friend{mutualFriendCount !== 1 ? 's' : ''}
         </p>
       )}
     </div>
-    <div className="flex flex-shrink-0 items-center gap-2">{actions}</div>
+    <div className="flex shrink-0 items-center gap-2">{actions}</div>
   </div>
 );
 

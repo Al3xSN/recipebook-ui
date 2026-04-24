@@ -24,7 +24,6 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
 
   return (
     <article className="relative flex flex-col overflow-hidden rounded-2xl border border-solid border-(--border) bg-(--card) shadow-(--shadow-card) transition-all duration-150">
-      {/* Image */}
       <div className="relative h-44 w-full">
         {showVisibility && recipe.visibility === Visibility.PRIVATE && (
           <span className="absolute top-2 left-2 z-10 rounded-full bg-[rgba(61,43,31,0.65)] px-2 py-0.5 text-xs font-medium text-white">
@@ -51,21 +50,17 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
         )}
       </div>
 
-      {/* Content */}
       <div className="flex flex-1 flex-col gap-2.5 p-4">
-        {/* Category label */}
-        <span className="text-[10px] font-semibold tracking-[0.1em] text-(--text3) uppercase">
+        <span className="text-[10px] font-semibold tracking-widest text-(--text3) uppercase">
           {CATEGORY_LABELS[recipe.category] ?? 'Other'}
         </span>
 
-        {/* Title — stretched link covers the full card */}
         <h2 className="line-clamp-2 text-[17px] leading-snug font-semibold text-(--text)">
           <Link href={`/recipes/${recipe.id}`} className="after:absolute after:inset-0">
             {recipe.title}
           </Link>
         </h2>
 
-        {/* Meta: time + servings */}
         <div className="flex items-center gap-3 text-[13px] text-(--text2)">
           <span className="flex items-center gap-1">
             <ClockIcon className="h-3.5 w-3.5" />
@@ -77,7 +72,6 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
           </span>
         </div>
 
-        {/* Tags */}
         {recipe.tags.length > 0 && (
           <div className="mt-auto flex flex-wrap gap-1 pt-1">
             {recipe.tags.slice(0, 3).map((tag) => (
@@ -96,7 +90,6 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
           </div>
         )}
 
-        {/* Author byline — relative z-10 sits above the stretched link overlay */}
         {showAuthor && (
           <Link
             href={`/profile/${recipe.author.username}`}
@@ -111,7 +104,7 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
                 className="h-6 w-6 rounded-full object-cover"
               />
             ) : (
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-(--bg2) text-xs font-semibold text-(--accent)">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--bg2) text-xs font-semibold text-(--accent)">
                 {recipe.author.displayName.charAt(0).toUpperCase()}
               </span>
             )}

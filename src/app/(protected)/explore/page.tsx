@@ -6,6 +6,7 @@ import { CATEGORY_LABELS } from '@/lib/recipe-enums';
 import { apiFetch } from '@/lib/api';
 import { ISearchRecipesResult } from '@/lib/server/recipe/search';
 import { RecipeListCard } from '@/app/(protected)/recipes/_components/RecipeListCard';
+import { SearchIcon } from '@/components/icons';
 
 const TRENDING_SEARCHES = [
   'Brown Butter',
@@ -99,28 +100,16 @@ const DiscoverPage = () => {
     <div className="min-h-screen p-5">
       <h1 className="mb-6 text-xl font-bold text-(--text)">Discover</h1>
 
-      {/* Search bar */}
       <div className="relative mb-5">
-        <svg
-          className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-gray-400"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
+        <SearchIcon className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-gray-400" />
         <input
           type="search"
           value={searchInput}
           onChange={(e) => handleSearchChange(e.target.value)}
           placeholder="Search recipes, ingredients..."
-          className="w-full rounded-2xl border border-gray-200 bg-white py-3 pr-10 pl-11 text-sm transition-colors outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
+          className="w-full rounded-2xl border border-gray-200 bg-white py-3 pr-10 pl-11 transition-colors outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
         />
+
         {searchInput && (
           <button
             type="button"

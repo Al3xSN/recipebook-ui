@@ -188,7 +188,7 @@ export const CommentsTab = ({ recipeId, isOwner }: ICommentsTab) => {
               <div className="mb-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span
-                    className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${avatarColor(comment.authorUsername)}`}
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${avatarColor(comment.authorUsername)}`}
                   >
                     {initials(comment.authorUsername)}
                   </span>

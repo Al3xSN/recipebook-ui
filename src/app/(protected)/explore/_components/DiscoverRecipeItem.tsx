@@ -29,7 +29,7 @@ export const DiscoverRecipeItem = ({ recipe }: IDiscoverRecipeItemProps) => {
       href={`/recipes/${recipe.id}`}
       className="flex items-center gap-4 rounded-2xl bg-white p-3 shadow-sm transition-shadow hover:shadow-md"
     >
-      <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl">
+      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl">
         {recipe.imageUrl ? (
           <Image src={recipe.imageUrl} alt={recipe.title} fill className="object-cover" />
         ) : (

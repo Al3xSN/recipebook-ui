@@ -26,14 +26,13 @@ export const RecipeListCard = ({
 
   return (
     <article className="relative flex items-center gap-3 rounded-2xl border border-solid border-(--border) bg-(--card) p-3 shadow-(--shadow-card-sm)">
-      {/* Thumbnail */}
-      <div className="relative h-18 w-18 flex-shrink-0 overflow-hidden rounded-[12px]">
+      <div className="relative h-18 w-18 shrink-0 overflow-hidden rounded-xl bg-(--bg2)">
         {recipe.imageUrl ? (
           <Image
             src={recipe.imageUrl}
             alt={recipe.title}
             fill
-            className="object-cover"
+            className="object-contain"
             sizes="72px"
           />
         ) : (
@@ -43,12 +42,12 @@ export const RecipeListCard = ({
         )}
 
         {showVisibility && recipe.visibility === 'PRIVATE' && (
-          <span className="absolute bottom-1 left-1 rounded-[6px] bg-[rgba(61,43,31,0.7)] px-1.5 py-0.5 text-[9px] font-semibold text-white">
+          <span className="absolute bottom-1 left-1 rounded-md bg-[rgba(61,43,31,0.7)] px-1.5 py-0.5 text-[9px] font-semibold text-white">
             Private
           </span>
         )}
         {showVisibility && recipe.visibility === 'FRIENDS_ONLY' && (
-          <span className="absolute bottom-1 left-1 rounded-[6px] bg-[rgba(61,43,31,0.7)] px-1.5 py-0.5 text-[9px] font-semibold text-white">
+          <span className="absolute bottom-1 left-1 rounded-md bg-[rgba(61,43,31,0.7)] px-1.5 py-0.5 text-[9px] font-semibold text-white">
             Friends
           </span>
         )}
