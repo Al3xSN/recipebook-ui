@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { FriendshipStatus } from '@/enums/FriendshipStatus';
 import { ProfileBanner, type IProfileData } from './ProfileBanner';
 import { ProfileTabs, type ProfileTab } from './ProfileTabs';

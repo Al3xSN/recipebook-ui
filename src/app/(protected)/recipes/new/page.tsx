@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch, ApiRequestError } from '@/lib/api';
-import type { IRecipeDto } from '@/interfaces/IRecipe';
+import { IRecipeDto } from '@/interfaces/IRecipe';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { DetailsStep } from './steps/DetailsStep';
 import { IngredientsStep } from './steps/IngredientsStep';

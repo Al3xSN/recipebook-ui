@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { CATEGORY_LABELS } from '@/lib/recipe-enums';
-import type { IRecipeDto } from '@/interfaces/IRecipe';
+import { IRecipeDto } from '@/interfaces/IRecipe';
 import { BookIcon, ClockIcon, StarIcon } from '@/components/icons';
 
 interface IRecipeListCardProps {

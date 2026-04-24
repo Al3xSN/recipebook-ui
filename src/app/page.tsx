@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import { Metadata } from 'next';
 import { auth } from '@/auth';
 import { HeroSection } from '@/components/home/HeroSection';
 import { redirect } from 'next/navigation';

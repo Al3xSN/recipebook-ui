@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { CATEGORY_LABELS } from '@/lib/recipe-enums';
 import { apiFetch } from '@/lib/api';
-import type { ISearchRecipesResult } from '@/lib/server/recipe/search';
+import { ISearchRecipesResult } from '@/lib/server/recipe/search';
 import { RecipeListCard } from '@/app/(protected)/recipes/_components/RecipeListCard';
 
 const TRENDING_SEARCHES = [

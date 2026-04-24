@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { IRecipeDto } from '@/interfaces/IRecipe';
+import { IRecipeDto } from '@/interfaces/IRecipe';
 import { RecipeListCard } from '@/app/(protected)/recipes/_components/RecipeListCard';
 
 interface IRecipesTabProps {

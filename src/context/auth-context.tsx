@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useReducer } from 'react';
 import { getUser, setUser, setTokens, clearTokens } from '@/lib/auth-storage';
-import type { IAuthResponseDto, IAuthUser } from '@/interfaces/IAuth';
+import { IAuthResponseDto, IAuthUser } from '@/interfaces/IAuth';
 
 interface IAuthContextValue {
   user: IAuthUser | null;

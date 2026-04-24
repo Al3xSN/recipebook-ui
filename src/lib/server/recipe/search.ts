@@ -1,7 +1,7 @@
 import { Prisma, Visibility, Difficulty, FriendRequestStatus } from '@generated/prisma/client';
 import { db } from '@/lib/db';
 import { toRecipeDto } from '@/lib/server/recipe/mapper';
-import type { IRecipeDto } from '@/interfaces/IRecipe';
+import { IRecipeDto } from '@/interfaces/IRecipe';
 
 export interface ISearchRecipesParams {
   userId: string;

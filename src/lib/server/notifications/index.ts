@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@generated/prisma/client';
+import { PrismaClient } from '@generated/prisma/client';
 import { NotificationType } from '@generated/prisma/client';
 
 type NotificationWriter = Pick<PrismaClient, 'notification'>;

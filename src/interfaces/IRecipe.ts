@@ -1,4 +1,4 @@
-import type { Visibility, Difficulty } from '@generated/prisma/client';
+import { Visibility, Difficulty } from '@generated/prisma/client';
 
 export interface ICreateRecipeData {
   title: string;

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { apiFetch } from '@/lib/api';
 import SearchInput from './SearchInput';
 import UserRow from './UserRow';
-import type { IUserSuggestionDto } from './types';
+import { IUserSuggestionDto } from './types';
 
 const FindPeopleTab = ({
   initialSuggestions,

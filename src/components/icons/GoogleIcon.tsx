@@ -1,13 +1,7 @@
-import type { SVGProps } from 'react';
+import { SVGProps } from 'react';
 
 export const GoogleIcon = (props: SVGProps<SVGSVGElement>) => (
-  <svg
-    {...props}
-    xmlnsXlink="http://www.w3.org/1999/xlink"
-    xmlSpace="preserve"
-    overflow="hidden"
-    viewBox="0 0 268.152 273.883"
-  >
+  <svg {...props} xmlSpace="preserve" overflow="hidden" viewBox="0 0 268.152 273.883">
     <defs>
       <linearGradient id="google__a">
         <stop offset="0" stopColor="#0fbc5c" />

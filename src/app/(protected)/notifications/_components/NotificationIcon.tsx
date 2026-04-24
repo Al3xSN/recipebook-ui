@@ -1,4 +1,4 @@
-import type { INotification } from './types';
+import { INotification } from './types';
 
 const NotificationIcon = ({ type }: { type: INotification['type'] }) => {
   if (type === 'FRIEND_REQUEST') {

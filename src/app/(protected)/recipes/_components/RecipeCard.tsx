@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 import { Visibility } from '@generated/prisma/client';
-import type { IRecipeDto } from '@/interfaces/IRecipe';
+import { IRecipeDto } from '@/interfaces/IRecipe';
 import { BookIcon, ClockIcon, UsersIcon } from '@/components/icons';
 
 interface IRecipeCardProps {

@@ -2,7 +2,7 @@ import { del } from '@vercel/blob';
 import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import { db } from '@/lib/db';
 import { toRecipeDto } from '@/lib/server/recipe/mapper';
-import type { IRecipeDto, ICreateRecipeData, IUpdateRecipeData } from '@/interfaces/IRecipe';
+import { IRecipeDto, ICreateRecipeData, IUpdateRecipeData } from '@/interfaces/IRecipe';
 
 export class RecipeNotFoundError extends Error {
   constructor() {

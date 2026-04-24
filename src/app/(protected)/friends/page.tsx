@@ -7,7 +7,7 @@ import { FriendsPageSkeleton } from './_components/FriendsPageSkeleton';
 import MyFriendsTab from './_components/MyFriendsTab';
 import FindPeopleTab from './_components/FindPeopleTab';
 import RequestsTab from './_components/RequestsTab';
-import type {
+import {
   IFriendDto,
   IIncomingRequestDto,
   IUserSuggestionDto,

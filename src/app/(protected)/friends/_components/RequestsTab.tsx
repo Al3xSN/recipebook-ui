@@ -1,5 +1,5 @@
 import UserRow from './UserRow';
-import type { IIncomingRequestDto } from './types';
+import { IIncomingRequestDto } from './types';
 
 const RequestsTab = ({
   requests,

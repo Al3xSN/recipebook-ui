@@ -1,4 +1,4 @@
-import type { IApiError } from '@/interfaces/IProfile';
+import { IApiError } from '@/interfaces/IProfile';
 
 export class ApiRequestError extends Error {
   status: number;

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/Button';
 import { apiFetch, ApiRequestError } from '@/lib/api';
-import type {
+import {
   IProfileDto,
   IUpdateProfileInfoRequest,
   IUpdateProfileInfoResponse,
@@ -18,7 +18,7 @@ const NOTIFICATIONS = [
 ];
 
 const FieldLabel = ({ children }: { children: React.ReactNode }) => (
-  <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[var(--text3)]">
+  <label className="mb-1 block text-xs font-semibold tracking-wider text-[var(--text3)] uppercase">
     {children}
   </label>
 );
@@ -154,7 +154,7 @@ export const ProfileInfoForm = () => {
 
       <div>
         <FieldLabel>Username</FieldLabel>
-        <div className="flex overflow-hidden rounded-lg border border-[var(--border)] bg-white focus-within:border-[var(--accent)] focus-within:ring-1 focus-within:ring-[var(--accent)] transition-colors">
+        <div className="flex overflow-hidden rounded-lg border border-[var(--border)] bg-white transition-colors focus-within:border-[var(--accent)] focus-within:ring-1 focus-within:ring-[var(--accent)]">
           <span className="flex items-center border-r border-[var(--border)] bg-[var(--bg2)] px-3 text-sm text-[var(--text3)]">
             @
           </span>
@@ -207,7 +207,7 @@ export const ProfileInfoForm = () => {
               role="switch"
               aria-checked={notifications[id]}
               onClick={() => toggleNotification(id)}
-              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 ${notifications[id] ? 'bg-[var(--accent)]' : 'bg-gray-200'}`}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:outline-none ${notifications[id] ? 'bg-[var(--accent)]' : 'bg-gray-200'}`}
             >
               <span
                 className={`pointer-events-none inline-block h-5 w-5 translate-y-0.5 rounded-full bg-white shadow transition-transform duration-200 ${notifications[id] ? 'translate-x-5' : 'translate-x-0.5'}`}

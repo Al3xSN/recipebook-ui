@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import { Metadata } from 'next';
 import { LoginForm } from './_components/LoginForm';
 
 export const metadata: Metadata = { title: 'Sign In' };

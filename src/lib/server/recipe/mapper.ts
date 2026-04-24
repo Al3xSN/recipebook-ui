@@ -1,10 +1,4 @@
-import type {
-  Recipe,
-  Ingredient,
-  InstructionStep,
-  RecipeTag,
-  User,
-} from '@generated/prisma/client';
+import { Recipe, Ingredient, InstructionStep, RecipeTag, User } from '@generated/prisma/client';
 
 type RecipeWithRelations = Recipe & {
   ingredients: Ingredient[];

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import SearchInput from './SearchInput';
 import UserRow from './UserRow';
-import type { IFriendDto } from './types';
+import { IFriendDto } from './types';
 
 const MyFriendsTab = ({
   friends,

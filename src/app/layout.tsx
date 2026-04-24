@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import { Metadata } from 'next';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 import MobileOnlyGuard from '@/components/ui/MobileOnlyGuard';

@@ -1,4 +1,4 @@
-import type { IAuthUser } from '@/interfaces/IAuth';
+import { IAuthUser } from '@/interfaces/IAuth';
 
 const TOKEN_KEY = 'rb_token';
 const REFRESH_TOKEN_KEY = 'rb_refresh_token';

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { CATEGORY_LABELS } from '@/lib/recipe-enums';
-import type { IRecipeDto } from '@/interfaces/IRecipe';
+import { IRecipeDto } from '@/interfaces/IRecipe';
 
 const CATEGORY_COLORS: Record<number, string> = {
   0: 'bg-amber-200',
@@ -37,7 +37,7 @@ export const DiscoverRecipeItem = ({ recipe }: IDiscoverRecipeItemProps) => {
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="mb-0.5 text-xs font-semibold uppercase tracking-wide text-[#b07050]">
+        <p className="mb-0.5 text-xs font-semibold tracking-wide text-[#b07050] uppercase">
           {CATEGORY_LABELS[recipe.category]}
         </p>
         <p className="truncate text-sm font-bold text-gray-900">{recipe.title}</p>
