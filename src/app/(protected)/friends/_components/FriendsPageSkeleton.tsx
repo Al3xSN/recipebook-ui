@@ -16,7 +16,7 @@ const FriendRowSkeleton = () => (
 );
 
 export const FriendsPageSkeleton = () => (
-  <div className="mx-auto max-w-lg px-4 pb-10 pt-5">
+  <div className="mx-auto max-w-lg px-4 pt-5 pb-10">
     {/* Header */}
     <div className="mb-5 flex items-center justify-between">
       <div className="flex items-center gap-2">

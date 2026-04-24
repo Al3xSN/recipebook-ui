@@ -128,7 +128,7 @@ export const CommentList = ({ recipeId }: ICommentList) => {
             placeholder="Add a comment…"
             rows={3}
             maxLength={500}
-            className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
+            className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm transition-colors outline-none focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
           />
           {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
           <div className="mt-2 flex justify-end">

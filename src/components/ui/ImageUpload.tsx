@@ -105,7 +105,7 @@ export const ImageUpload = ({
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
           aria-label="Change photo"
-          className="group/upload relative flex h-24 w-24 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-orange-100 text-2xl font-bold text-orange-600 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
+          className="group/upload relative flex h-24 w-24 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-orange-100 text-2xl font-bold text-orange-600 transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {displayUrl ? (
             <Image
@@ -148,7 +148,7 @@ export const ImageUpload = ({
         onClick={() => fileInputRef.current?.click()}
         disabled={isUploading}
         aria-label="Upload photo"
-        className="group/upload relative w-full cursor-pointer overflow-hidden rounded-xl bg-orange-50 transition-colors disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
+        className="group/upload relative w-full cursor-pointer overflow-hidden rounded-xl bg-orange-50 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
         <div className="aspect-video w-full">
           {displayUrl ? (
@@ -160,7 +160,7 @@ export const ImageUpload = ({
               sizes="(max-width: 672px) 100vw, 672px"
             />
           ) : (
-            <span className="flex h-full w-full flex-col items-center justify-center gap-2 border-2 border-dashed border-orange-200 rounded-xl hover:border-orange-400 transition-colors">
+            <span className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-orange-200 transition-colors hover:border-orange-400">
               <CameraIcon className="h-10 w-10 text-orange-300" strokeWidth={1.5} />
               <span className="text-sm text-orange-400">Upload photo</span>
             </span>
@@ -175,7 +175,7 @@ export const ImageUpload = ({
           <button
             type="button"
             onClick={onRemove}
-            className="text-xs text-red-500 hover:text-red-700 transition-colors"
+            className="text-xs text-red-500 transition-colors hover:text-red-700"
           >
             Remove photo
           </button>
