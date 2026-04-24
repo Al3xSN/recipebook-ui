@@ -1,7 +1,10 @@
-export const StarIcon = (props: React.SVGProps<SVGSVGElement>) => (
+import { SVGProps } from 'react';
+
+export const StarIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
+    width="18"
+    height="18"
     viewBox="0 0 24 24"
-    stroke="currentColor"
     strokeWidth="1.5"
     strokeLinecap="round"
     strokeLinejoin="round"

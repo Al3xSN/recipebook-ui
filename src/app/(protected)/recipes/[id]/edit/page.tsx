@@ -28,13 +28,11 @@ const EditRecipePage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Image state
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
   const [pendingImagePreview, setPendingImagePreview] = useState<string | null>(null);
   const [imageRemoved, setImageRemoved] = useState(false);
 
-  // Form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState(-1);
@@ -138,52 +136,38 @@ const EditRecipePage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6">
-      {/* Header */}
       <div className="mb-6 flex items-center justify-between">
-        <h1
-          className="text-xl font-bold"
-          style={{ color: 'var(--text)', fontFamily: 'var(--font-display)' }}
-        >
-          Edit Recipe
-        </h1>
+        <h1 className="text-xl font-bold text-(--text)">Edit Recipe</h1>
         <button
           type="button"
           onClick={() => setShowCancelModal(true)}
-          className="text-sm transition-colors hover:opacity-70"
-          style={{ color: 'var(--text2)' }}
+          className="text-sm text-(--text2) transition-colors hover:opacity-70"
         >
           Cancel
         </button>
       </div>
 
-      {/* Progress bar */}
       <div className="mb-8 flex">
         {STEP_LABELS.map((label, i) => {
           const stepNum = i + 1;
           const isActive = step === stepNum;
           const isDone = step > stepNum;
+
           return (
             <div key={label} className="flex flex-1 flex-col items-center gap-1">
               <span
-                className="text-[9px] font-semibold tracking-widest"
-                style={{
-                  color: isActive ? 'var(--accent)' : isDone ? 'var(--text2)' : 'var(--text3)',
-                }}
+                className={`text-[9px] font-semibold tracking-widest text-(${isActive ? '--accent' : isDone ? '--text2' : '--text3'})`}
               >
                 {label}
               </span>
               <div
-                className="h-0.5 w-full"
-                style={{
-                  backgroundColor: isActive || isDone ? 'var(--accent)' : 'var(--border)',
-                }}
+                className={`h-0.5 w-full bg-(${isActive || isDone ? '--accent' : '--border'})`}
               />
             </div>
           );
         })}
       </div>
 
-      {/* Steps */}
       {step === 1 && (
         <DetailsStep
           title={title}

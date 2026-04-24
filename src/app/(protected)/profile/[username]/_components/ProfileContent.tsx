@@ -37,7 +37,7 @@ export const ProfileContent = ({
         friendCount={friendCount}
       />
       <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
-      <div className="px-5 py-5">
+      <div className="p-5">
         <div className={activeTab === 'recipes' ? 'block' : 'hidden'}>{recipesContent}</div>
         {activeTab === 'saved' && <SavedTab />}
         {activeTab === 'about' && <AboutTab bio={profile.bio} createdAt={profile.createdAt} />}

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ImageUpload } from '@/components/ui/ImageUpload';
 import { CATEGORY_LABELS, TAG_LABELS, DIFFICULTY_LABELS } from '@/lib/recipe-enums';
+import { ArrowRightIcon } from '@/components/icons';
 
 type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
 
@@ -29,20 +30,6 @@ interface DetailsStepProps {
   onContinue: () => void;
 }
 
-const inputClass =
-  'w-full rounded-lg border px-3 py-2.5 text-base outline-none transition-colors focus:ring-2';
-const inputStyle = {
-  borderColor: 'var(--border)',
-  backgroundColor: 'white',
-  color: 'var(--text)',
-};
-const focusAccentStyle = {
-  '--tw-ring-color': 'color-mix(in srgb, var(--accent) 20%, transparent)',
-} as React.CSSProperties;
-
-const labelClass = 'text-[10px] font-semibold tracking-widest uppercase';
-const labelStyle = { color: 'var(--text2)' };
-
 const DIFFICULTIES: Array<{ key: Difficulty; label: string }> = [
   { key: 'EASY', label: DIFFICULTY_LABELS['EASY'] ?? 'Easy' },
   { key: 'MEDIUM', label: DIFFICULTY_LABELS['MEDIUM'] ?? 'Medium' },
@@ -51,22 +38,22 @@ const DIFFICULTIES: Array<{ key: Difficulty; label: string }> = [
 
 export const DetailsStep = ({
   title,
-  setTitle,
   description,
-  setDescription,
   category,
-  setCategory,
   tags,
-  setTags,
   difficulty,
-  setDifficulty,
   prepTimeMinutes,
-  setPrepTimeMinutes,
   cookTimeMinutes,
-  setCookTimeMinutes,
   servings,
-  setServings,
   pendingImagePreview,
+  setTitle,
+  setDescription,
+  setCategory,
+  setTags,
+  setDifficulty,
+  setPrepTimeMinutes,
+  setCookTimeMinutes,
+  setServings,
   onImageSelect,
   onImageRemove,
   onContinue,
@@ -92,7 +79,6 @@ export const DetailsStep = ({
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Cover photo */}
       <ImageUpload
         currentImageUrl={pendingImagePreview}
         shape="rectangle"
@@ -100,9 +86,11 @@ export const DetailsStep = ({
         onRemove={onImageRemove}
       />
 
-      {/* Title */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="title" className={labelClass} style={labelStyle}>
+        <label
+          htmlFor="title"
+          className="text-[10px] font-semibold tracking-widest text-(--text2) uppercase"
+        >
           Recipe Title
         </label>
         <input
@@ -111,22 +99,22 @@ export const DetailsStep = ({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. Roasted Tomato Pasta"
-          className={inputClass}
-          style={{ ...inputStyle, ...focusAccentStyle }}
+          className="w-full rounded-lg border border-(--border) bg-white px-3 py-2.5 text-(--text) transition-colors"
         />
       </div>
 
-      {/* Category */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="category" className={labelClass} style={labelStyle}>
+        <label
+          htmlFor="category"
+          className="text-[10px] font-semibold tracking-widest text-(--text2) uppercase"
+        >
           Category
         </label>
         <select
           id="category"
           value={category}
           onChange={(e) => setCategory(Number(e.target.value))}
-          className={inputClass}
-          style={inputStyle}
+          className="w-full rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
         >
           <option value={-1} disabled>
             Select a category…
@@ -139,9 +127,11 @@ export const DetailsStep = ({
         </select>
       </div>
 
-      {/* Description */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="description" className={labelClass} style={labelStyle}>
+        <label
+          htmlFor="description"
+          className="text-[10px] font-semibold tracking-widest text-(--text2) uppercase"
+        >
           Description
         </label>
         <textarea
@@ -150,15 +140,16 @@ export const DetailsStep = ({
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
           placeholder="A short description of your recipe…"
-          className={`${inputClass} resize-none`}
-          style={inputStyle}
+          className="w-full resize-none rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
         />
       </div>
 
-      {/* Cook Time & Servings */}
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="cookTime" className={labelClass} style={labelStyle}>
+          <label
+            htmlFor="cookTime"
+            className="text-[10px] font-semibold tracking-widest text-(--text2) uppercase"
+          >
             Cook Time (min)
           </label>
           <input
@@ -168,12 +159,14 @@ export const DetailsStep = ({
             value={cookTimeMinutes}
             onChange={(e) => setCookTimeMinutes(e.target.value)}
             placeholder="45"
-            className={inputClass}
-            style={inputStyle}
+            className="w-full rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="servings" className={labelClass} style={labelStyle}>
+          <label
+            htmlFor="servings"
+            className="text-[10px] font-semibold tracking-widest text-(--text2) uppercase"
+          >
             Servings
           </label>
           <input
@@ -183,15 +176,16 @@ export const DetailsStep = ({
             value={servings}
             onChange={(e) => setServings(e.target.value)}
             placeholder="4"
-            className={inputClass}
-            style={inputStyle}
+            className="w-full rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
           />
         </div>
       </div>
 
-      {/* Prep Time */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="prepTime" className={labelClass} style={labelStyle}>
+        <label
+          htmlFor="prepTime"
+          className="text-[10px] font-semibold tracking-widest text-(--text2) uppercase"
+        >
           Prep Time (min)
         </label>
         <input
@@ -201,14 +195,12 @@ export const DetailsStep = ({
           value={prepTimeMinutes}
           onChange={(e) => setPrepTimeMinutes(e.target.value)}
           placeholder="15"
-          className={inputClass}
-          style={inputStyle}
+          className="w-full rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
         />
       </div>
 
-      {/* Difficulty */}
       <div className="flex flex-col gap-2">
-        <span className={labelClass} style={labelStyle}>
+        <span className="text-[10px] font-semibold tracking-widest text-(--text2) uppercase">
           Difficulty
         </span>
         <div className="flex gap-2">
@@ -234,9 +226,8 @@ export const DetailsStep = ({
         </div>
       </div>
 
-      {/* Tags */}
       <div className="flex flex-col gap-2">
-        <span className={labelClass} style={labelStyle}>
+        <span className="text-[10px] font-semibold tracking-widest text-(--text2) uppercase">
           Tags
         </span>
         <div className="flex flex-wrap gap-2">
@@ -266,21 +257,19 @@ export const DetailsStep = ({
         </div>
       </div>
 
-      {/* Error */}
       {error && (
         <p role="alert" className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">
           {error}
         </p>
       )}
 
-      {/* Continue */}
       <button
         type="button"
         onClick={handleContinue}
-        className="w-full rounded-lg py-3 text-sm font-semibold text-white transition-colors hover:opacity-90"
-        style={{ backgroundColor: 'var(--accent)' }}
+        className="flex w-full items-center justify-center gap-1 rounded-lg bg-(--accent) py-3 text-sm font-semibold text-white transition-colors hover:opacity-90"
       >
-        Continue →
+        <span>Continue</span>
+        <ArrowRightIcon className="h-4 w-4" />
       </button>
     </div>
   );

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { AuthShell } from '@/components/auth/AuthCard';
 import { EyeIcon } from '@/components/icons';
 
 const fieldLabel = 'mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em]';
@@ -20,11 +19,11 @@ const getStrength = (pw: string): 0 | 1 | 2 | 3 | 4 => {
   return score as 0 | 1 | 2 | 3 | 4;
 };
 
-const strengthColors: Record<number, string> = {
-  1: '#ef4444',
-  2: '#f97316',
-  3: '#ca8a04',
-  4: '#16a34a',
+const strengthClasses: Record<number, string> = {
+  1: 'bg-red-500',
+  2: 'bg-orange-500',
+  3: 'bg-yellow-600',
+  4: 'bg-green-600',
 };
 
 export const RegisterForm = () => {
@@ -95,16 +94,9 @@ export const RegisterForm = () => {
   };
 
   return (
-    <AuthShell showProgress>
-      <h1
-        style={{ color: 'var(--text)', fontSize: 30, fontWeight: 700 }}
-        className="mb-1 leading-tight"
-      >
-        Create account
-      </h1>
-      <p style={{ color: 'var(--text2)' }} className="mb-7 text-sm">
-        Join thousands of home cooks.
-      </p>
+    <>
+      <h1 className="mb-1 text-3xl leading-tight font-bold text-(--text)">Create account</h1>
+      <p className="mb-7 text-sm text-(--text2)">Join thousands of home cooks.</p>
 
       {error && (
         <p role="alert" className="mb-4 rounded-xl bg-red-50 px-4 py-2.5 text-sm text-red-600">
@@ -114,9 +106,10 @@ export const RegisterForm = () => {
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <div>
-          <label htmlFor="displayName" style={{ color: 'var(--text3)' }} className={fieldLabel}>
+          <label htmlFor="displayName" className={`${fieldLabel} text-(--text3)`}>
             Full name
           </label>
+
           <input
             id="displayName"
             type="text"
@@ -124,15 +117,15 @@ export const RegisterForm = () => {
             onChange={(e) => setDisplayName(e.target.value)}
             autoComplete="name"
             placeholder="Isabelle Chen"
-            style={{ background: 'var(--bg2)', borderColor: 'var(--border)', color: 'var(--text)' }}
-            className={fieldInput + ' focus:ring-[var(--accent)]/20 focus:border-[var(--accent)]'}
+            className={`${fieldInput} border-(--border) bg-(--bg2) text-(--text) focus:border-(--accent) focus:ring-(--accent)/20`}
           />
         </div>
 
         <div>
-          <label htmlFor="email" style={{ color: 'var(--text3)' }} className={fieldLabel}>
+          <label htmlFor="email" className={`${fieldLabel} text-(--text3)`}>
             Email address
           </label>
+
           <input
             id="email"
             type="email"
@@ -141,15 +134,15 @@ export const RegisterForm = () => {
             autoComplete="email"
             required
             placeholder="you@example.com"
-            style={{ background: 'var(--bg2)', borderColor: 'var(--border)', color: 'var(--text)' }}
-            className={fieldInput + ' focus:ring-[var(--accent)]/20 focus:border-[var(--accent)]'}
+            className={`${fieldInput} border-(--border) bg-(--bg2) text-(--text) focus:border-(--accent) focus:ring-(--accent)/20`}
           />
         </div>
 
         <div>
-          <label htmlFor="password" style={{ color: 'var(--text3)' }} className={fieldLabel}>
+          <label htmlFor="password" className={`${fieldLabel} text-(--text3)`}>
             Password
           </label>
+
           <div className="relative">
             <input
               id="password"
@@ -159,35 +152,24 @@ export const RegisterForm = () => {
               autoComplete="new-password"
               required
               placeholder="At least 6 characters"
-              style={{
-                background: 'var(--bg2)',
-                borderColor: 'var(--border)',
-                color: 'var(--text)',
-              }}
-              className={
-                fieldInput + ' pr-14 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)]'
-              }
+              className={`${fieldInput} border-(--border) bg-(--bg2) pr-14 text-(--text) focus:border-(--accent) focus:ring-(--accent)/20`}
             />
+
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              style={{ color: 'var(--border)' }}
-              className="absolute right-3 top-1/2 -translate-y-1/2"
+              className="absolute top-1/2 right-3 -translate-y-1/2 text-(--border)"
             >
               <EyeIcon open={showPassword} className="h-5 w-5" />
             </button>
           </div>
+
           {password.length > 0 && (
             <div className="mt-2 flex gap-1">
               {[1, 2, 3, 4].map((seg) => (
                 <div
                   key={seg}
-                  style={{
-                    borderRadius: 100,
-                    background: strength >= seg ? strengthColors[seg] : 'var(--border)',
-                    transition: 'background 200ms',
-                  }}
-                  className="h-1 flex-1"
+                  className={`h-1 flex-1 rounded-full transition-[background] duration-200 ${strength >= seg ? strengthClasses[seg] : 'bg-(--border)'}`}
                 />
               ))}
             </div>
@@ -195,7 +177,7 @@ export const RegisterForm = () => {
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" style={{ color: 'var(--text3)' }} className={fieldLabel}>
+          <label htmlFor="confirmPassword" className={`${fieldLabel} text-(--text3)`}>
             Confirm password
           </label>
           <input
@@ -207,17 +189,10 @@ export const RegisterForm = () => {
             autoComplete="new-password"
             required
             placeholder="Repeat password"
-            style={{
-              background: 'var(--bg2)',
-              borderColor: passwordsMismatch ? '#ef4444' : 'var(--border)',
-              color: 'var(--text)',
-            }}
-            className={fieldInput + ' focus:ring-[var(--accent)]/20 focus:border-[var(--accent)]'}
+            className={`${fieldInput} bg-(--bg2) text-(--text) focus:border-(--accent) focus:ring-(--accent)/20 ${passwordsMismatch ? 'border-red-500' : 'border-(--border)'}`}
           />
           {passwordsMismatch && (
-            <p style={{ color: '#ef4444' }} className="mt-1.5 text-xs">
-              Passwords don&apos;t match
-            </p>
+            <p className="mt-1.5 text-xs text-red-500">Passwords don&apos;t match</p>
           )}
         </div>
 
@@ -231,17 +206,7 @@ export const RegisterForm = () => {
               className="sr-only"
             />
             <div
-              style={{
-                width: 18,
-                height: 18,
-                borderRadius: 4,
-                border: `2px solid ${agreedToTerms ? 'var(--accent)' : 'var(--border)'}`,
-                background: agreedToTerms ? 'var(--accent)' : 'transparent',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'background 150ms, border-color 150ms',
-              }}
+              className={`flex size-4.5 items-center justify-center rounded border-2 transition-[background,border-color] duration-150 ${agreedToTerms ? 'border-(--accent) bg-(--accent)' : 'border-(--border) bg-transparent'}`}
             >
               {agreedToTerms && (
                 <svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden="true">
@@ -256,40 +221,33 @@ export const RegisterForm = () => {
               )}
             </div>
           </div>
-          <span style={{ color: 'var(--text2)' }} className="text-sm leading-snug">
-            I agree to the{' '}
-            <a href="#" style={{ color: 'var(--accent)' }} className="font-medium">
+          <p className="text-sm leading-snug text-(--text2)">
+            <span>I agree to the </span>
+            <Link href="#" className="font-medium text-(--accent)">
               Terms of Service
-            </a>{' '}
-            and{' '}
-            <a href="#" style={{ color: 'var(--accent)' }} className="font-medium">
+            </Link>
+            <span> and </span>
+            <Link href="#" className="font-medium text-(--accent)">
               Privacy Policy
-            </a>
-          </span>
+            </Link>
+          </p>
         </label>
 
         <button
           type="submit"
           disabled={!canSubmit}
-          style={{
-            background: 'var(--accent)',
-            borderRadius: 12,
-            boxShadow: canSubmit
-              ? '0 4px 18px color-mix(in oklch, var(--accent) 45%, transparent)'
-              : 'none',
-          }}
-          className="mt-1 w-full py-3.5 text-sm font-semibold text-white transition-transform active:scale-[0.97] disabled:opacity-60"
+          className={`mt-1 w-full rounded-xl bg-(--accent) py-3.5 text-sm font-semibold text-white transition-transform active:scale-[0.97] disabled:opacity-60 ${canSubmit ? 'shadow-[0_4px_18px_color-mix(in_oklch,var(--accent)_45%,transparent)]' : 'shadow-none'}`}
         >
           {isLoading ? 'Creating account…' : 'Continue →'}
         </button>
       </form>
 
-      <p style={{ color: 'var(--text2)' }} className="mt-6 text-center text-sm">
-        Already have an account?{' '}
-        <Link href="/login" style={{ color: 'var(--accent)' }} className="font-semibold">
+      <div className="mt-6 flex items-center justify-center gap-1.5 text-sm">
+        <p className="text-(--text-2)">Already have an account? </p>
+        <Link href="/login" className="font-semibold text-(--accent)">
           Log in
         </Link>
-      </p>
-    </AuthShell>
+      </div>
+    </>
   );
 };

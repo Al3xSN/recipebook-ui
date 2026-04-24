@@ -23,31 +23,16 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
   };
 
   return (
-    <article
-      className="relative flex flex-col overflow-hidden"
-      style={{
-        borderRadius: 16,
-        border: '1px solid var(--border)',
-        background: 'var(--card)',
-        boxShadow: '0 2px 14px rgba(61,43,31,0.07)',
-        transition: 'transform 0.15s, box-shadow 0.15s',
-      }}
-    >
+    <article className="relative flex flex-col overflow-hidden rounded-2xl border border-solid border-(--border) bg-(--card) shadow-(--shadow-card) transition-all duration-150">
       {/* Image */}
       <div className="relative h-44 w-full">
         {showVisibility && recipe.visibility === Visibility.PRIVATE && (
-          <span
-            className="absolute left-2 top-2 z-10 px-2 py-0.5 text-xs font-medium text-white"
-            style={{ borderRadius: 100, background: 'rgba(61,43,31,0.65)' }}
-          >
+          <span className="absolute top-2 left-2 z-10 rounded-full bg-[rgba(61,43,31,0.65)] px-2 py-0.5 text-xs font-medium text-white">
             Private
           </span>
         )}
         {showVisibility && recipe.visibility === Visibility.FRIENDS_ONLY && (
-          <span
-            className="absolute left-2 top-2 z-10 px-2 py-0.5 text-xs font-medium text-white"
-            style={{ borderRadius: 100, background: 'rgba(61,43,31,0.65)' }}
-          >
+          <span className="absolute top-2 left-2 z-10 rounded-full bg-[rgba(61,43,31,0.65)] px-2 py-0.5 text-xs font-medium text-white">
             Friends only
           </span>
         )}
@@ -60,11 +45,8 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         ) : (
-          <div
-            className="flex h-full w-full items-center justify-center"
-            style={{ background: 'var(--bg2)' }}
-          >
-            <BookIcon className="h-10 w-10" style={{ color: 'var(--border)' }} strokeWidth={1.5} />
+          <div className="flex h-full w-full items-center justify-center bg-(--bg2)">
+            <BookIcon className="h-10 w-10 text-(--border)" strokeWidth={1.5} />
           </div>
         )}
       </div>
@@ -72,30 +54,19 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
       {/* Content */}
       <div className="flex flex-1 flex-col gap-2.5 p-4">
         {/* Category label */}
-        <span
-          style={{
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            color: 'var(--text3)',
-          }}
-        >
+        <span className="text-[10px] font-semibold tracking-[0.1em] text-(--text3) uppercase">
           {CATEGORY_LABELS[recipe.category] ?? 'Other'}
         </span>
 
         {/* Title — stretched link covers the full card */}
-        <h2
-          className="line-clamp-2 leading-snug"
-          style={{ fontSize: 17, fontWeight: 600, color: 'var(--text)' }}
-        >
+        <h2 className="line-clamp-2 text-[17px] leading-snug font-semibold text-(--text)">
           <Link href={`/recipes/${recipe.id}`} className="after:absolute after:inset-0">
             {recipe.title}
           </Link>
         </h2>
 
         {/* Meta: time + servings */}
-        <div className="flex items-center gap-3" style={{ fontSize: 13, color: 'var(--text2)' }}>
+        <div className="flex items-center gap-3 text-[13px] text-(--text2)">
           <span className="flex items-center gap-1">
             <ClockIcon className="h-3.5 w-3.5" />
             {formatTime(totalMinutes)}
@@ -112,29 +83,13 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
             {recipe.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                style={{
-                  borderRadius: 100,
-                  background: 'var(--bg2)',
-                  color: 'var(--text2)',
-                  fontSize: 11,
-                  fontWeight: 500,
-                  padding: '2px 8px',
-                }}
+                className="rounded-full bg-(--bg2) px-2 py-0.5 text-[11px] font-medium text-(--text2)"
               >
                 #{TAG_LABELS[tag] ?? tag}
               </span>
             ))}
             {recipe.tags.length > 3 && (
-              <span
-                style={{
-                  borderRadius: 100,
-                  background: 'var(--bg2)',
-                  color: 'var(--text3)',
-                  fontSize: 11,
-                  fontWeight: 500,
-                  padding: '2px 8px',
-                }}
-              >
+              <span className="rounded-full bg-(--bg2) px-2 py-0.5 text-[11px] font-medium text-(--text3)">
                 +{recipe.tags.length - 3}
               </span>
             )}
@@ -145,8 +100,7 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
         {showAuthor && (
           <Link
             href={`/profile/${recipe.author.username}`}
-            className="relative z-10 mt-auto flex cursor-pointer items-center gap-2 pt-3"
-            style={{ borderTop: '1px solid var(--border)' }}
+            className="relative z-10 mt-auto flex cursor-pointer items-center gap-2 border-t border-(--border) pt-3"
           >
             {recipe.author.avatarUrl ? (
               <Image
@@ -157,16 +111,11 @@ export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IR
                 className="h-6 w-6 rounded-full object-cover"
               />
             ) : (
-              <span
-                className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-                style={{ background: 'var(--bg2)', color: 'var(--accent)' }}
-              >
+              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-(--bg2) text-xs font-semibold text-(--accent)">
                 {recipe.author.displayName.charAt(0).toUpperCase()}
               </span>
             )}
-            <span className="truncate text-xs" style={{ color: 'var(--text2)' }}>
-              {recipe.author.displayName}
-            </span>
+            <span className="truncate text-xs text-(--text2)">{recipe.author.displayName}</span>
           </Link>
         )}
       </div>

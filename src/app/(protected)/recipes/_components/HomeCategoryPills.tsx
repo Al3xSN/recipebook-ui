@@ -27,15 +27,7 @@ export const HomeCategoryPills = () => {
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: 8,
-        overflowX: 'auto',
-        paddingBottom: 2,
-        scrollbarWidth: 'none',
-      }}
-    >
+    <div className="flex gap-2 overflow-x-auto pb-0.5 [scrollbar-width:none]">
       {PILLS.map(({ value, label }) => {
         const isActive = category === value;
         return (
@@ -43,18 +35,7 @@ export const HomeCategoryPills = () => {
             key={value}
             type="button"
             onClick={() => setCategory(value)}
-            style={{
-              flexShrink: 0,
-              borderRadius: 100,
-              padding: '7px 16px',
-              fontSize: 13,
-              fontWeight: 500,
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'background 140ms, color 140ms',
-              background: isActive ? 'var(--accent)' : 'var(--bg2)',
-              color: isActive ? '#fff' : 'var(--text2)',
-            }}
+            className={`shrink-0 cursor-pointer rounded-full border-none px-4 py-2 text-[13px] font-medium transition-colors duration-150 ${isActive ? 'bg-(--accent) text-white' : 'bg-(--bg2) text-(--text2)'}`}
           >
             {label}
           </button>

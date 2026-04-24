@@ -1,4 +1,6 @@
-export const EyeIcon = ({ open, ...props }: { open?: boolean } & React.SVGProps<SVGSVGElement>) =>
+import { SVGProps } from 'react';
+
+export const EyeIcon = ({ open, ...props }: { open?: boolean } & SVGProps<SVGSVGElement>) =>
   open ? (
     <svg
       viewBox="0 0 24 24"

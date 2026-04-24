@@ -14,7 +14,7 @@ const HomePage = async () => {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--bg)' }}>
+    <div className="min-h-dvh bg-(--bg)">
       <HeroSection />
     </div>
   );

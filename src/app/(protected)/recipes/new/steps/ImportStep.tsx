@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { YouTube, Instagram, TikTok, Facebook } from '@/components/icons';
+import { YouTubeIcon, InstagramIcon, TikTokIcon, FacebookIcon } from '@/components/icons';
 
 type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
 
@@ -64,10 +64,10 @@ const PROGRESS_STEPS = [
 const STEP_DELAYS = [1200, 1200, 1600, 1200];
 
 const PLATFORMS = [
-  { name: 'YouTube', Icon: YouTube, bg: '#FF0000' },
-  { name: 'Instagram', Icon: Instagram, bg: 'transparent' },
-  { name: 'TikTok', Icon: TikTok, bg: '#010101' },
-  { name: 'Facebook', Icon: Facebook, bg: '#1877F2' },
+  { name: 'YouTube', Icon: YouTubeIcon, bg: 'transparent' },
+  { name: 'Instagram', Icon: InstagramIcon, bg: 'transparent' },
+  { name: 'TikTok', Icon: TikTokIcon, bg: 'black' },
+  { name: 'Facebook', Icon: FacebookIcon, bg: 'transparent' },
 ];
 
 const CheckCircle = () => (
@@ -77,7 +77,7 @@ const CheckCircle = () => (
     viewBox="0 0 20 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ flexShrink: 0 }}
+    className="shrink-0"
   >
     <circle cx="10" cy="10" r="10" fill="var(--accent)" />
     <polyline
@@ -98,7 +98,7 @@ const ActiveCircle = () => (
     viewBox="0 0 20 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ flexShrink: 0 }}
+    className="shrink-0"
   >
     <circle cx="10" cy="10" r="9" stroke="var(--accent)" strokeWidth="2" fill="none" />
   </svg>
@@ -111,7 +111,7 @@ const PendingCircle = () => (
     viewBox="0 0 20 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ flexShrink: 0 }}
+    className="shrink-0"
   >
     <circle cx="10" cy="10" r="10" fill="var(--border)" />
   </svg>
@@ -119,13 +119,12 @@ const PendingCircle = () => (
 
 const SpinnerArc = () => (
   <svg
-    className="animate-spin"
+    className="shrink-0 animate-spin text-(--accent)"
     width="16"
     height="16"
     viewBox="0 0 16 16"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ flexShrink: 0, color: 'var(--accent)' }}
   >
     <circle cx="8" cy="8" r="6" stroke="var(--border)" strokeWidth="2" />
     <path d="M8 2a6 6 0 0 1 6 6" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" />
@@ -176,61 +175,23 @@ export const ImportStep = ({ onComplete }: ImportStepProps) => {
 
   return (
     <div>
-      <p
-        style={{
-          fontSize: 11,
-          fontWeight: 600,
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-          color: 'var(--text3)',
-          marginBottom: 12,
-        }}
-      >
+      <p className="mb-3 text-xs font-semibold tracking-wide text-(--text3) uppercase">
         Supported Platforms
       </p>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: 10,
-          marginBottom: 20,
-        }}
-      >
+      <div className="mb-4 flex justify-around">
         {PLATFORMS.map(({ name, Icon, bg }) => (
-          <div
-            key={name}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}
-          >
+          <div key={name} className="flex flex-col items-center gap-1.5">
             <div
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: 14,
-                overflow: 'hidden',
-                border: '1px solid var(--border)',
-                background: bg,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+              className={`flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-solid border-(--border) bg-${bg}`}
             >
               <Icon width={40} height={40} />
             </div>
-            <span style={{ fontSize: 12, color: 'var(--text2)' }}>{name}</span>
+            <span className="text-xs text-(--text2)">{name}</span>
           </div>
         ))}
       </div>
 
-      <p
-        style={{
-          fontSize: 11,
-          fontWeight: 600,
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-          color: 'var(--text3)',
-          marginBottom: 8,
-        }}
-      >
+      <p className="mb-2 text-xs font-semibold tracking-wide text-(--text3) uppercase">
         Paste Video URL
       </p>
       <input
@@ -239,68 +200,29 @@ export const ImportStep = ({ onComplete }: ImportStepProps) => {
         onChange={(e) => setUrl(e.target.value)}
         placeholder="https://www.youtube.com/watch?v=..."
         disabled={isRunning}
-        style={{
-          width: '100%',
-          padding: '12px 14px',
-          borderRadius: 10,
-          border: '1px solid var(--border)',
-          background: 'var(--bg2)',
-          color: 'var(--text)',
-          fontSize: 14,
-          outline: 'none',
-          boxSizing: 'border-box',
-          marginBottom: 12,
-          opacity: isRunning ? 0.6 : 1,
-        }}
+        className="mb-3 box-border w-full rounded-xl border border-solid border-(--border) bg-(--bg2) px-3.5 py-3 text-sm text-(--text) outline-none"
       />
 
-      <div
-        style={{
-          padding: '14px 16px',
-          borderRadius: 12,
-          background: 'color-mix(in oklch, var(--accent) 6%, var(--bg))',
-          marginBottom: isRunning ? 16 : 24,
-        }}
-      >
-        <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.55, margin: 0 }}>
+      <div className="mb-5 rounded-xl bg-(--accent-tint-6) px-4 py-3.5">
+        <p className="m-0 text-sm leading-[1.55] text-(--text2)">
           Our AI will extract the recipe title, ingredients, and steps directly from the video. You
           can review everything before publishing.
         </p>
       </div>
 
       {isRunning && (
-        <div
-          style={{
-            borderRadius: 12,
-            border: '1px solid var(--border)',
-            background: 'var(--card)',
-            padding: '4px 0',
-            marginBottom: 24,
-          }}
-        >
+        <div className="mb-6 rounded-xl border border-solid border-(--border) bg-(--card) py-1">
           {PROGRESS_STEPS.map((label, i) => {
             const isDone = completedStages >= i;
             const isActive = !isDone && completedStages === i - 1;
 
             return (
-              <div
-                key={label}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '10px 16px',
-                  gap: 12,
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div key={label} className="flex items-center justify-between gap-3 px-4 py-2.5">
+                <div className="flex items-center gap-2.5">
                   {isDone ? <CheckCircle /> : isActive ? <ActiveCircle /> : <PendingCircle />}
+
                   <span
-                    style={{
-                      fontSize: 14,
-                      color: isActive ? 'var(--accent)' : isDone ? 'var(--text)' : 'var(--text3)',
-                      fontWeight: isActive ? 600 : 400,
-                    }}
+                    className={`text-sm ${isActive ? 'font-semibold text-(--accent)' : isDone ? 'text-(--text)' : 'text-(--text3)'}`}
                   >
                     {label}
                   </span>
@@ -316,20 +238,7 @@ export const ImportStep = ({ onComplete }: ImportStepProps) => {
         type="button"
         onClick={handleImport}
         disabled={isRunning || !url.trim()}
-        style={{
-          width: '100%',
-          padding: '15px',
-          borderRadius: 12,
-          border: 'none',
-          background:
-            isRunning || !url.trim()
-              ? 'color-mix(in oklch, var(--accent) 55%, var(--bg))'
-              : 'var(--accent)',
-          color: '#fff',
-          fontSize: 15,
-          fontWeight: 600,
-          cursor: isRunning || !url.trim() ? 'default' : 'pointer',
-        }}
+        className={`w-full rounded-xl p-3 text-lg font-semibold text-white ${isRunning || !url.trim() ? 'cursor-default bg-[color-mix(in_oklch,var(--accent)_55%,var(--bg))]' : 'cursor-pointer bg-(--accent)'}`}
       >
         {isRunning ? 'Analysing...' : 'Import recipe →'}
       </button>

@@ -2,6 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { HomeIcon } from '../icons/HomeIcon';
+import { SearchIcon } from '../icons/SearchIcon';
+import { PlusIcon } from '../icons/PlusIcon';
+import { UserIcon, UsersIcon } from '../icons';
 
 interface IBottomNavProps {
   username: string;
@@ -12,195 +16,54 @@ export const BottomNav = ({ username }: IBottomNavProps) => {
 
   const isActive = (href: string) => pathname.startsWith(href);
 
-  const tabColor = (href: string) => (isActive(href) ? 'var(--accent)' : 'var(--text3)');
+  const tabColor = (href: string) => (isActive(href) ? '--accent' : '--text3');
 
   return (
-    <nav
-      style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 'calc(var(--nav-h) + env(safe-area-inset-bottom, 0px))',
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        background: 'var(--card)',
-        borderTop: '1px solid var(--border)',
-        display: 'flex',
-        alignItems: 'flex-start',
-        zIndex: 100,
-      }}
-    >
-      {/* Home */}
+    <nav className="fixed right-0 bottom-0 left-0 flex h-(--nav-h) items-start border-t border-solid border-(--border) bg-(--card)">
       <Link
         href="/recipes"
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingTop: 12,
-          gap: 4,
-          color: tabColor('/recipes'),
-          fontSize: 10,
-          fontWeight: 500,
-          letterSpacing: '0.04em',
-          textDecoration: 'none',
-          transition: 'color 0.18s',
-        }}
+        className={`flex flex-1 flex-col items-center justify-center gap-1 pt-3 text-[10px] font-medium tracking-wider transition-colors text-(${tabColor('/recipes')})`}
       >
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-        >
-          <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1z" />
-          <polyline points="9,21 9,13 15,13 15,21" />
-        </svg>
-        Home
+        <HomeIcon className="h-6 w-6" />
+
+        <span>Home</span>
       </Link>
 
-      {/* Discover */}
       <Link
         href="/explore"
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingTop: 12,
-          gap: 4,
-          color: tabColor('/explore'),
-          fontSize: 10,
-          fontWeight: 500,
-          letterSpacing: '0.04em',
-          textDecoration: 'none',
-          transition: 'color 0.18s',
-        }}
+        className={`flex flex-1 flex-col items-center justify-center gap-1 pt-3 text-[10px] font-medium tracking-wider transition-colors text-(${tabColor('/explore')})`}
       >
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path d="M21 21l-4.35-4.35" />
-        </svg>
-        Discover
+        <SearchIcon className="h-6 w-6" />
+
+        <span>Discover</span>
       </Link>
 
-      {/* Add FAB */}
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingTop: 6,
-        }}
-      >
+      <div className="flex flex-1 items-center justify-center pt-1.5">
         <Link
           href="/recipes/new"
-          style={{
-            width: 50,
-            height: 50,
-            background: 'var(--accent)',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 18px color-mix(in oklch, var(--accent) 45%, transparent)',
-            textDecoration: 'none',
-            transition: 'transform 0.18s',
-          }}
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-(--accent) shadow-(--shadow-accent) transition-all"
           aria-label="Add recipe"
         >
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="2.4"
-          >
-            <path d="M12 5v14M5 12h14" />
-          </svg>
+          <PlusIcon className="h-6 w-6 stroke-white" />
         </Link>
       </div>
 
-      {/* Friends */}
       <Link
         href="/friends"
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingTop: 12,
-          gap: 4,
-          color: tabColor('/friends'),
-          fontSize: 10,
-          fontWeight: 500,
-          letterSpacing: '0.04em',
-          textDecoration: 'none',
-          transition: 'color 0.18s',
-        }}
+        className={`flex flex-1 flex-col items-center justify-center gap-1 pt-3 text-[10px] font-medium tracking-wider transition-colors text-(${tabColor('/friends')})`}
       >
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-        >
-          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 00-3-3.87" />
-          <path d="M16 3.13a4 4 0 010 7.75" />
-        </svg>
-        Friends
+        <UsersIcon className="h-6 w-6" />
+
+        <span>Friends</span>
       </Link>
 
-      {/* Profile */}
       <Link
         href={`/profile/${username}`}
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingTop: 12,
-          gap: 4,
-          color: tabColor(`/profile/${username}`),
-          fontSize: 10,
-          fontWeight: 500,
-          letterSpacing: '0.04em',
-          textDecoration: 'none',
-          transition: 'color 0.18s',
-        }}
+        className={`flex flex-1 flex-col items-center justify-center gap-1 pt-3 text-[10px] font-medium tracking-wider transition-colors text-(${tabColor(`/profile`)})`}
       >
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-        >
-          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
-        Profile
+        <UserIcon className="h-6 w-6" />
+
+        <span>Profile</span>
       </Link>
     </nav>
   );

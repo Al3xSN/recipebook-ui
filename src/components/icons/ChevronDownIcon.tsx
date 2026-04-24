@@ -1,4 +1,6 @@
-export const ChevronDownIcon = (props: React.SVGProps<SVGSVGElement>) => (
+import { SVGProps } from 'react';
+
+export const ChevronDownIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" {...props}>
     <path
       fillRule="evenodd"

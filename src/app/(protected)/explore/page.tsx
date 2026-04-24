@@ -96,13 +96,13 @@ const DiscoverPage = () => {
   const isLanding = !searchInput && categoryId === null;
 
   return (
-    <div className="min-h-screen px-4 py-8">
-      <h1 className="mb-5 text-3xl font-bold text-gray-900">Discover</h1>
+    <div className="min-h-screen p-5">
+      <h1 className="mb-6 text-xl font-bold text-(--text)">Discover</h1>
 
       {/* Search bar */}
       <div className="relative mb-5">
         <svg
-          className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+          className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-gray-400"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -119,14 +119,14 @@ const DiscoverPage = () => {
           value={searchInput}
           onChange={(e) => handleSearchChange(e.target.value)}
           placeholder="Search recipes, ingredients..."
-          className="w-full rounded-2xl border border-gray-200 bg-white py-3 pl-11 pr-10 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
+          className="w-full rounded-2xl border border-gray-200 bg-white py-3 pr-10 pl-11 text-sm transition-colors outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
         />
         {searchInput && (
           <button
             type="button"
             onClick={handleClear}
             aria-label="Clear search"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600"
           >
             <svg
               viewBox="0 0 24 24"
@@ -147,9 +147,8 @@ const DiscoverPage = () => {
 
       {isLanding ? (
         <>
-          {/* Trending Searches */}
           <section className="mb-7">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">
+            <p className="mb-3 text-xs font-semibold tracking-widest text-gray-400 uppercase">
               Trending Searches
             </p>
             <div className="flex flex-wrap gap-2">
@@ -168,7 +167,7 @@ const DiscoverPage = () => {
 
           {/* Browse by Category */}
           <section>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">
+            <p className="mb-3 text-xs font-semibold tracking-widest text-gray-400 uppercase">
               Browse by Category
             </p>
             <div className="grid grid-cols-2 gap-3">
@@ -203,7 +202,7 @@ const DiscoverPage = () => {
       ) : (
         <section>
           {!loading && results !== null && (
-            <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-400">
+            <p className="mb-4 text-xs font-semibold tracking-widest text-gray-400 uppercase">
               {results.totalCount} result{results.totalCount !== 1 ? 's' : ''} for &ldquo;
               {searchInput}&rdquo;
             </p>
@@ -212,7 +211,7 @@ const DiscoverPage = () => {
             <div className="flex flex-col gap-3">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="flex items-center gap-4 rounded-2xl bg-white p-3 shadow-sm">
-                  <div className="h-16 w-16 flex-shrink-0 animate-pulse rounded-xl bg-gray-200" />
+                  <div className="h-16 w-16 shrink-0 animate-pulse rounded-xl bg-gray-200" />
                   <div className="flex-1 space-y-2">
                     <div className="h-2.5 w-16 animate-pulse rounded bg-gray-200" />
                     <div className="h-3.5 w-40 animate-pulse rounded bg-gray-200" />

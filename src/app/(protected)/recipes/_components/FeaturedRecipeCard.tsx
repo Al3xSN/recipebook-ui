@@ -21,10 +21,8 @@ export const FeaturedRecipeCard = ({ recipe }: IFeaturedRecipeCardProps) => {
   return (
     <Link
       href={`/recipes/${recipe.id}`}
-      className="relative block overflow-hidden"
-      style={{ borderRadius: 20, height: 210 }}
+      className="relative block h-56 overflow-hidden rounded-2xl"
     >
-      {/* Background image */}
       {recipe.imageUrl ? (
         <Image
           src={recipe.imageUrl}
@@ -35,69 +33,28 @@ export const FeaturedRecipeCard = ({ recipe }: IFeaturedRecipeCardProps) => {
           priority
         />
       ) : (
-        <div style={{ position: 'absolute', inset: 0, background: 'var(--bg2)' }} />
+        <div className="absolute inset-0 bg-(--bg2)" />
       )}
 
-      {/* Gradient overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(to top, rgba(30,16,8,0.85) 0%, rgba(30,16,8,0.2) 55%, transparent 100%)',
-        }}
-      />
+      <div className="absolute inset-0 [background:var(--gradient-card-overlay)]" />
 
-      {/* Top badges */}
-      <div className="absolute left-3 top-3 flex gap-2">
-        <span
-          className="text-white"
-          style={{
-            borderRadius: 100,
-            background: 'var(--accent)',
-            padding: '4px 10px',
-            fontSize: 10,
-            fontWeight: 700,
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-          }}
-        >
+      <div className="absolute top-3 left-3 flex gap-2">
+        <span className="rounded-full bg-(--accent) px-1 py-2.5 text-[10px] font-semibold tracking-wider text-white uppercase">
           Featured
         </span>
-        <span
-          className="text-white"
-          style={{
-            borderRadius: 100,
-            background: 'rgba(255,255,255,0.2)',
-            backdropFilter: 'blur(4px)',
-            padding: '4px 10px',
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-          }}
-        >
+        <span className="rounded-full bg-white/20 px-1 py-2.5 text-[10px] font-semibold tracking-wider text-white uppercase backdrop-blur-sm">
           {CATEGORY_LABELS[recipe.category] ?? 'Other'}
         </span>
       </div>
 
-      {/* Bottom content */}
-      <div className="absolute bottom-0 left-0 right-0 p-4">
-        <h2
-          className="line-clamp-2 leading-tight text-white"
-          style={{ fontSize: 20, fontWeight: 700 }}
-        >
-          {recipe.title}
-        </h2>
-        <div
-          className="mt-2 flex items-center gap-4"
-          style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)' }}
-        >
+      <div className="absolute right-0 bottom-0 left-0 p-4">
+        <h2 className="line-clamp-2 text-xl leading-tight font-bold text-white">{recipe.title}</h2>
+        <div className="mt-2 flex items-center gap-4 text-[13px] text-white/80">
           {recipe.ratingCount > 0 && (
             <span className="flex items-center gap-1">
-              <StarIcon className="h-3.5 w-3.5" fill="currentColor" style={{ color: '#f59e0b' }} />
+              <StarIcon className="h-3.5 w-3.5 fill-yellow-400" fill="currentColor" />
               {recipe.averageRating!.toFixed(1)}
-              <span style={{ color: 'rgba(255,255,255,0.5)' }}>
+              <span className="text-white/50">
                 · {recipe.ratingCount} review{recipe.ratingCount !== 1 ? 's' : ''}
               </span>
             </span>

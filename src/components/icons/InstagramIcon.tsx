@@ -1,6 +1,6 @@
-import type { SVGProps } from 'react';
+import { SVGProps } from 'react';
 
-const Instagram = (props: SVGProps<SVGSVGElement>) => (
+export const InstagramIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg {...props} xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 264.583 264.583">
     <defs>
       <radialGradient
@@ -93,5 +93,3 @@ const Instagram = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-
-export { Instagram };

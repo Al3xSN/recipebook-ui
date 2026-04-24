@@ -10,25 +10,21 @@ export const AboutTab = ({ bio, createdAt }: IAboutTabProps) => {
   });
 
   return (
-    <div className="divide-y divide-[var(--border)]">
+    <div className="divide-y divide-(--border)">
       <div className="flex items-center gap-4 py-4">
         <span className="text-[20px]">📅</span>
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text3)]">
+          <p className="text-[10px] font-semibold tracking-widest text-(--text3) uppercase">
             Joined
           </p>
-          <p className="text-[15px] font-medium text-[var(--text)]">{joinedDate}</p>
+          <p className="text-[15px] font-medium text-(--text)">{joinedDate}</p>
         </div>
       </div>
       <div className="flex items-start gap-4 py-4">
         <span className="text-[20px]">📝</span>
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text3)]">
-            Bio
-          </p>
-          <p
-            className={`text-[15px] font-medium ${bio ? 'text-[var(--text)]' : 'text-[var(--text3)]'}`}
-          >
+          <p className="text-[10px] font-semibold tracking-widest text-(--text3) uppercase">Bio</p>
+          <p className={`text-[15px] font-medium ${bio ? 'text-(--text)' : 'text-(--text3)'}`}>
             {bio ?? 'No bio yet'}
           </p>
         </div>
