@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
-import NotificationIcon from './_components/NotificationIcon';
 import { type INotification, notificationMessage } from './_components/types';
+import { NotificationIcon } from './_components/NotificationIcon';
 
 const NotificationsPage = () => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
@@ -48,17 +48,21 @@ const NotificationsPage = () => {
         )}
       </div>
 
-      {loading ? (
+      {loading && (
         <div className="flex flex-col gap-2">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="h-20 animate-pulse rounded-xl bg-(--bg2)" />
           ))}
         </div>
-      ) : notifications.length === 0 ? (
+      )}
+
+      {notifications.length === 0 && (
         <div className="rounded-2xl border border-dashed border-(--border) py-20 text-center">
           <p className="text-sm text-(--text2)">No notifications yet.</p>
         </div>
-      ) : (
+      )}
+
+      {notifications.length > 0 && (
         <div className="flex flex-col gap-2">
           {notifications.map((n) => (
             <button

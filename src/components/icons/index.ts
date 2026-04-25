@@ -28,3 +28,8 @@ export { GoogleIcon } from './GoogleIcon';
 export { ListIcon } from './ListIcon';
 export { PlusIcon } from './PlusIcon';
 export { SearchIcon } from './SearchIcon';
+export { CommentIcon } from './CommentIcon';
+export { FriendRequestIcon } from './FriendRequestIcon';
+export { FriendAcceptedIcon } from './FriendAcceptedIcon';
+export { RatingIcon } from './RatingIcon';
+export { RecipeImportedIcon } from './RecipeImportedIcon';

@@ -14,7 +14,11 @@ export const GET = async () => {
       userId: session.userId,
       OR: [{ read: false }, { createdAt: { gte: sevenDaysAgo } }],
     },
-    include: {
+    select: {
+      id: true,
+      type: true,
+      read: true,
+      createdAt: true,
       sender: { select: { username: true, displayName: true } },
     },
     orderBy: { createdAt: 'desc' },
@@ -26,8 +30,6 @@ export const GET = async () => {
       type: n.type,
       read: n.read,
       createdAt: n.createdAt,
-      referenceId: n.referenceId,
-      senderId: n.senderId,
       senderUsername: n.sender.username,
       senderDisplayName: n.sender.displayName,
     })),

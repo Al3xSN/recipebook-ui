@@ -11,6 +11,7 @@ import { RecipeListCard } from './_components/RecipeListCard';
 
 const RecipesPage = async ({ searchParams }: { searchParams: Promise<{ category?: string }> }) => {
   const session = await auth();
+
   const user = session!.user!;
 
   const { category = '' } = await searchParams;
