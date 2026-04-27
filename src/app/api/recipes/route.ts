@@ -2,17 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { requireAuth } from '@/lib/server/require-auth';
 import { apiError } from '@/lib/server/api-error';
-import { getRecipesByUserId, createRecipe } from '@/lib/server/recipe';
-
-// GET /api/recipes — list all recipes owned by the authenticated user
-export const GET = async () => {
-  const session = await requireAuth();
-  if (session instanceof Response) return session;
-
-  const recipes = await getRecipesByUserId(session.userId);
-
-  return NextResponse.json(recipes);
-};
+import { createRecipe } from '@/lib/server/recipe';
 
 // POST /api/recipes — create a new recipe
 export const POST = async (req: NextRequest) => {

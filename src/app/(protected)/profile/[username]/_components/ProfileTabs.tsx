@@ -1,5 +1,3 @@
-'use client';
-
 export type ProfileTab = 'recipes' | 'saved' | 'about';
 
 interface IProfileTabsProps {

@@ -6,18 +6,10 @@ import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 import { FriendshipStatus } from '@/enums/FriendshipStatus';
 import { SettingsIcon, UserPlusIcon, ClockIcon, UserCheckIcon } from '@/components/icons';
-
-export interface IProfileData {
-  userId: string;
-  username: string;
-  displayName: string | null;
-  bio: string | null;
-  avatarUrl: string | null;
-  createdAt: string;
-}
+import { IUserDto } from '@/interfaces/IUser';
 
 interface IProfileBannerProps {
-  profile: IProfileData;
+  profile: IUserDto;
   isOwner: boolean;
   initialFriendshipStatus: FriendshipStatus;
   recipeCount: number;
@@ -31,8 +23,7 @@ export const ProfileBanner = ({
   recipeCount,
   friendCount,
 }: IProfileBannerProps) => {
-  const [friendshipStatus, setFriendshipStatus] =
-    useState<FriendshipStatus>(initialFriendshipStatus);
+  const [friendshipStatus, setFriendshipStatus] = useState(initialFriendshipStatus);
   const [isManagingFriend, setIsManagingFriend] = useState(false);
 
   const displayName = profile.displayName ?? profile.username;
@@ -56,7 +47,7 @@ export const ProfileBanner = ({
   const handleRemoveFriend = async () => {
     setIsManagingFriend(true);
     try {
-      await apiFetch(`/api/friends/${profile.userId}`, { method: 'DELETE' });
+      await apiFetch(`/api/friends/${profile.id}`, { method: 'DELETE' });
       setFriendshipStatus(FriendshipStatus.NotFriends);
     } catch {
       // silently ignore

@@ -1,10 +1,10 @@
 interface IAboutTabProps {
   bio: string | null;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export const AboutTab = ({ bio, createdAt }: IAboutTabProps) => {
-  const joinedDate = new Date(createdAt).toLocaleDateString('en-US', {
+  const joinedDate = createdAt.toLocaleDateString('en-US', {
     month: 'long',
     year: 'numeric',
   });

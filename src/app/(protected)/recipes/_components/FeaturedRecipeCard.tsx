@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { CATEGORY_LABELS } from '@/lib/recipe-enums';
-import { IRecipeDto } from '@/interfaces/IRecipe';
+import { IRecipeCardDto } from '@/interfaces/IRecipe';
 import { ClockIcon, StarIcon } from '@/components/icons';
 
 interface IFeaturedRecipeCardProps {
-  recipe: IRecipeDto;
+  recipe: IRecipeCardDto;
 }
 
 const formatTime = (minutes: number) => {
@@ -16,7 +16,7 @@ const formatTime = (minutes: number) => {
 };
 
 export const FeaturedRecipeCard = ({ recipe }: IFeaturedRecipeCardProps) => {
-  const totalMinutes = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
+  const totalMinutes = recipe.prepTime + recipe.cookTime;
 
   return (
     <Link

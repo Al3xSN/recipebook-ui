@@ -61,6 +61,7 @@ const DiscoverPage = () => {
         } else if (searchInputRef.current) {
           params.set('search', searchInputRef.current);
         }
+
         const data = await apiFetch<ISearchRecipesResult>(`/api/recipes/explore?${params}`);
         setResults(data);
       } catch {
@@ -154,7 +155,6 @@ const DiscoverPage = () => {
             </div>
           </section>
 
-          {/* Browse by Category */}
           <section>
             <p className="mb-3 text-xs font-semibold tracking-widest text-gray-400 uppercase">
               Browse by Category

@@ -58,3 +58,16 @@ export interface IRecipeDto {
   averageRating: number | null;
   ratingCount: number;
 }
+
+export interface IRecipeCardDto {
+  id: string;
+  title: string;
+  imageUrl: string | null;
+  category: number;
+  visibility: Visibility;
+  createdBy: string | null;
+  prepTime: number;
+  cookTime: number;
+  averageRating: number | null;
+  ratingCount: number;
+}

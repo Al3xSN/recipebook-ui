@@ -1,8 +1,14 @@
 import { del } from '@vercel/blob';
 import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import { db } from '@/lib/db';
-import { toRecipeDto } from '@/lib/server/recipe/mapper';
-import { IRecipeDto, ICreateRecipeData, IUpdateRecipeData } from '@/interfaces/IRecipe';
+import { toRecipeCardDto, toRecipeDto } from '@/lib/server/recipe/mapper';
+import {
+  IRecipeDto,
+  ICreateRecipeData,
+  IUpdateRecipeData,
+  IRecipeCardDto,
+} from '@/interfaces/IRecipe';
+import { FriendshipStatus } from '@/enums/FriendshipStatus';
 
 export class RecipeNotFoundError extends Error {
   constructor() {
@@ -35,25 +41,59 @@ export const getRecipeById = async (id: string): Promise<IRecipeDto> => {
   return toRecipeDto(recipe);
 };
 
-export const getRecipesByUserId = async (userId: string): Promise<IRecipeDto[]> => {
+export const getRecipesByUserIdAsync = async (
+  userId: string,
+  isOwner: boolean,
+  friendshipStatus: FriendshipStatus,
+): Promise<IRecipeCardDto[]> => {
+  const visibilityFilter = isOwner
+    ? undefined
+    : friendshipStatus === FriendshipStatus.Friends
+      ? { in: [Visibility.PUBLIC, Visibility.FRIENDS_ONLY] }
+      : { equals: Visibility.PUBLIC };
+
   const recipes = await db.recipe.findMany({
-    where: { userId },
-    include: RECIPE_INCLUDE,
+    where: {
+      userId,
+      visibility: visibilityFilter,
+    },
+    select: {
+      id: true,
+      title: true,
+      imageUrl: true,
+      category: true,
+      visibility: true,
+      cookTimeMinutes: true,
+      prepTimeMinutes: true,
+      user: { select: { displayName: true } },
+      ratings: { select: { value: true } },
+    },
     orderBy: { createdAt: 'desc' },
   });
-  return recipes.map(toRecipeDto);
+
+  return recipes.map(toRecipeCardDto);
 };
 
-export const getPublicRecipes = async (category?: number): Promise<IRecipeDto[]> => {
+export const getPublicRecipes = async (category?: number): Promise<IRecipeCardDto[]> => {
   const recipes = await db.recipe.findMany({
     where: {
       visibility: Visibility.PUBLIC,
       ...(category !== undefined ? { category } : {}),
     },
-    include: RECIPE_INCLUDE,
+    select: {
+      id: true,
+      title: true,
+      imageUrl: true,
+      category: true,
+      visibility: true,
+      cookTimeMinutes: true,
+      prepTimeMinutes: true,
+      user: { select: { displayName: true } },
+      ratings: { select: { value: true } },
+    },
     orderBy: { createdAt: 'desc' },
   });
-  return recipes.map(toRecipeDto);
+  return recipes.map(toRecipeCardDto);
 };
 
 export const canAccessRecipe = async (

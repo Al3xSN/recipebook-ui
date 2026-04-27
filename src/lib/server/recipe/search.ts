@@ -1,7 +1,7 @@
 import { Prisma, Visibility, Difficulty, FriendRequestStatus } from '@generated/prisma/client';
 import { db } from '@/lib/db';
-import { toRecipeDto } from '@/lib/server/recipe/mapper';
-import { IRecipeDto } from '@/interfaces/IRecipe';
+import { toRecipeCardDto } from '@/lib/server/recipe/mapper';
+import { IRecipeCardDto } from '@/interfaces/IRecipe';
 
 export interface ISearchRecipesParams {
   userId: string;
@@ -19,7 +19,7 @@ export interface ISearchRecipesParams {
 }
 
 export interface ISearchRecipesResult {
-  items: IRecipeDto[];
+  items: IRecipeCardDto[];
   page: number;
   pageSize: number;
   totalCount: number;
@@ -101,11 +101,15 @@ export const searchRecipes = async (
     db.recipe.count({ where }),
     db.recipe.findMany({
       where,
-      include: {
-        ingredients: true,
-        instructions: true,
-        tags: true,
-        user: true,
+      select: {
+        id: true,
+        title: true,
+        imageUrl: true,
+        category: true,
+        visibility: true,
+        cookTimeMinutes: true,
+        prepTimeMinutes: true,
+        user: { select: { displayName: true } },
         ratings: { select: { value: true } },
       },
       orderBy,
@@ -117,7 +121,7 @@ export const searchRecipes = async (
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return {
-    items: recipes.map(toRecipeDto),
+    items: recipes.map(toRecipeCardDto),
     page,
     pageSize,
     totalCount,
