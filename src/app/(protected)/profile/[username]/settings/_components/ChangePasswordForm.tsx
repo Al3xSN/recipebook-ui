@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { apiFetch, ApiRequestError } from '@/lib/api';
+import { changePassword } from '../actions';
 
 export const ChangePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -26,20 +26,17 @@ export const ChangePasswordForm = () => {
     setIsLoading(true);
 
     try {
-      await apiFetch('/api/profile/password', {
-        method: 'PUT',
-        body: JSON.stringify({ currentPassword, newPassword }),
-      });
+      const result = await changePassword({ currentPassword, newPassword });
+
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+
       setSuccess(true);
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (err) {
-      if (err instanceof ApiRequestError) {
-        setError(err.detail);
-      } else {
-        setError('Failed to change password.');
-      }
     } finally {
       setIsLoading(false);
     }

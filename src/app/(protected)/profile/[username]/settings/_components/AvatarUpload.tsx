@@ -3,8 +3,8 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import { ApiRequestError } from '@/lib/api';
 import { SpinnerIcon } from '@/components/icons';
+import { uploadAvatar } from '../actions';
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -33,6 +33,7 @@ export const AvatarUpload = () => {
       if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
+
     if (file.size > MAX_BYTES) {
       setError('File must be 2 MB or smaller.');
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -45,23 +46,30 @@ export const AvatarUpload = () => {
 
     try {
       const form = new FormData();
-      form.append('image', file);
-      const res = await fetch('/api/profile/avatar', { method: 'POST', body: form });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({ detail: res.statusText }));
-        throw new ApiRequestError({ status: res.status, detail: body.detail ?? res.statusText });
+      form.append('avatar', file);
+
+      const result = await uploadAvatar(form);
+
+      if (result.error) {
+        setLocalPreviewUrl(null);
+        URL.revokeObjectURL(objectUrl);
+        setError(result.error);
+        return;
       }
-      const { url } = (await res.json()) as { url: string };
+
       URL.revokeObjectURL(objectUrl);
-      setLocalPreviewUrl(url);
-      await updateSession({ avatarUrl: url });
-    } catch (err) {
+      setLocalPreviewUrl(result.data!.url);
+      await updateSession({ avatarUrl: result.data!.url });
+    } catch {
       setLocalPreviewUrl(null);
       URL.revokeObjectURL(objectUrl);
-      setError(err instanceof ApiRequestError ? err.detail : 'Upload failed. Please try again.');
+      setError('Upload failed. Please try again.');
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 

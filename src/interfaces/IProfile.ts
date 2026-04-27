@@ -10,7 +10,6 @@ export interface IUpdateProfileInfoRequest {
   username: string;
   displayName: string | null;
   bio: string | null;
-  avatarUrl: string | null;
 }
 
 export interface IUpdateProfileInfoResponse {
