@@ -5,12 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { EyeIcon } from '@/components/icons';
-import { GoogleIcon } from '@/components/icons/GoogleIcon';
-import { AppleIcon } from '@/components/icons/AppleIcon';
-
-const fieldLabel = 'mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em]';
-const fieldInput =
-  'w-full rounded-[10px] border px-3 py-3 text-base outline-none transition-colors focus:ring-2';
 
 export const LoginForm = () => {
   const router = useRouter();
@@ -27,13 +21,14 @@ export const LoginForm = () => {
     setIsLoading(true);
 
     try {
-      const result = await signIn('credentials', { email, password, redirect: false });
-      if (result?.error) {
+      const res = await signIn('credentials', { email, password, redirect: false });
+      if (res.error !== undefined) {
         setError('Invalid email or password.');
-      } else {
-        router.replace('/recipes');
+        return;
       }
-    } catch {
+
+      router.replace('/recipes');
+    } catch (err) {
       setError('Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
@@ -42,28 +37,6 @@ export const LoginForm = () => {
 
   return (
     <>
-      <h1 className="mb-1 text-3xl leading-tight font-bold text-(--text)">Welcome back</h1>
-      <p className="mb-7 text-sm text-(--text2)">Sign in to your RecipeBook account.</p>
-
-      <div className="mb-5 flex flex-col gap-3">
-        <button
-          disabled
-          title="Coming soon"
-          className="flex w-full cursor-not-allowed items-center justify-center gap-2.5 rounded-xl border border-solid border-(--border) bg-(--card) py-3 text-sm font-medium opacity-60"
-        >
-          <GoogleIcon className="h-5 w-5" />
-          Continue with Google
-        </button>
-        <button
-          disabled
-          title="Coming soon"
-          className="flex w-full cursor-not-allowed items-center justify-center gap-2.5 rounded-xl border border-solid border-(--border) bg-(--card) py-3 text-sm font-medium opacity-60"
-        >
-          <AppleIcon className="h-5 w-5" />
-          Continue with Apple
-        </button>
-      </div>
-
       <div className="mb-5 flex items-center gap-3">
         <div className="h-px flex-1 bg-(--border)" />
         <span className="text-xs text-(--text3)">or continue with email</span>
@@ -78,9 +51,13 @@ export const LoginForm = () => {
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <div>
-          <label htmlFor="email" className={`${fieldLabel} text-(--text3)`}>
+          <label
+            htmlFor="email"
+            className={`mb-1.5 block text-[10px] font-semibold tracking-widest text-(--text3) uppercase`}
+          >
             Email address
           </label>
+
           <input
             id="email"
             type="email"
@@ -89,19 +66,24 @@ export const LoginForm = () => {
             autoComplete="email"
             required
             placeholder="you@example.com"
-            className={`${fieldInput} border-(--border) bg-(--bg2) text-(--text) focus:border-(--accent) focus:ring-(--accent)/20`}
+            className={`w-full rounded-[10px] border border-(--border) bg-(--bg2) px-3 py-3 text-base text-(--text) transition-colors outline-none focus:border-(--accent) focus:ring-2 focus:ring-(--accent)/20`}
           />
         </div>
 
         <div>
           <div className="mb-1.5 flex items-center justify-between">
-            <label htmlFor="password" className={`${fieldLabel} mb-0 text-(--text3)`}>
+            <label
+              htmlFor="password"
+              className={`mb-1.5 block text-[10px] font-semibold tracking-widest text-(--text3) uppercase`}
+            >
               Password
             </label>
-            <a href="/forgot-password" className="text-xs font-medium text-(--accent)">
+
+            <Link href="/forgot-password" className="text-xs font-medium text-(--accent)">
               Forgot password?
-            </a>
+            </Link>
           </div>
+
           <div className="relative">
             <input
               id="password"
@@ -111,8 +93,9 @@ export const LoginForm = () => {
               autoComplete="current-password"
               required
               placeholder="••••••••"
-              className={`${fieldInput} border-(--border) bg-(--bg2) pr-14 text-(--text) focus:border-(--accent) focus:ring-(--accent)/20`}
+              className={`w-full rounded-[10px] border border-(--border) bg-(--bg2) px-3 py-3 pr-14 text-base text-(--text) transition-colors outline-none focus:border-(--accent) focus:ring-2 focus:ring-(--accent)/20`}
             />
+
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
@@ -134,6 +117,7 @@ export const LoginForm = () => {
 
       <div className="mt-6 flex items-center justify-center gap-1.5">
         <p className="text-center text-sm text-(--text2)">Don&apos;t have an account?</p>
+
         <Link href="/register" className="text-sm font-semibold text-(--accent)">
           Sign up
         </Link>

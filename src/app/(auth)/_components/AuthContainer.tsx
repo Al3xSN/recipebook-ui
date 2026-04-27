@@ -1,7 +1,6 @@
-'use client';
-
 import { ArrowLeftIcon } from '@/components/icons';
 import Link from 'next/link';
+
 export const AuthContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-dvh bg-(--bg) p-5">
@@ -14,6 +13,7 @@ export const AuthContainer = ({ children }: { children: React.ReactNode }) => {
           <ArrowLeftIcon className="h-5 w-5 text-gray-700" />
         </Link>
       </div>
+
       <div className="mx-auto mt-4 max-w-sm">{children}</div>
     </div>
   );
