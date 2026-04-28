@@ -56,19 +56,20 @@ export const addComment = async (
   if (!recipe) throw new RecipeNotFoundError();
 
   const comment = await db.$transaction(async (tx) => {
-    const c = await tx.comment.create({
+    const newComment = await tx.comment.create({
       data: { recipeId, authorId: userId, text },
       include: { author: { select: { username: true, avatarUrl: true } } },
     });
+
     if (recipe.userId !== userId) {
       await createNotification(tx, {
         userId: recipe.userId,
         senderId: userId,
         type: NotificationType.COMMENT,
-        referenceId: c.id,
+        referenceId: newComment.id,
       });
     }
-    return c;
+    return newComment;
   });
 
   return {

@@ -1,14 +1,13 @@
 'use server';
 
-import { put, del } from '@vercel/blob';
 import { auth } from '@/auth';
 import {
   getUserById,
-  updateUserAvatar,
   updateUserProfile,
   updateUserPassword,
   UserConflictError,
 } from '@/lib/server/user';
+import { uploadUserAvatar, AvatarValidationError } from '@/lib/server/user/avatar';
 import { IUpdateProfileInfoRequest } from '@/interfaces/IProfile';
 
 const getSession = async () => {
@@ -50,9 +49,6 @@ export const updateProfileInfo = async (
   }
 };
 
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_BYTES = 5 * 1024 * 1024;
-
 export const uploadAvatar = async (
   formData: FormData,
 ): Promise<{ data: { url: string } | null; error: string | null }> => {
@@ -60,26 +56,14 @@ export const uploadAvatar = async (
 
   const file = formData.get('avatar');
   if (!(file instanceof File)) return { data: null, error: 'No file provided.' };
-  if (!ALLOWED_TYPES.includes(file.type))
-    return { data: null, error: 'Only JPEG, PNG, and WebP images are supported.' };
-  if (file.size > MAX_BYTES) return { data: null, error: 'File must be 5 MB or smaller.' };
 
-  const user = await getUserById(session.user.id);
-  if (!user) return { data: null, error: 'User not found.' };
-
-  if (user.avatarUrl) {
-    await del(user.avatarUrl).catch(() => {});
+  try {
+    const { url } = await uploadUserAvatar(session.user.id, file);
+    return { data: { url }, error: null };
+  } catch (err) {
+    if (err instanceof AvatarValidationError) return { data: null, error: err.message };
+    throw err;
   }
-
-  const blob = await put(`avatars/${session.user.id}`, file, {
-    access: 'public',
-    contentType: file.type,
-    addRandomSuffix: true,
-  });
-
-  await updateUserAvatar(session.user.id, blob.url);
-
-  return { data: { url: blob.url }, error: null };
 };
 
 export const changePassword = async (data: {

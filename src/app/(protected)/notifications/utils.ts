@@ -1,13 +1,4 @@
-export interface INotification {
-  id: string;
-  type: 'FRIEND_REQUEST' | 'FRIEND_ACCEPTED' | 'COMMENT' | 'RATING' | 'RECIPE_IMPORTED';
-  read: boolean;
-  createdAt: string;
-  referenceId: string | null;
-  senderId: string;
-  senderUsername: string;
-  senderDisplayName: string | null;
-}
+import { INotification } from './types';
 
 export const notificationMessage = (n: INotification): string => {
   const name = n.senderDisplayName ?? n.senderUsername;

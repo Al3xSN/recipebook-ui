@@ -5,7 +5,7 @@ import {
   RatingIcon,
   RecipeImportedIcon,
 } from '@/components/icons';
-import { INotification } from './types';
+import { INotification } from '../types';
 
 export const NotificationIcon = ({ type }: { type: INotification['type'] }) => {
   const notificationIcons = {

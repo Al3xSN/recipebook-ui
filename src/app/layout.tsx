@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
-import MobileOnlyGuard from '@/components/ui/MobileOnlyGuard';
+import { MobileOnlyGuard } from '@/components/ui/MobileOnlyGuard';
 
 export const metadata: Metadata = {
   title: {
