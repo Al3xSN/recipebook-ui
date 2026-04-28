@@ -37,7 +37,11 @@ export const getRecipeById = async (id: string): Promise<IRecipeDto> => {
     where: { id },
     include: RECIPE_INCLUDE,
   });
-  if (!recipe) throw new RecipeNotFoundError();
+
+  if (!recipe) {
+    throw new RecipeNotFoundError();
+  }
+
   return toRecipeDto(recipe);
 };
 
@@ -93,6 +97,7 @@ export const getPublicRecipes = async (category?: number): Promise<IRecipeCardDt
     },
     orderBy: { createdAt: 'desc' },
   });
+
   return recipes.map(toRecipeCardDto);
 };
 
@@ -100,8 +105,14 @@ export const canAccessRecipe = async (
   recipe: { userId: string; visibility: Visibility },
   viewerId: string,
 ): Promise<void> => {
-  if (recipe.userId === viewerId) return;
-  if (recipe.visibility === Visibility.PRIVATE) throw new RecipeAccessError();
+  if (recipe.userId === viewerId) {
+    return;
+  }
+
+  if (recipe.visibility === Visibility.PRIVATE) {
+    throw new RecipeAccessError();
+  }
+
   if (recipe.visibility === Visibility.FRIENDS_ONLY) {
     const connection = await db.friendRequest.findFirst({
       where: {
@@ -112,7 +123,10 @@ export const canAccessRecipe = async (
         ],
       },
     });
-    if (!connection) throw new RecipeAccessError();
+
+    if (!connection) {
+      throw new RecipeAccessError();
+    }
   }
 };
 

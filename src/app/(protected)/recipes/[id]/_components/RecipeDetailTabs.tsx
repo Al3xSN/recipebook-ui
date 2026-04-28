@@ -39,7 +39,6 @@ export const RecipeDetailTabs = ({
 
   return (
     <div>
-      {/* Tab bar */}
       <div className="flex border-b border-gray-200">
         {tabs.map(({ key, label }) => (
           <button
@@ -57,7 +56,6 @@ export const RecipeDetailTabs = ({
         ))}
       </div>
 
-      {/* Tab content */}
       {active === 'overview' && <OverviewTab description={recipe.description} tags={recipe.tags} />}
       {active === 'ingredients' && <IngredientsTab ingredients={recipe.ingredients} />}
       {active === 'steps' && <StepsTab steps={recipe.instructions} />}

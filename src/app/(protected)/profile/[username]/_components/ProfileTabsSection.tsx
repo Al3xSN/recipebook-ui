@@ -27,12 +27,8 @@ export const ProfileTabsSection = ({
       <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       <div className="p-5">
-        <div className={activeTab === 'recipes' ? 'block' : 'hidden'}>
-          <RecipesTab isOwner={isOwner} recipes={recipes} />
-        </div>
-
+        {activeTab === 'recipes' && <RecipesTab isOwner={isOwner} recipes={recipes} />}
         {activeTab === 'saved' && <SavedTab />}
-
         {activeTab === 'about' && <AboutTab bio={profileBio} createdAt={profileCreatedAt} />}
       </div>
     </>

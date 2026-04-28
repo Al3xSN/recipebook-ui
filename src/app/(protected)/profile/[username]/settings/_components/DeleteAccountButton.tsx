@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useTransition, useState } from 'react';
+import { deleteAccount } from '../actions';
 
 export const DeleteAccountButton = () => {
   const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   return (
     <>
@@ -29,16 +31,22 @@ export const DeleteAccountButton = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setOpen(false)}
-                className="flex-1 rounded-xl border border-(--border) py-2.5 text-sm font-medium text-(--text2) transition-colors hover:bg-(--bg2)"
+                disabled={isPending}
+                className="flex-1 rounded-xl border border-(--border) py-2.5 text-sm font-medium text-(--text2) transition-colors hover:bg-(--bg2) disabled:opacity-50"
               >
                 Cancel
               </button>
 
               <button
-                onClick={() => setOpen(false)}
-                className="flex-1 rounded-xl bg-red-500 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-600"
+                onClick={() =>
+                  startTransition(() => {
+                    deleteAccount();
+                  })
+                }
+                disabled={isPending}
+                className="flex-1 rounded-xl bg-red-500 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-600 disabled:opacity-50"
               >
-                Delete
+                {isPending ? 'Deleting…' : 'Delete'}
               </button>
             </div>
           </div>
