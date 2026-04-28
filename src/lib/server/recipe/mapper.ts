@@ -1,9 +1,10 @@
-import type {
+import {
   Recipe,
   Ingredient,
   InstructionStep,
   RecipeTag,
   User,
+  Visibility,
 } from '@generated/prisma/client';
 
 type RecipeWithRelations = Recipe & {
@@ -13,6 +14,38 @@ type RecipeWithRelations = Recipe & {
   user: User;
   ratings: { value: number }[];
 };
+
+type RecipeCardProjection = {
+  id: string;
+  title: string;
+  category: number;
+  visibility: Visibility;
+  prepTimeMinutes: number;
+  cookTimeMinutes: number;
+  imageUrl: string | null;
+  user: {
+    displayName: string | null;
+  };
+  ratings: {
+    value: number;
+  }[];
+};
+
+export const toRecipeCardDto = (recipe: RecipeCardProjection) => ({
+  id: recipe.id,
+  title: recipe.title,
+  imageUrl: recipe.imageUrl,
+  category: recipe.category,
+  visibility: recipe.visibility,
+  createdBy: recipe.user.displayName,
+  cookTime: recipe.cookTimeMinutes,
+  prepTime: recipe.prepTimeMinutes,
+  ratingCount: recipe.ratings.length,
+  averageRating:
+    recipe.ratings.length > 0
+      ? recipe.ratings.reduce((sum, r) => sum + r.value, 0) / recipe.ratings.length
+      : null,
+});
 
 export const toRecipeDto = (recipe: RecipeWithRelations) => {
   const ratingCount = recipe.ratings.length;

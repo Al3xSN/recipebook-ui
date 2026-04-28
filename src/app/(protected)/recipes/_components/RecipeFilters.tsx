@@ -57,8 +57,7 @@ export const RecipeFilters = () => {
       {/* Search */}
       <div className="relative">
         <svg
-          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
-          style={{ color: 'var(--text3)' }}
+          className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-(--text3)"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -75,26 +74,13 @@ export const RecipeFilters = () => {
           placeholder="Search my recipes…"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          style={{
-            width: '100%',
-            borderRadius: 10,
-            border: '1px solid var(--border)',
-            background: 'var(--bg2)',
-            color: 'var(--text)',
-            padding: '10px 12px 10px 36px',
-            fontSize: 16,
-            outline: 'none',
-            transition: 'border-color 150ms',
-          }}
-          onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--accent)')}
-          onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
+          className="w-full rounded-[10px] border border-solid border-(--border) bg-(--bg2) py-2.5 pr-3 pl-9 text-base text-(--text) transition-colors duration-150 outline-none focus:border-(--accent)"
         />
         {searchInput && (
           <button
             type="button"
             onClick={() => setSearchInput('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2"
-            style={{ color: 'var(--text3)' }}
+            className="absolute top-1/2 right-3 -translate-y-1/2 text-(--text3)"
             aria-label="Clear search"
           >
             <svg
@@ -112,15 +98,7 @@ export const RecipeFilters = () => {
       </div>
 
       {/* Category pills */}
-      <div
-        style={{
-          display: 'flex',
-          gap: 8,
-          overflowX: 'auto',
-          paddingBottom: 2,
-          scrollbarWidth: 'none',
-        }}
-      >
+      <div className="flex gap-2 overflow-x-auto pb-0.5 [scrollbar-width:none]">
         {CATEGORY_PILLS.map(({ value, label }) => {
           const isActive = category === value;
           return (
@@ -128,18 +106,7 @@ export const RecipeFilters = () => {
               key={value}
               type="button"
               onClick={() => setCategory(value)}
-              style={{
-                flexShrink: 0,
-                borderRadius: 100,
-                padding: '6px 14px',
-                fontSize: 13,
-                fontWeight: 500,
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'background 140ms, color 140ms',
-                background: isActive ? 'var(--accent)' : 'var(--bg2)',
-                color: isActive ? '#fff' : 'var(--text2)',
-              }}
+              className={`shrink-0 cursor-pointer rounded-full border-none px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-150 ${isActive ? 'bg-(--accent) text-white' : 'bg-(--bg2) text-(--text2)'}`}
             >
               {label}
             </button>

@@ -1,6 +1,6 @@
 import { Prisma } from '@generated/prisma/client';
 import { db } from '@/lib/db';
-import type { IUserDto } from '@/interfaces/IUser';
+import { IUserDto } from '@/interfaces/IUser';
 
 const toDto = (user: {
   id: string;

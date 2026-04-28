@@ -67,15 +67,14 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
 
   return (
     <div className="mx-auto max-w-lg">
-      {/* Hero image */}
       <div className="relative">
         {recipe.imageUrl ? (
-          <div className="relative h-64 w-full">
+          <div className="relative aspect-video w-full bg-(--bg2)">
             <Image
               src={recipe.imageUrl}
               alt={recipe.title}
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="(max-width: 512px) 100vw, 512px"
               priority
             />
@@ -88,9 +87,8 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
 
         <RecipeHeroActions />
 
-        {/* Owner edit/delete */}
         {isOwner && (
-          <div className="absolute bottom-3 right-3 flex items-center gap-2">
+          <div className="absolute right-3 bottom-3 flex items-center gap-2">
             <Link
               href={`/recipes/${id}/edit`}
               className="flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-orange-500"
@@ -103,11 +101,9 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
         )}
       </div>
 
-      {/* Content */}
       <div className="px-4 pt-4">
-        {/* Category + rating */}
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+          <span className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
             {CATEGORY_LABELS[recipe.category] ?? 'Other'}
           </span>
           {averageRating !== null && totalRatings > 0 && (
@@ -128,10 +124,8 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
           )}
         </div>
 
-        {/* Title */}
         <h1 className="mb-3 text-2xl font-bold tracking-tight text-gray-900">{recipe.title}</h1>
 
-        {/* Author */}
         <div className="mb-4 flex items-center justify-between">
           <Link
             href={`/profile/${recipe.author.username}`}
@@ -147,7 +141,7 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
               />
             ) : (
               <span
-                className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(recipe.author.username)}`}
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(recipe.author.username)}`}
               >
                 {recipe.author.displayName.charAt(0).toUpperCase()}
               </span>
@@ -167,13 +161,13 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
         <div className="mb-1 grid grid-cols-3 divide-x divide-gray-200 rounded-2xl border border-gray-200 bg-white py-3">
           <div className="flex flex-col items-center gap-0.5 px-3">
             <span className="text-base font-bold text-gray-900">{formatTime(totalTime)}</span>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+            <span className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
               Time
             </span>
           </div>
           <div className="flex flex-col items-center gap-0.5 px-3">
             <span className="text-base font-bold text-gray-900">{recipe.servings}</span>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+            <span className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
               Servings
             </span>
           </div>
@@ -181,7 +175,7 @@ const RecipeDetailPage = async ({ params }: { params: Promise<{ id: string }> })
             <span className="text-base font-bold text-gray-900">
               {recipe.difficulty ? DIFFICULTY_LABELS[recipe.difficulty] : '—'}
             </span>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+            <span className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
               Level
             </span>
           </div>

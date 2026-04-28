@@ -1,13 +1,11 @@
 import { notFound } from 'next/navigation';
 import { auth } from '@/auth';
-import { db } from '@/lib/db';
-import { areFriends } from '@/lib/server/friends';
-import { toRecipeDto } from '@/lib/server/recipe/mapper';
+import { areFriends, getFriendCount, getPendingRequest } from '@/lib/server/friends';
 import { getUserByUsername } from '@/lib/server/user';
-import { Visibility, FriendRequestStatus } from '@generated/prisma/client';
 import { FriendshipStatus } from '@/enums/FriendshipStatus';
-import { ProfileContent } from './_components/ProfileContent';
-import { RecipesTab } from './_components/RecipesTab';
+import { ProfileBanner } from './_components/ProfileBanner';
+import { ProfileTabsSection } from './_components/ProfileTabsSection';
+import { getRecipesByUserIdAsync } from '@/lib/server/recipe';
 
 export default async function ProfilePage(props: PageProps<'/profile/[username]'>) {
   const session = await auth();
@@ -21,88 +19,49 @@ export default async function ProfilePage(props: PageProps<'/profile/[username]'
   const currentUserId = session?.user?.id;
   const isOwner = currentUserId === profileUser.id;
 
-  const friendCount = await db.friendRequest.count({
-    where: {
-      status: FriendRequestStatus.ACCEPTED,
-      OR: [{ senderId: profileUser.id }, { receiverId: profileUser.id }],
-    },
-  });
+  const resolveFriendshipStatus = async (): Promise<FriendshipStatus> => {
+    if (isOwner || !currentUserId) {
+      return FriendshipStatus.NotFriends;
+    }
 
-  let friendshipStatus = FriendshipStatus.NotFriends;
-
-  if (!isOwner && currentUserId) {
     const isFriend = await areFriends(currentUserId, profileUser.id);
     if (isFriend) {
-      friendshipStatus = FriendshipStatus.Friends;
-    } else {
-      const pending = await db.friendRequest.findFirst({
-        where: {
-          OR: [
-            {
-              senderId: currentUserId,
-              receiverId: profileUser.id,
-              status: FriendRequestStatus.PENDING,
-            },
-            {
-              senderId: profileUser.id,
-              receiverId: currentUserId,
-              status: FriendRequestStatus.PENDING,
-            },
-          ],
-        },
-      });
-
-      if (pending) {
-        friendshipStatus =
-          pending.senderId === currentUserId
-            ? FriendshipStatus.PendingOutgoing
-            : FriendshipStatus.PendingIncoming;
-      }
+      return FriendshipStatus.Friends;
     }
-  }
 
-  const visibilityFilter = isOwner
-    ? undefined
-    : friendshipStatus === FriendshipStatus.Friends
-      ? { in: [Visibility.PUBLIC, Visibility.FRIENDS_ONLY] }
-      : { equals: Visibility.PUBLIC };
+    const pending = await getPendingRequest(currentUserId, profileUser.id);
+    if (!pending) {
+      return FriendshipStatus.NotFriends;
+    }
 
-  const recipes = await db.recipe.findMany({
-    where: {
-      userId: profileUser.id,
-      ...(visibilityFilter ? { visibility: visibilityFilter } : {}),
-    },
-    include: {
-      ingredients: true,
-      instructions: true,
-      tags: true,
-      user: true,
-      ratings: { select: { value: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-
-  const recipeDtos = recipes.map(toRecipeDto);
-
-  const profile = {
-    userId: profileUser.id,
-    username: profileUser.username,
-    displayName: profileUser.displayName,
-    bio: profileUser.bio,
-    avatarUrl: profileUser.avatarUrl,
-    createdAt: profileUser.createdAt.toISOString(),
+    return pending.senderId === currentUserId
+      ? FriendshipStatus.PendingOutgoing
+      : FriendshipStatus.PendingIncoming;
   };
 
+  const [friendCount, friendshipStatus] = await Promise.all([
+    getFriendCount(profileUser.id),
+    resolveFriendshipStatus(),
+  ]);
+
+  const recipes = await getRecipesByUserIdAsync(profileUser.id, isOwner, friendshipStatus);
+
   return (
-    <ProfileContent
-      profile={profile}
-      isOwner={isOwner}
-      initialFriendshipStatus={friendshipStatus}
-      recipeCount={recipeDtos.length}
-      friendCount={friendCount}
-      recipesContent={
-        <RecipesTab recipes={recipeDtos} isOwner={isOwner} currentUserId={currentUserId} />
-      }
-    />
+    <div className="mx-auto max-w-5xl">
+      <ProfileBanner
+        profile={profileUser}
+        isOwner={isOwner}
+        initialFriendshipStatus={friendshipStatus}
+        recipeCount={recipes.length}
+        friendCount={friendCount}
+      />
+
+      <ProfileTabsSection
+        profileBio={profileUser.bio}
+        profileCreatedAt={profileUser.createdAt}
+        recipes={recipes}
+        isOwner={isOwner}
+      />
+    </div>
   );
 }

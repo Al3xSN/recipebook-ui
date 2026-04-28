@@ -1,4 +1,4 @@
-import type { Visibility, Difficulty } from '@generated/prisma/client';
+import { Visibility, Difficulty } from '@generated/prisma/client';
 
 export interface ICreateRecipeData {
   title: string;
@@ -55,6 +55,19 @@ export interface IRecipeDto {
   author: IRecipeAuthor;
   createdAt: string;
   updatedAt: string;
+  averageRating: number | null;
+  ratingCount: number;
+}
+
+export interface IRecipeCardDto {
+  id: string;
+  title: string;
+  imageUrl: string | null;
+  category: number;
+  visibility: Visibility;
+  createdBy: string | null;
+  prepTime: number;
+  cookTime: number;
   averageRating: number | null;
   ratingCount: number;
 }

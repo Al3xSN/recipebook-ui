@@ -9,10 +9,8 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = session.user as { displayName?: string | null; username: string };
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--bg)' }}>
-      <main className="pb-[calc(var(--nav-h)+env(safe-area-inset-bottom,0px)+8px)]">
-        {children}
-      </main>
+    <div className="min-h-dvh bg-(--bg)">
+      <main className="pb-(--nav-h)">{children}</main>
       <BottomNav username={user.username} />
     </div>
   );

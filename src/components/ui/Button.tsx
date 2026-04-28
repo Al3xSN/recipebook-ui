@@ -28,7 +28,7 @@ export const Button = ({
   return (
     <button
       disabled={disabled || isLoading}
-      className={`inline-flex items-center justify-center rounded-lg px-5 py-2 text-sm font-medium outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg px-5 py-2 text-sm font-medium transition-colors outline-none disabled:cursor-not-allowed disabled:opacity-50 ${variantClasses[variant]} ${className}`}
       {...rest}
     >
       {isLoading && <SpinnerIcon className="mr-2 h-4 w-4 animate-spin" />}

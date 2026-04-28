@@ -22,7 +22,7 @@ export const TabBar = ({ tabs, active, onChange }: ITabBarProps) => {
           onClick={() => onChange(tab.id)}
           className={`relative px-4 py-3 text-sm font-medium transition-colors ${
             active === tab.id
-              ? "text-orange-500 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-orange-500 after:content-['']"
+              ? "text-orange-500 after:absolute after:right-0 after:bottom-0 after:left-0 after:h-0.5 after:bg-orange-500 after:content-['']"
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >

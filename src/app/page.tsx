@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import { Metadata } from 'next';
 import { auth } from '@/auth';
 import { HeroSection } from '@/components/home/HeroSection';
 import { redirect } from 'next/navigation';
@@ -14,7 +14,7 @@ const HomePage = async () => {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--bg)' }}>
+    <div className="min-h-dvh bg-(--bg)">
       <HeroSection />
     </div>
   );

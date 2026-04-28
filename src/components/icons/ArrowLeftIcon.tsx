@@ -1,8 +1,11 @@
-export const ArrowLeftIcon = (props: React.SVGProps<SVGSVGElement>) => (
+import { SVGProps } from 'react';
+
+export const ArrowLeftIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 24 24"
+    fill="none"
     stroke="currentColor"
-    strokeWidth="1.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     aria-hidden="true"

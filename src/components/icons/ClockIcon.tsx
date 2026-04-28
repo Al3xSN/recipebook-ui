@@ -1,4 +1,6 @@
-export const ClockIcon = (props: React.SVGProps<SVGSVGElement>) => (
+import { SVGProps } from 'react';
+
+export const ClockIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 24 24"
     fill="none"

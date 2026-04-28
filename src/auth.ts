@@ -37,13 +37,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.displayName = (user as any).displayName ?? null;
         token.avatarUrl = (user as any).avatarUrl ?? null;
       }
+
       if (trigger === 'update' && session?.avatarUrl !== undefined) {
         token.avatarUrl = session.avatarUrl;
       }
+
       if (trigger === 'update' && session?.username !== undefined) {
         token.username = session.username;
         token.displayName = session.displayName ?? null;
       }
+
       return token;
     },
     async session({ session, token }) {

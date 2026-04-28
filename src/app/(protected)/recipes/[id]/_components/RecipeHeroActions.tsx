@@ -13,7 +13,7 @@ export const RecipeHeroActions = () => {
       <button
         type="button"
         onClick={() => router.back()}
-        className="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
+        className="absolute top-3 left-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
         aria-label="Go back"
       >
         <ArrowLeftIcon className="h-5 w-5 text-gray-700" />
@@ -22,7 +22,7 @@ export const RecipeHeroActions = () => {
       <button
         type="button"
         onClick={() => setLiked((v) => !v)}
-        className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
+        className="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
         aria-label="Favourite recipe"
       >
         <HeartIcon

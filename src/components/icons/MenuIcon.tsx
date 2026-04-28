@@ -1,4 +1,6 @@
-export const MenuIcon = (props: React.SVGProps<SVGSVGElement>) => (
+import { SVGProps } from 'react';
+
+export const MenuIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 24 24"
     fill="none"

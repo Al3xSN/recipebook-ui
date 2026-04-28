@@ -3,7 +3,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 const CommentRowSkeleton = () => {
   return (
     <div className="flex gap-3">
-      <Skeleton className="h-8 w-8 flex-shrink-0 rounded-full" />
+      <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
       <div className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3">
         <div className="mb-2 flex items-center gap-2">
           <Skeleton className="h-3 w-20" />

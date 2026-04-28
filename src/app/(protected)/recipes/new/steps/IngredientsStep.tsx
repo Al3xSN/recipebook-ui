@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { UNIT_LABELS } from '@/lib/recipe-enums';
+import { ArrowLeftIcon, ArrowRightIcon, PlusIcon, XIcon } from '@/components/icons';
 
 interface Ingredient {
   name: string;
@@ -15,10 +16,6 @@ interface IngredientsStepProps {
   onBack: () => void;
   onContinue: () => void;
 }
-
-const inputClass =
-  'rounded-lg border px-3 py-2.5 text-base outline-none transition-colors focus:ring-2';
-const inputStyle = { borderColor: 'var(--border)', backgroundColor: 'white', color: 'var(--text)' };
 
 export const IngredientsStep = ({
   ingredients,
@@ -46,15 +43,13 @@ export const IngredientsStep = ({
 
   return (
     <div className="flex flex-col gap-5">
-      <p className="text-sm" style={{ color: 'var(--text2)' }}>
-        List all ingredients with quantities.
-      </p>
+      <p className="text-sm text-(--text2)">List all ingredients with quantities.</p>
 
       <div className="flex flex-col gap-2">
         {ingredients.map((ing, i) => (
           <div key={i} className="flex items-center gap-2">
-            {/* Qty */}
             <input
+              id={ing.name}
               type="number"
               min="0"
               step="any"
@@ -62,16 +57,14 @@ export const IngredientsStep = ({
               onChange={(e) => update(i, 'amount', e.target.value)}
               placeholder="Qty"
               aria-label="Quantity"
-              className={`${inputClass} w-16 text-center`}
-              style={inputStyle}
+              className="w-14 flex-none rounded-lg border border-(--border) bg-white px-2 py-2.5 text-center text-base text-(--text) transition-colors outline-none focus:ring-2"
             />
-            {/* Unit */}
+
             <select
               value={ing.unit}
               onChange={(e) => update(i, 'unit', Number(e.target.value))}
               aria-label="Unit"
-              className={`${inputClass} w-20`}
-              style={inputStyle}
+              className="w-20 flex-none rounded-lg border border-(--border) bg-white px-2 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
             >
               {Object.entries(UNIT_LABELS).map(([val, lbl]) => (
                 <option key={val} value={val}>
@@ -79,26 +72,24 @@ export const IngredientsStep = ({
                 </option>
               ))}
             </select>
-            {/* Name */}
+
             <input
               type="text"
               value={ing.name}
               onChange={(e) => update(i, 'name', e.target.value)}
               placeholder="Ingredient name"
               aria-label="Ingredient name"
-              className={`${inputClass} flex-1`}
-              style={inputStyle}
+              className="min-w-0 flex-1 rounded-lg border border-(--border) bg-white px-2 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
             />
-            {/* Remove */}
+
             <button
               type="button"
               onClick={() => remove(i)}
               disabled={ingredients.length === 1}
               aria-label="Remove ingredient"
               className="rounded-lg p-1.5 transition-colors hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-30"
-              style={{ color: 'var(--text3)' }}
             >
-              ×
+              <XIcon className="h-5 w-5 stroke-black" />
             </button>
           </div>
         ))}
@@ -107,10 +98,10 @@ export const IngredientsStep = ({
       <button
         type="button"
         onClick={add}
-        className="w-fit rounded-lg border border-dashed px-4 py-2 text-sm font-medium transition-colors hover:opacity-80"
-        style={{ borderColor: 'var(--border)', color: 'var(--text2)' }}
+        className="flex w-fit items-center justify-center gap-1 rounded-lg border border-dashed border-(--border) px-4 py-2 text-sm font-medium text-(--text2) transition-colors hover:opacity-80"
       >
-        + Add ingredient
+        <PlusIcon />
+        <span>Add ingredient</span>
       </button>
 
       {error && (
@@ -123,18 +114,18 @@ export const IngredientsStep = ({
         <button
           type="button"
           onClick={onBack}
-          className="flex-1 rounded-lg border py-3 text-sm font-medium transition-colors hover:opacity-80"
-          style={{ borderColor: 'var(--border)', color: 'var(--text)' }}
+          className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-(--border) py-3 text-sm font-medium text-(--text) transition-colors hover:opacity-80"
         >
-          ← Back
+          <ArrowLeftIcon className="h-5 w-5" />
+          <span>Back</span>
         </button>
         <button
           type="button"
           onClick={handleContinue}
-          className="flex-[2] rounded-lg py-3 text-sm font-semibold text-white transition-colors hover:opacity-90"
-          style={{ backgroundColor: 'var(--accent)' }}
+          className="flex flex-2 items-center justify-center gap-1 rounded-lg bg-(--accent) py-3 text-sm font-semibold text-white transition-colors hover:opacity-90"
         >
-          Continue →
+          <span>Continue</span>
+          <ArrowRightIcon className="h-5 w-5" />
         </button>
       </div>
     </div>

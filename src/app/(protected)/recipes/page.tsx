@@ -11,6 +11,7 @@ import { RecipeListCard } from './_components/RecipeListCard';
 
 const RecipesPage = async ({ searchParams }: { searchParams: Promise<{ category?: string }> }) => {
   const session = await auth();
+
   const user = session!.user!;
 
   const { category = '' } = await searchParams;
@@ -27,101 +28,57 @@ const RecipesPage = async ({ searchParams }: { searchParams: Promise<{ category?
 
   const initials = (user.displayName ?? user.username ?? 'U')
     .split(' ')
-    .map((w: string) => w[0])
+    .map((w) => w.at(0))
     .join('')
     .slice(0, 2)
     .toUpperCase();
 
   return (
-    <div style={{ padding: '20px 20px 8px' }}>
-      {/* Header */}
-      <div className="mb-5 flex items-start justify-between">
+    <div className="p-5">
+      <div className="mb-5 flex items-start justify-between gap-3">
         <div>
           <TimeGreeting />
-          <h1
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 26,
-              fontWeight: 700,
-              color: 'var(--text)',
-              lineHeight: 1.2,
-            }}
-          >
-            What&apos;s cooking today?
-          </h1>
+          <h1 className="text-2xl font-bold text-(--text)">What&apos;s cooking today?</h1>
         </div>
         <div className="flex items-center gap-2 pt-1">
           <Link
             href="/notifications"
             aria-label="Notifications"
-            className="flex items-center justify-center"
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 12,
-              background: 'var(--bg2)',
-              color: 'var(--text2)',
-            }}
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--bg2) text-(--text2)"
           >
             <BellIcon className="h-5 w-5" />
           </Link>
           <Link
             href={`/profile/${user.username}`}
             aria-label="Profile"
-            className="flex items-center justify-center text-sm font-semibold"
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 12,
-              background: 'var(--accent)',
-              color: '#fff',
-            }}
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent) text-sm font-semibold text-white"
           >
             {initials}
           </Link>
         </div>
       </div>
 
-      {/* Featured recipe */}
       {featured && (
         <div className="mb-5">
           <FeaturedRecipeCard recipe={featured} />
         </div>
       )}
 
-      {/* Category pills */}
-      <Suspense fallback={<div style={{ height: 36 }} />}>
+      <Suspense fallback={<div className="h-9" />}>
         <div className="mb-5">
           <HomeCategoryPills />
         </div>
       </Suspense>
 
-      {/* Recipe list */}
       {recipes.length === 0 && (
-        <div
-          className="py-20 text-center"
-          style={{
-            borderRadius: 16,
-            border: '1px dashed var(--border)',
-            background: 'var(--card)',
-          }}
-        >
-          <p style={{ fontSize: 14, color: 'var(--text2)' }}>
-            No recipes yet. Be the first to share one!
-          </p>
+        <div className="rounded-2xl border border-dashed border-(--border) bg-(--card) py-20 text-center">
+          <p className="text-sm text-(--text2)">No recipes yet. Be the first to share one!</p>
         </div>
       )}
 
       {recipes.length > 0 && rest.length === 0 && featured && (
-        <div
-          className="py-12 text-center"
-          style={{
-            borderRadius: 16,
-            border: '1px dashed var(--border)',
-            background: 'var(--card)',
-          }}
-        >
-          <p style={{ fontSize: 14, color: 'var(--text2)' }}>No other recipes in this category.</p>
+        <div className="border(--border) rounded-2xl border border-dashed bg-(--card) py-12 text-center">
+          <p className="text-sm text-(--text2)">No other recipes in this category.</p>
         </div>
       )}
 

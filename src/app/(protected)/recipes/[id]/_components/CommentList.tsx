@@ -76,14 +76,13 @@ export const CommentList = ({ recipeId }: ICommentList) => {
         )}
       </h2>
 
-      {/* Comment list */}
       {isLoading ? (
         <CommentListSkeleton />
       ) : (
         <div className="mb-6 flex flex-col gap-4">
           {comments.map((comment) => (
             <div key={comment.id} className="flex gap-3">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">
                 {initials(comment.authorUsername)}
               </div>
               <div className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3">
@@ -116,9 +115,8 @@ export const CommentList = ({ recipeId }: ICommentList) => {
         </div>
       )}
 
-      {/* Add comment form */}
       <form onSubmit={handlePost} className="flex gap-3">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">
           {session?.user?.username ? initials(session.user.username) : 'Me'}
         </div>
         <div className="flex-1">
@@ -128,7 +126,7 @@ export const CommentList = ({ recipeId }: ICommentList) => {
             placeholder="Add a comment…"
             rows={3}
             maxLength={500}
-            className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
+            className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm transition-colors outline-none focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-400/20"
           />
           {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
           <div className="mt-2 flex justify-end">

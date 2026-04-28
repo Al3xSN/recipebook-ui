@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch, ApiRequestError } from '@/lib/api';
-import type { IRecipeDto } from '@/interfaces/IRecipe';
+import { IRecipeDto } from '@/interfaces/IRecipe';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { DetailsStep } from './steps/DetailsStep';
 import { IngredientsStep } from './steps/IngredientsStep';
@@ -28,7 +28,6 @@ const NewRecipePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState(-1);
@@ -139,78 +138,35 @@ const NewRecipePage = () => {
   };
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-6">
-      {/* Header */}
+    <div className="max-w-lg p-5">
       <div className="mb-6 flex items-center justify-between">
-        <h1
-          className="text-xl font-bold"
-          style={{ color: 'var(--text)', fontFamily: 'var(--font-display)' }}
-        >
-          New Recipe
-        </h1>
+        <h1 className="text-xl font-bold text-(--text)">New Recipe</h1>
         <button
           type="button"
           onClick={() => (hasManualData ? setShowCancelModal(true) : router.push('/recipes'))}
-          className="text-sm transition-colors hover:opacity-70"
-          style={{ color: 'var(--text2)' }}
+          className="text-sm text-(--text2) transition-colors hover:opacity-70"
         >
           Cancel
         </button>
       </div>
 
-      {/* Mode toggle */}
-      <div
-        style={{
-          display: 'flex',
-          gap: 8,
-          marginBottom: 24,
-          padding: 4,
-          borderRadius: 100,
-          background: 'var(--bg2)',
-          border: '1px solid var(--border)',
-        }}
-      >
+      <div className="mb-6 flex gap-2 rounded-full border border-solid border-(--border) bg-(--bg2) p-1">
         <button
           type="button"
           onClick={() => setMode('manual')}
-          style={{
-            flex: 1,
-            padding: '9px 14px',
-            borderRadius: 100,
-            border: 'none',
-            background: mode === 'manual' ? 'var(--accent)' : 'transparent',
-            color: mode === 'manual' ? '#fff' : 'var(--text2)',
-            fontWeight: 600,
-            fontSize: 14,
-            cursor: 'pointer',
-            transition: 'background 150ms, color 150ms',
-            whiteSpace: 'nowrap',
-          }}
+          className={`flex-1 cursor-pointer rounded-full px-3.5 py-2 text-sm font-semibold whitespace-nowrap transition-colors bg-${mode === 'manual' ? '(--accent)' : 'transparent'} text-${mode === 'manual' ? 'white' : '(--text2)'}`}
         >
           🔥 Manual
         </button>
         <button
           type="button"
           onClick={handleSwitchToImport}
-          style={{
-            flex: 1,
-            padding: '9px 14px',
-            borderRadius: 100,
-            border: 'none',
-            background: mode === 'import' ? 'var(--accent)' : 'transparent',
-            color: mode === 'import' ? '#fff' : 'var(--text2)',
-            fontWeight: 600,
-            fontSize: 14,
-            cursor: 'pointer',
-            transition: 'background 150ms, color 150ms',
-            whiteSpace: 'nowrap',
-          }}
+          className={`flex-1 cursor-pointer rounded-full px-3.5 py-2 text-sm font-semibold whitespace-nowrap transition-colors bg-${mode !== 'manual' ? '(--accent)' : 'transparent'} text-${mode !== 'manual' ? 'white' : '(--text2)'}`}
         >
           🪄 Import from video
         </button>
       </div>
 
-      {/* Progress bar */}
       {mode === 'manual' ? (
         <div className="mb-8 flex">
           {MANUAL_STEP_LABELS.map((label, i) => {
@@ -220,18 +176,13 @@ const NewRecipePage = () => {
             return (
               <div key={label} className="flex flex-1 flex-col items-center gap-1">
                 <span
-                  className="text-[9px] font-semibold tracking-widest"
-                  style={{
-                    color: isActive ? 'var(--accent)' : isDone ? 'var(--text2)' : 'var(--text3)',
-                  }}
+                  className={`text-[9px] font-semibold tracking-widest text-${isActive ? '(--accent)' : isDone ? '(--text2)' : '(--text3)'}`}
                 >
                   {label}
                 </span>
+
                 <div
-                  className="h-0.5 w-full"
-                  style={{
-                    backgroundColor: isActive || isDone ? 'var(--accent)' : 'var(--border)',
-                  }}
+                  className={`bg-${isActive || isDone ? '(--accent)' : '(--border)'} h-0.5 w-full`}
                 />
               </div>
             );
@@ -244,48 +195,26 @@ const NewRecipePage = () => {
             return (
               <div key={label} className="flex flex-1 flex-col items-center gap-1">
                 <span
-                  className="text-[9px] font-semibold tracking-widest"
-                  style={{
-                    color: isActive ? 'var(--accent)' : 'var(--text3)',
-                  }}
+                  className={`text-[9px] font-semibold tracking-widest text-${isActive ? '(--accent)' : '(--text3)'}`}
                 >
                   {label}
                 </span>
-                <div
-                  className="h-0.5 w-full"
-                  style={{
-                    backgroundColor: isActive ? 'var(--accent)' : 'var(--border)',
-                  }}
-                />
+                <div className={`h-0.5 w-full bg-${isActive ? '(--accent)' : '(--border)'}`} />
               </div>
             );
           })}
         </div>
       )}
 
-      {/* Import mode */}
       {mode === 'import' && (
-        <div style={{ position: 'relative' }}>
-          <div style={{ filter: 'blur(3px)', pointerEvents: 'none', userSelect: 'none' }}>
+        <div className="relative">
+          <div className="pointer-events-none blur-xs select-none">
             <ImportStep onComplete={handleImportComplete} />
           </div>
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+          <div className="absolute inset-0 flex items-center justify-center">
             <span
+              className="rounded-full bg-(--accent) px-4 py-2 text-xs font-semibold text-white"
               style={{
-                padding: '8px 18px',
-                borderRadius: 100,
-                background: 'var(--accent)',
-                color: '#fff',
-                fontSize: 13,
-                fontWeight: 600,
                 boxShadow: '0 2px 12px rgba(61,43,31,0.18)',
               }}
             >
@@ -295,7 +224,6 @@ const NewRecipePage = () => {
         </div>
       )}
 
-      {/* Manual mode steps */}
       {mode === 'manual' && step === 1 && (
         <DetailsStep
           title={title}
