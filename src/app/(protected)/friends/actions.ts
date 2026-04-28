@@ -67,3 +67,41 @@ export const removeFriend = async (friendUserId: string): Promise<{ error: strin
   await removeFriendship(session.user.id, friendUserId);
   return { error: null };
 };
+
+export const acceptRequest = async (requestId: string): Promise<{ error: string | null }> => {
+  const session = await getSession();
+
+  const request = await db.friendRequest.findUnique({ where: { id: requestId } });
+  if (!request) return { error: 'Friend request not found.' };
+  if (request.receiverId !== session.user.id) return { error: 'This request was not sent to you.' };
+
+  await db.$transaction(async (tx) => {
+    const r = await tx.friendRequest.update({
+      where: { id: requestId },
+      data: { status: FriendRequestStatus.ACCEPTED },
+    });
+    await createNotification(tx, {
+      userId: r.senderId,
+      senderId: session.user.id,
+      type: NotificationType.FRIEND_ACCEPTED,
+      referenceId: r.id,
+    });
+  });
+
+  return { error: null };
+};
+
+export const declineRequest = async (requestId: string): Promise<{ error: string | null }> => {
+  const session = await getSession();
+
+  const request = await db.friendRequest.findUnique({ where: { id: requestId } });
+  if (!request) return { error: 'Friend request not found.' };
+  if (request.receiverId !== session.user.id) return { error: 'This request was not sent to you.' };
+
+  await db.friendRequest.update({
+    where: { id: requestId },
+    data: { status: FriendRequestStatus.REJECTED },
+  });
+
+  return { error: null };
+};

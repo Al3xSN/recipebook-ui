@@ -9,7 +9,7 @@ const SearchInput = ({
 }) => (
   <div className="relative mb-4">
     <svg
-      className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-[var(--text3)]"
+      className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-(--text3)"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -24,7 +24,7 @@ const SearchInput = ({
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full rounded-full border border-[var(--border)] bg-white py-2.5 pr-4 pl-10 text-[14px] text-[var(--text)] placeholder-[var(--text3)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
+      className="w-full rounded-full border border-(--border) bg-white py-2.5 pr-4 pl-10 text-[14px] text-(--text) placeholder-(--text3) outline-none focus:border-(--accent) focus:ring-1 focus:ring-(--accent)"
     />
   </div>
 );

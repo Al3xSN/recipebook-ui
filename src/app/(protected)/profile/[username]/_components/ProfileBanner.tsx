@@ -3,7 +3,7 @@
 import { useOptimistic, useTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { sendFriendRequest, removeFriend } from '../actions';
+import { sendFriendRequest, removeFriend } from '@/app/(protected)/friends/actions';
 import { FriendshipStatus } from '@/enums/FriendshipStatus';
 import { SettingsIcon, UserPlusIcon, ClockIcon, UserCheckIcon } from '@/components/icons';
 import { IUserDto } from '@/interfaces/IUser';
