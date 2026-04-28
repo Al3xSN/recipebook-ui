@@ -38,8 +38,10 @@ const RecipesPage = async ({ searchParams }: { searchParams: Promise<{ category?
       <div className="mb-5 flex items-start justify-between gap-3">
         <div>
           <TimeGreeting />
+
           <h1 className="text-2xl font-bold text-(--text)">What&apos;s cooking today?</h1>
         </div>
+
         <div className="flex items-center gap-2 pt-1">
           <Link
             href="/notifications"
@@ -48,6 +50,7 @@ const RecipesPage = async ({ searchParams }: { searchParams: Promise<{ category?
           >
             <BellIcon className="h-5 w-5" />
           </Link>
+
           <Link
             href={`/profile/${user.username}`}
             aria-label="Profile"

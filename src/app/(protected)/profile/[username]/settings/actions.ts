@@ -1,6 +1,6 @@
 'use server';
 
-import { auth } from '@/auth';
+import { auth, signOut } from '@/auth';
 import {
   getUserById,
   updateUserProfile,
@@ -9,6 +9,7 @@ import {
 } from '@/lib/server/user';
 import { uploadUserAvatar, AvatarValidationError } from '@/lib/server/user/avatar';
 import { IUpdateProfileInfoRequest } from '@/interfaces/IProfile';
+import { db } from '@/lib/db';
 
 const getSession = async () => {
   const session = await auth();
@@ -79,4 +80,11 @@ export const changePassword = async (data: {
   if (!ok) return { data: null, error: 'Current password is incorrect.' };
 
   return { data: null, error: null };
+};
+
+export const deleteAccount = async (): Promise<{ error: string | null }> => {
+  const session = await getSession();
+  await db.user.delete({ where: { id: session.user.id } });
+  await signOut({ redirectTo: '/' });
+  return { error: null };
 };

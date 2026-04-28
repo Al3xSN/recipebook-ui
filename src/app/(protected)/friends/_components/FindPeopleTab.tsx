@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { apiFetch } from '@/lib/api';
+import { sendFriendRequest } from '../actions';
 import SearchInput from './SearchInput';
 import UserRow from './UserRow';
-import { IUserSuggestionDto } from './types';
+import { IUserSuggestionDto } from '@/interfaces/IFriend';
 
 const FindPeopleTab = ({
   initialSuggestions,
@@ -42,15 +43,8 @@ const FindPeopleTab = ({
   }, [search]);
 
   const handleAdd = async (username: string, userId: string) => {
-    try {
-      await apiFetch('/api/friends/requests', {
-        method: 'POST',
-        body: JSON.stringify({ receiverUsername: username }),
-      });
-      onAdd(userId);
-    } catch {
-      // ignore
-    }
+    await sendFriendRequest(username);
+    onAdd(userId);
   };
 
   const displayList = search.trim() ? results : initialSuggestions;
@@ -74,8 +68,8 @@ const FindPeopleTab = ({
             onClick={() => handleAdd(u.username, u.userId)}
             className={`rounded-lg px-4 py-1.5 text-[13px] font-medium transition-opacity ${
               sent
-                ? 'cursor-default border border-[var(--border)] text-[var(--text3)]'
-                : 'bg-[var(--accent)] text-white hover:opacity-90'
+                ? 'cursor-default border border-(--border) text-(--text3)'
+                : 'bg-(--accent) text-white hover:opacity-90'
             }`}
           >
             {sent ? 'Sent' : '+ Add'}
@@ -93,20 +87,20 @@ const FindPeopleTab = ({
         onChange={setSearch}
       />
       {isSearching ? (
-        <p className="py-4 text-center text-sm text-[var(--text3)]">Searching...</p>
+        <p className="py-4 text-center text-sm text-(--text3)">Searching...</p>
       ) : (
         <>
           {showSuggestedLabel && (
-            <p className="mb-1 text-[11px] font-semibold tracking-wider text-[var(--text3)] uppercase">
+            <p className="mb-1 text-[11px] font-semibold tracking-wider text-(--text3) uppercase">
               Suggested for you
             </p>
           )}
           {displayList.length === 0 && (
-            <p className="py-10 text-center text-sm text-[var(--text3)]">
+            <p className="py-10 text-center text-sm text-(--text3)">
               {search.trim() ? 'No users found.' : 'No suggestions available.'}
             </p>
           )}
-          <div className="divide-y divide-[var(--border)]">{displayList.map(renderRow)}</div>
+          <div className="divide-y divide-(--border)">{displayList.map(renderRow)}</div>
         </>
       )}
     </div>

@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useOptimistic, useTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { apiFetch } from '@/lib/api';
+import { sendFriendRequest, removeFriend } from '@/app/(protected)/friends/actions';
 import { FriendshipStatus } from '@/enums/FriendshipStatus';
 import { SettingsIcon, UserPlusIcon, ClockIcon, UserCheckIcon } from '@/components/icons';
 import { IUserDto } from '@/interfaces/IUser';
@@ -23,37 +23,24 @@ export const ProfileBanner = ({
   recipeCount,
   friendCount,
 }: IProfileBannerProps) => {
-  const [friendshipStatus, setFriendshipStatus] = useState(initialFriendshipStatus);
-  const [isManagingFriend, setIsManagingFriend] = useState(false);
+  const [optimisticStatus, setOptimisticStatus] = useOptimistic(initialFriendshipStatus);
+  const [isPending, startTransition] = useTransition();
 
   const displayName = profile.displayName ?? profile.username;
   const initials = displayName.slice(0, 2).toUpperCase();
 
-  const handleAddFriend = async () => {
-    setIsManagingFriend(true);
-    try {
-      await apiFetch('/api/friends/requests', {
-        method: 'POST',
-        body: JSON.stringify({ receiverUsername: profile.username }),
-      });
-      setFriendshipStatus(FriendshipStatus.PendingOutgoing);
-    } catch {
-      // silently ignore
-    } finally {
-      setIsManagingFriend(false);
-    }
+  const handleAddFriend = () => {
+    startTransition(async () => {
+      setOptimisticStatus(FriendshipStatus.PendingOutgoing);
+      await sendFriendRequest(profile.username);
+    });
   };
 
-  const handleRemoveFriend = async () => {
-    setIsManagingFriend(true);
-    try {
-      await apiFetch(`/api/friends/${profile.id}`, { method: 'DELETE' });
-      setFriendshipStatus(FriendshipStatus.NotFriends);
-    } catch {
-      // silently ignore
-    } finally {
-      setIsManagingFriend(false);
-    }
+  const handleRemoveFriend = () => {
+    startTransition(async () => {
+      setOptimisticStatus(FriendshipStatus.NotFriends);
+      await removeFriend(profile.id);
+    });
   };
 
   return (
@@ -94,11 +81,11 @@ export const ProfileBanner = ({
 
         {!isOwner && (
           <>
-            {friendshipStatus === FriendshipStatus.NotFriends && (
+            {optimisticStatus === FriendshipStatus.NotFriends && (
               <button
                 type="button"
                 onClick={handleAddFriend}
-                disabled={isManagingFriend}
+                disabled={isPending}
                 className="flex items-center gap-1.5 rounded-lg border border-white/30 bg-white/20 px-3 py-1.5 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 disabled:opacity-50"
               >
                 <UserPlusIcon className="h-4 w-4" />
@@ -106,7 +93,7 @@ export const ProfileBanner = ({
               </button>
             )}
 
-            {friendshipStatus === FriendshipStatus.PendingOutgoing && (
+            {optimisticStatus === FriendshipStatus.PendingOutgoing && (
               <button
                 type="button"
                 disabled
@@ -117,17 +104,17 @@ export const ProfileBanner = ({
               </button>
             )}
 
-            {friendshipStatus === FriendshipStatus.PendingIncoming && (
+            {optimisticStatus === FriendshipStatus.PendingIncoming && (
               <span className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80 backdrop-blur-sm">
                 Sent you a request
               </span>
             )}
 
-            {friendshipStatus === FriendshipStatus.Friends && (
+            {optimisticStatus === FriendshipStatus.Friends && (
               <button
                 type="button"
                 onClick={handleRemoveFriend}
-                disabled={isManagingFriend}
+                disabled={isPending}
                 className="flex items-center gap-1.5 rounded-lg border border-white/30 bg-white/20 px-3 py-1.5 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:border-red-300/50 hover:bg-red-500/30 disabled:opacity-50"
               >
                 <UserCheckIcon className="h-4 w-4" />

@@ -52,14 +52,12 @@ export const CommentsTab = ({ recipeId, isOwner }: ICommentsTab) => {
   const [comments, setComments] = useState<ICommentDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Rating state
   const [hoveredStar, setHoveredStar] = useState(0);
   const [selectedStar, setSelectedStar] = useState(0);
   const [isRating, setIsRating] = useState(false);
   const [ratingError, setRatingError] = useState<string | null>(null);
   const [ratingDone, setRatingDone] = useState(false);
 
-  // Comment state
   const [text, setText] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const [commentError, setCommentError] = useState<string | null>(null);

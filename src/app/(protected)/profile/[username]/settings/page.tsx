@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '@/auth';
@@ -7,6 +8,8 @@ import { SignOutButton } from '@/components/ui/SignOutButton';
 import { DeleteAccountButton } from './_components/DeleteAccountButton';
 import { ArrowLeftIcon } from '@/components/icons';
 import { getUserById } from '@/lib/server/user';
+
+export const metadata: Metadata = { title: 'Settings' };
 
 const SettingsPage = async ({ params }: { params: Promise<{ username: string }> }) => {
   const [session, { username }] = await Promise.all([auth(), params]);

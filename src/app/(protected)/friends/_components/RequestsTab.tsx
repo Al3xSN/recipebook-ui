@@ -1,5 +1,5 @@
 import UserRow from './UserRow';
-import { IIncomingRequestDto } from './types';
+import { IIncomingRequestDto } from '@/interfaces/IFriend';
 
 const RequestsTab = ({
   requests,
@@ -11,17 +11,15 @@ const RequestsTab = ({
   onDecline: (id: string) => void;
 }) => {
   if (requests.length === 0) {
-    return (
-      <p className="py-10 text-center text-sm text-[var(--text3)]">No pending friend requests.</p>
-    );
+    return <p className="py-10 text-center text-sm text-(--text3)">No pending friend requests.</p>;
   }
 
   return (
     <div>
-      <p className="mb-1 text-[11px] font-semibold tracking-wider text-[var(--text3)] uppercase">
+      <p className="mb-1 text-[11px] font-semibold tracking-wider text-(--text3) uppercase">
         {requests.length} pending
       </p>
-      <div className="divide-y divide-[var(--border)]">
+      <div className="divide-y divide-(--border)">
         {requests.map((r) => {
           const name = r.senderDisplayName ?? r.senderUsername;
           return (
@@ -37,14 +35,14 @@ const RequestsTab = ({
                   <button
                     type="button"
                     onClick={() => onAccept(r.id)}
-                    className="rounded-lg bg-[var(--accent)] px-4 py-1.5 text-[13px] font-medium text-white transition-opacity hover:opacity-90"
+                    className="rounded-lg bg-(--accent) px-4 py-1.5 text-[13px] font-medium text-white transition-opacity hover:opacity-90"
                   >
                     Accept
                   </button>
                   <button
                     type="button"
                     onClick={() => onDecline(r.id)}
-                    className="rounded-lg border border-[var(--border)] px-4 py-1.5 text-[13px] font-medium text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                    className="rounded-lg border border-(--border) px-4 py-1.5 text-[13px] font-medium text-(--text2) transition-colors hover:border-(--accent) hover:text-(--accent)"
                   >
                     Decline
                   </button>

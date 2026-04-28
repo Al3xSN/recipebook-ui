@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import SearchInput from './SearchInput';
 import UserRow from './UserRow';
-import { IFriendDto } from './types';
+import { IFriendDto } from '@/interfaces/IFriend';
 
 const MyFriendsTab = ({
   friends,
@@ -27,11 +27,11 @@ const MyFriendsTab = ({
     <div>
       <SearchInput placeholder="Search your friends..." value={search} onChange={setSearch} />
       {filtered.length === 0 ? (
-        <p className="py-10 text-center text-sm text-[var(--text3)]">
+        <p className="py-10 text-center text-sm text-(--text3)">
           {search ? 'No friends match your search.' : "You haven't added any friends yet."}
         </p>
       ) : (
-        <div className="divide-y divide-[var(--border)]">
+        <div className="divide-y divide-(--border)">
           {filtered.map((f) => {
             const name = f.displayName ?? f.username;
             return (
@@ -46,14 +46,14 @@ const MyFriendsTab = ({
                   <>
                     <Link
                       href={`/profile/${f.username}`}
-                      className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-[13px] font-medium text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                      className="rounded-lg border border-(--border) px-3 py-1.5 text-[13px] font-medium text-(--text) transition-colors hover:border-(--accent) hover:text-(--accent)"
                     >
                       Recipes
                     </Link>
                     <button
                       type="button"
                       onClick={() => onRemove(f.userId)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text3)] transition-colors hover:border-red-300 hover:text-red-400"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-(--border) text-(--text3) transition-colors hover:border-red-300 hover:text-red-400"
                       aria-label="Remove friend"
                     >
                       <svg
