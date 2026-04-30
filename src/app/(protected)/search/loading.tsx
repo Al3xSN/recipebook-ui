@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/Skeleton';
 
-const ExploreLoading = () => {
+const SearchLoading = () => {
   return (
     <div className="min-h-screen px-4 py-8">
       {/* Header */}
@@ -32,4 +32,4 @@ const ExploreLoading = () => {
   );
 };
 
-export default ExploreLoading;
+export default SearchLoading;

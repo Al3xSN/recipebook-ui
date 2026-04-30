@@ -15,11 +15,22 @@ interface IRecipeData {
   instructions: { stepNumber: number; text: string }[];
 }
 
+export interface ICommentItem {
+  id: string;
+  recipeId: string;
+  authorUserId: string;
+  authorUsername: string;
+  authorAvatarUrl: string | null;
+  text: string;
+  createdAt: string;
+}
+
 interface IRecipeDetailTabs {
   recipe: IRecipeData;
   recipeId: string;
   commentCount: number;
   isOwner: boolean;
+  initialComments: ICommentItem[];
 }
 
 export const RecipeDetailTabs = ({
@@ -27,6 +38,7 @@ export const RecipeDetailTabs = ({
   recipeId,
   commentCount,
   isOwner,
+  initialComments,
 }: IRecipeDetailTabs) => {
   const [active, setActive] = useState<Tab>('overview');
 
@@ -59,7 +71,9 @@ export const RecipeDetailTabs = ({
       {active === 'overview' && <OverviewTab description={recipe.description} tags={recipe.tags} />}
       {active === 'ingredients' && <IngredientsTab ingredients={recipe.ingredients} />}
       {active === 'steps' && <StepsTab steps={recipe.instructions} />}
-      {active === 'comments' && <CommentsTab recipeId={recipeId} isOwner={isOwner} />}
+      {active === 'comments' && (
+        <CommentsTab recipeId={recipeId} isOwner={isOwner} initialComments={initialComments} />
+      )}
     </div>
   );
 };

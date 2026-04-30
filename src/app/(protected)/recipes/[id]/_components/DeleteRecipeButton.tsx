@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ApiRequestError } from '@/lib/api';
+import { apiFetch, ApiRequestError } from '@/lib/api';
 import { TrashIcon, SpinnerIcon } from '@/components/icons';
 
 export const DeleteRecipeButton = ({ recipeId }: { recipeId: string }) => {
@@ -15,11 +15,7 @@ export const DeleteRecipeButton = ({ recipeId }: { recipeId: string }) => {
     setIsDeleting(true);
     setError(null);
     try {
-      const res = await fetch(`/api/recipes/${recipeId}`, { method: 'DELETE' });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({ detail: res.statusText }));
-        throw new ApiRequestError({ status: res.status, detail: body.detail ?? res.statusText });
-      }
+      await apiFetch(`/api/recipes/${recipeId}`, { method: 'DELETE' });
       router.back();
     } catch (err) {
       setIsDeleting(false);

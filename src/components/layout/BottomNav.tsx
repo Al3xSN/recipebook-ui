@@ -30,12 +30,12 @@ export const BottomNav = ({ username }: IBottomNavProps) => {
       </Link>
 
       <Link
-        href="/explore"
-        className={`flex flex-1 flex-col items-center justify-center gap-1 pt-3 text-[10px] font-medium tracking-wider transition-colors text-(${tabColor('/explore')})`}
+        href="/search"
+        className={`flex flex-1 flex-col items-center justify-center gap-1 pt-3 text-[10px] font-medium tracking-wider transition-colors text-(${tabColor('/search')})`}
       >
         <SearchIcon className="h-6 w-6" />
 
-        <span>Discover</span>
+        <span>Search</span>
       </Link>
 
       <div className="flex flex-1 items-center justify-center pt-1.5">
