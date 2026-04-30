@@ -4,6 +4,7 @@ import { CATEGORY_LABELS, TAG_LABELS } from '@/lib/recipe-enums';
 import { Visibility } from '@generated/prisma/client';
 import { IRecipeDto } from '@/interfaces/IRecipe';
 import { BookIcon, ClockIcon, UsersIcon } from '@/components/icons';
+import { formatTime } from '@/lib/formatting';
 
 interface IRecipeCardProps {
   recipe: IRecipeDto;
@@ -14,13 +15,6 @@ interface IRecipeCardProps {
 export const RecipeCard = ({ recipe, showVisibility = false, currentUserId }: IRecipeCardProps) => {
   const totalMinutes = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
   const showAuthor = recipe.userId !== currentUserId;
-
-  const formatTime = (minutes: number) => {
-    if (minutes < 60) return `${minutes}m`;
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return m > 0 ? `${h}h ${m}m` : `${h}h`;
-  };
 
   return (
     <article className="relative flex flex-col overflow-hidden rounded-2xl border border-solid border-(--border) bg-(--card) shadow-(--shadow-card) transition-all duration-150">

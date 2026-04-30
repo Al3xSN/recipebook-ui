@@ -3,17 +3,11 @@ import Image from 'next/image';
 import { CATEGORY_LABELS } from '@/lib/recipe-enums';
 import { IRecipeCardDto } from '@/interfaces/IRecipe';
 import { ClockIcon, StarIcon } from '@/components/icons';
+import { formatTime } from '@/lib/formatting';
 
 interface IFeaturedRecipeCardProps {
   recipe: IRecipeCardDto;
 }
-
-const formatTime = (minutes: number) => {
-  if (minutes < 60) return `${minutes}m`;
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return m > 0 ? `${h}h ${m}m` : `${h}h`;
-};
 
 export const FeaturedRecipeCard = ({ recipe }: IFeaturedRecipeCardProps) => {
   const totalMinutes = recipe.prepTime + recipe.cookTime;

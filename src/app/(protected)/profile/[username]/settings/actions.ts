@@ -1,6 +1,7 @@
 'use server';
 
-import { auth, signOut } from '@/auth';
+import { signOut } from '@/auth';
+import { getSession } from '@/lib/server/auth-session';
 import {
   getUserById,
   updateUserProfile,
@@ -10,12 +11,6 @@ import {
 import { uploadUserAvatar, AvatarValidationError } from '@/lib/server/user/avatar';
 import { IUpdateProfileInfoRequest } from '@/interfaces/IProfile';
 import { db } from '@/lib/db';
-
-const getSession = async () => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error('Unauthorized');
-  return session;
-};
 
 export const updateProfileInfo = async (
   data: IUpdateProfileInfoRequest,

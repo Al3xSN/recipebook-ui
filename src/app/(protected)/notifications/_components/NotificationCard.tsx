@@ -1,12 +1,12 @@
 'use client';
 
 import { markReadAction } from '../actions';
-import { INotification } from '../types';
+import { INotificationDto } from '@/lib/server/notifications';
 import { notificationMessage } from '../utils';
 import { NotificationIcon } from './NotificationIcon';
 
 interface INotificationCardProps {
-  notification: INotification;
+  notification: INotificationDto;
 }
 
 export const NotificationCard = ({ notification }: INotificationCardProps) => {

@@ -4,23 +4,8 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { apiFetch, ApiRequestError } from '@/lib/api';
 import { StarIcon } from '@/components/icons';
+import { getAvatarColor, getInitials } from '@/lib/formatting';
 import { type ICommentItem as ICommentDto } from './RecipeDetailTabs';
-
-const AVATAR_COLORS = [
-  'bg-orange-400',
-  'bg-blue-400',
-  'bg-green-400',
-  'bg-purple-400',
-  'bg-pink-400',
-  'bg-teal-400',
-  'bg-red-400',
-  'bg-yellow-400',
-];
-
-const avatarColor = (username: string) =>
-  AVATAR_COLORS[username.charCodeAt(0) % AVATAR_COLORS.length];
-
-const initials = (username: string) => username.slice(0, 2).toUpperCase();
 
 const timeAgo = (dateStr: string) => {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -164,9 +149,9 @@ export const CommentsTab = ({ recipeId, isOwner, initialComments }: ICommentsTab
               <div className="mb-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${avatarColor(comment.authorUsername)}`}
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${getAvatarColor(comment.authorUsername)}`}
                   >
-                    {initials(comment.authorUsername)}
+                    {getInitials(comment.authorUsername)}
                   </span>
                   <div>
                     <p className="text-sm font-semibold text-gray-900">{comment.authorUsername}</p>

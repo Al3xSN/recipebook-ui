@@ -1,24 +1,7 @@
 import { Prisma } from '@generated/prisma/client';
 import { db } from '@/lib/db';
 import { IUserDto } from '@/interfaces/IUser';
-
-const toDto = (user: {
-  id: string;
-  username: string;
-  email: string;
-  displayName: string | null;
-  bio: string | null;
-  avatarUrl: string | null;
-  createdAt: Date;
-}): IUserDto => ({
-  id: user.id,
-  username: user.username,
-  email: user.email,
-  displayName: user.displayName,
-  bio: user.bio,
-  avatarUrl: user.avatarUrl,
-  createdAt: user.createdAt,
-});
+import { toUserDto } from './mapper';
 
 export const searchUsers = async (query: string, excludeIds: string[]): Promise<IUserDto[]> => {
   const users = await db.user.findMany({
@@ -29,7 +12,7 @@ export const searchUsers = async (query: string, excludeIds: string[]): Promise<
     take: 20,
   });
 
-  return users.map(toDto);
+  return users.map(toUserDto);
 };
 
 export const getUserSuggestions = async (
@@ -41,5 +24,5 @@ export const getUserSuggestions = async (
     take: 10,
   });
 
-  return users.map(toDto);
+  return users.map(toUserDto);
 };

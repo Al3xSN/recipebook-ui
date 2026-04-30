@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { changePassword } from '../actions';
+import { ErrorAlert } from '@/components/ErrorAlert';
 
 export const ChangePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -51,11 +52,7 @@ export const ChangePasswordForm = () => {
       )}
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
-        {error && (
-          <p role="alert" className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">
-            {error}
-          </p>
-        )}
+        <ErrorAlert message={error} />
         <Input
           id="currentPassword"
           label="Current password"

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { EyeIcon } from '@/components/icons';
+import { ErrorAlert } from '@/components/ErrorAlert';
 import { getStrength } from '@/utils/passwordStrenghts';
 
 const strengthClasses: Record<number, string> = {
@@ -87,11 +88,7 @@ export const RegisterForm = () => {
 
   return (
     <>
-      {error && (
-        <p role="alert" className="mb-4 rounded-xl bg-red-50 px-4 py-2.5 text-sm text-red-600">
-          {error}
-        </p>
-      )}
+      <ErrorAlert message={error} className="mb-4" />
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <div>

@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { verifyPassword, hashPassword } from '@/lib/server/user/password';
 import { IUserDto, ICreateUserData, IUpdateUserProfileData } from '@/interfaces/IUser';
+import { toUserDto } from './mapper';
 
 export { searchUsers, getUserSuggestions } from './search';
 
@@ -11,37 +12,19 @@ export class UserConflictError extends Error {
   }
 }
 
-const toDto = (user: {
-  id: string;
-  username: string;
-  email: string;
-  displayName: string | null;
-  bio: string | null;
-  avatarUrl: string | null;
-  createdAt: Date;
-}): IUserDto => ({
-  id: user.id,
-  username: user.username,
-  email: user.email,
-  displayName: user.displayName,
-  bio: user.bio,
-  avatarUrl: user.avatarUrl,
-  createdAt: user.createdAt,
-});
-
 export const getUserById = async (id: string): Promise<IUserDto | null> => {
   const user = await db.user.findUnique({ where: { id } });
-  return user ? toDto(user) : null;
+  return user ? toUserDto(user) : null;
 };
 
 export const getUserByUsername = async (username: string): Promise<IUserDto | null> => {
   const user = await db.user.findUnique({ where: { username } });
-  return user ? toDto(user) : null;
+  return user ? toUserDto(user) : null;
 };
 
 export const getUserByEmail = async (email: string): Promise<IUserDto | null> => {
   const user = await db.user.findUnique({ where: { email } });
-  return user ? toDto(user) : null;
+  return user ? toUserDto(user) : null;
 };
 
 export const verifyUserPassword = async (
@@ -56,7 +39,7 @@ export const verifyUserPassword = async (
 
   const valid = await verifyPassword(password, user.passwordHash);
 
-  return valid ? toDto(user) : null;
+  return valid ? toUserDto(user) : null;
 };
 
 export const createUser = async (data: ICreateUserData): Promise<IUserDto> => {
@@ -72,7 +55,7 @@ export const createUser = async (data: ICreateUserData): Promise<IUserDto> => {
 
   const user = await db.user.create({ data });
 
-  return toDto(user);
+  return toUserDto(user);
 };
 
 export const updateUserProfile = async (
@@ -91,7 +74,7 @@ export const updateUserProfile = async (
 
   const user = await db.user.update({ where: { id }, data });
 
-  return toDto(user);
+  return toUserDto(user);
 };
 
 export const updateUserAvatar = async (id: string, avatarUrl: string): Promise<void> => {

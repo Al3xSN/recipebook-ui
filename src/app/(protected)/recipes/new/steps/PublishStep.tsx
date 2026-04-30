@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowLeftIcon, SpinnerIcon } from '@/components/icons';
+import { ErrorAlert } from '@/components/ErrorAlert';
 import { CATEGORY_LABELS } from '@/lib/recipe-enums';
 
 type Visibility = 'PUBLIC' | 'FRIENDS_ONLY' | 'PRIVATE';
@@ -104,11 +105,7 @@ export const PublishStep = ({
         <div className="rounded-xl bg-(--bg2) px-4 py-3 text-sm text-(--text2)">{infoBanner}</div>
       )}
 
-      {error && (
-        <p role="alert" className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">
-          {error}
-        </p>
-      )}
+      <ErrorAlert message={error} />
 
       <div className="flex gap-3">
         <button
