@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/server/auth-session';
 import { getUserByUsername } from '@/lib/server/user';
@@ -49,6 +50,8 @@ export const sendFriendRequest = async (
     });
   });
 
+  revalidatePath('/profile/' + receiverUsername);
+  revalidatePath('/friends');
   return { error: null };
 };
 
@@ -59,6 +62,8 @@ export const removeFriend = async (friendUserId: string): Promise<{ error: strin
     return { error: 'Not friends with this user.' };
 
   await removeFriendship(session.user.id, friendUserId);
+  revalidatePath('/friends');
+  revalidatePath('/profile/[username]', 'page');
   return { error: null };
 };
 
@@ -82,6 +87,7 @@ export const acceptRequest = async (requestId: string): Promise<{ error: string 
     });
   });
 
+  revalidatePath('/friends');
   return { error: null };
 };
 
@@ -97,5 +103,6 @@ export const declineRequest = async (requestId: string): Promise<{ error: string
     data: { status: FriendRequestStatus.REJECTED },
   });
 
+  revalidatePath('/friends');
   return { error: null };
 };

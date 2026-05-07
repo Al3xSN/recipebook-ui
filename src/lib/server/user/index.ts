@@ -33,7 +33,7 @@ export const verifyUserPassword = async (
 ): Promise<IUserDto | null> => {
   const user = await db.user.findUnique({ where: { email } });
 
-  if (!user) {
+  if (!user || !user.passwordHash) {
     return null;
   }
 
@@ -87,7 +87,7 @@ export const updateUserPassword = async (
   newPassword: string,
 ): Promise<boolean> => {
   const user = await db.user.findUnique({ where: { id } });
-  if (!user) {
+  if (!user || !user.passwordHash) {
     return false;
   }
 
