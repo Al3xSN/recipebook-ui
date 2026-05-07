@@ -61,6 +61,7 @@ const FindPeopleTab = ({
         bio={u.bio}
         avatarUrl={u.avatarUrl}
         mutualFriendCount={u.mutualFriendCount}
+        profileUrl={`/profile/${u.username}`}
         actions={
           <button
             type="button"

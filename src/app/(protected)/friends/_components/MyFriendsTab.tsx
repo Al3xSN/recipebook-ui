@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import SearchInput from './SearchInput';
 import UserRow from './UserRow';
 import { IFriendDto } from '@/interfaces/IFriend';
@@ -42,32 +41,25 @@ const MyFriendsTab = ({
                 bio={f.bio}
                 avatarUrl={f.avatarUrl}
                 mutualFriendCount={f.mutualFriendCount}
+                profileUrl={`/profile/${f.username}`}
                 actions={
-                  <>
-                    <Link
-                      href={`/profile/${f.username}`}
-                      className="rounded-lg border border-(--border) px-3 py-1.5 text-[13px] font-medium text-(--text) transition-colors hover:border-(--accent) hover:text-(--accent)"
+                  <button
+                    type="button"
+                    onClick={() => onRemove(f.userId)}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-(--border) text-(--text3) transition-colors hover:border-red-300 hover:text-red-400"
+                    aria-label="Remove friend"
+                  >
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      aria-hidden="true"
                     >
-                      Recipes
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => onRemove(f.userId)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-(--border) text-(--text3) transition-colors hover:border-red-300 hover:text-red-400"
-                      aria-label="Remove friend"
-                    >
-                      <svg
-                        className="h-4 w-4"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        aria-hidden="true"
-                      >
-                        <path d="M18 6 6 18M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </>
+                      <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </button>
                 }
               />
             );
