@@ -1,15 +1,8 @@
 'use server';
 
-import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
+import { getSession } from '@/lib/server/auth-session';
 import { markNotificationRead, markAllNotificationsRead } from '@/lib/server/notifications';
-
-const getSession = async () => {
-  const session = await auth();
-
-  if (!session?.user?.id) throw new Error('Unauthorized');
-  return session;
-};
 
 export const markReadAction = async (id: string): Promise<void> => {
   const session = await getSession();

@@ -1,6 +1,6 @@
-import { INotification } from './types';
+import { INotificationDto } from '@/lib/server/notifications';
 
-export const notificationMessage = (n: INotification): string => {
+export const notificationMessage = (n: INotificationDto): string => {
   const name = n.senderDisplayName ?? n.senderUsername;
   switch (n.type) {
     case 'FRIEND_REQUEST':

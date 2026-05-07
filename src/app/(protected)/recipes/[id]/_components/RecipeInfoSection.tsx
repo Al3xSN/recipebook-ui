@@ -1,6 +1,7 @@
 import { StarIcon } from '@/components/icons';
 import { IRecipeDto } from '@/interfaces/IRecipe';
 import { CATEGORY_LABELS, DIFFICULTY_LABELS } from '@/lib/recipe-enums';
+import { formatTime, getAvatarColor } from '@/lib/formatting';
 import { GetRatingAggregateType } from '@generated/prisma/models';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -24,29 +25,6 @@ export const RecipeInfoSection = ({ recipe, ratingStats }: IRecipeInfoSectionPro
   const totalTime = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
   const averageRating = ratingStats._avg.value;
   const totalRatings = ratingStats._count.value;
-
-  const AVATAR_COLORS = [
-    'bg-orange-400',
-    'bg-blue-400',
-    'bg-green-400',
-    'bg-purple-400',
-    'bg-pink-400',
-    'bg-teal-400',
-    'bg-red-400',
-    'bg-yellow-400',
-  ];
-
-  const getAvatarColor = (username: string) =>
-    AVATAR_COLORS[username.charCodeAt(0) % AVATAR_COLORS.length];
-
-  const formatTime = (minutes: number) => {
-    if (minutes < 60) return `${minutes}m`;
-
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-
-    return m > 0 ? `${h}h ${m}m` : `${h}h`;
-  };
 
   return (
     <div className="px-4 pt-4">

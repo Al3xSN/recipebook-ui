@@ -1,17 +1,12 @@
 'use server';
 
-import { auth } from '@/auth';
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
+import { getSession } from '@/lib/server/auth-session';
 import { getUserByUsername } from '@/lib/server/user';
 import { areFriends, removeFriendship } from '@/lib/server/friends';
 import { createNotification, NotificationType } from '@/lib/server/notifications';
 import { FriendRequestStatus } from '@generated/prisma/client';
-
-const getSession = async () => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error('Unauthorized');
-  return session;
-};
 
 export const sendFriendRequest = async (
   receiverUsername: string,
@@ -55,6 +50,8 @@ export const sendFriendRequest = async (
     });
   });
 
+  revalidatePath('/profile/' + receiverUsername);
+  revalidatePath('/friends');
   return { error: null };
 };
 
@@ -65,6 +62,8 @@ export const removeFriend = async (friendUserId: string): Promise<{ error: strin
     return { error: 'Not friends with this user.' };
 
   await removeFriendship(session.user.id, friendUserId);
+  revalidatePath('/friends');
+  revalidatePath('/profile/[username]', 'page');
   return { error: null };
 };
 
@@ -88,6 +87,7 @@ export const acceptRequest = async (requestId: string): Promise<{ error: string 
     });
   });
 
+  revalidatePath('/friends');
   return { error: null };
 };
 
@@ -103,5 +103,6 @@ export const declineRequest = async (requestId: string): Promise<{ error: string
     data: { status: FriendRequestStatus.REJECTED },
   });
 
+  revalidatePath('/friends');
   return { error: null };
 };

@@ -1,35 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { apiFetch, ApiRequestError } from '@/lib/api';
 import { StarIcon } from '@/components/icons';
-
-interface ICommentDto {
-  id: string;
-  recipeId: string;
-  authorUserId: string;
-  authorUsername: string;
-  authorAvatarUrl: string | null;
-  text: string;
-  createdAt: string;
-}
-
-const AVATAR_COLORS = [
-  'bg-orange-400',
-  'bg-blue-400',
-  'bg-green-400',
-  'bg-purple-400',
-  'bg-pink-400',
-  'bg-teal-400',
-  'bg-red-400',
-  'bg-yellow-400',
-];
-
-const avatarColor = (username: string) =>
-  AVATAR_COLORS[username.charCodeAt(0) % AVATAR_COLORS.length];
-
-const initials = (username: string) => username.slice(0, 2).toUpperCase();
+import { getAvatarColor, getInitials } from '@/lib/formatting';
+import { type ICommentItem as ICommentDto } from './RecipeDetailTabs';
 
 const timeAgo = (dateStr: string) => {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -45,12 +21,12 @@ const timeAgo = (dateStr: string) => {
 interface ICommentsTab {
   recipeId: string;
   isOwner: boolean;
+  initialComments: ICommentDto[];
 }
 
-export const CommentsTab = ({ recipeId, isOwner }: ICommentsTab) => {
+export const CommentsTab = ({ recipeId, isOwner, initialComments }: ICommentsTab) => {
   const { data: session } = useSession();
-  const [comments, setComments] = useState<ICommentDto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [comments, setComments] = useState<ICommentDto[]>(initialComments);
 
   const [hoveredStar, setHoveredStar] = useState(0);
   const [selectedStar, setSelectedStar] = useState(0);
@@ -61,13 +37,6 @@ export const CommentsTab = ({ recipeId, isOwner }: ICommentsTab) => {
   const [text, setText] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const [commentError, setCommentError] = useState<string | null>(null);
-
-  useEffect(() => {
-    apiFetch<ICommentDto[]>(`/api/recipes/${recipeId}/comments`)
-      .then(setComments)
-      .catch(() => {})
-      .finally(() => setIsLoading(false));
-  }, [recipeId]);
 
   const handleRate = async (value: number) => {
     setSelectedStar(value);
@@ -171,13 +140,7 @@ export const CommentsTab = ({ recipeId, isOwner }: ICommentsTab) => {
       )}
 
       {/* Comment list */}
-      {isLoading ? (
-        <div className="flex flex-col gap-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 animate-pulse rounded-2xl bg-gray-100" />
-          ))}
-        </div>
-      ) : comments.length === 0 ? (
+      {comments.length === 0 ? (
         <p className="text-sm text-gray-400">No comments yet. Be the first!</p>
       ) : (
         <div className="flex flex-col gap-3">
@@ -186,9 +149,9 @@ export const CommentsTab = ({ recipeId, isOwner }: ICommentsTab) => {
               <div className="mb-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${avatarColor(comment.authorUsername)}`}
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${getAvatarColor(comment.authorUsername)}`}
                   >
-                    {initials(comment.authorUsername)}
+                    {getInitials(comment.authorUsername)}
                   </span>
                   <div>
                     <p className="text-sm font-semibold text-gray-900">{comment.authorUsername}</p>

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ImageUpload } from '@/components/ui/ImageUpload';
 import { CATEGORY_LABELS, TAG_LABELS, DIFFICULTY_LABELS } from '@/lib/recipe-enums';
 import { ArrowRightIcon } from '@/components/icons';
+import { ErrorAlert } from '@/components/ErrorAlert';
 
 type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
 
@@ -257,11 +258,7 @@ export const DetailsStep = ({
         </div>
       </div>
 
-      {error && (
-        <p role="alert" className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">
-          {error}
-        </p>
-      )}
+      <ErrorAlert message={error} />
 
       <button
         type="button"

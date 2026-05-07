@@ -11,8 +11,9 @@ export interface IUserDto {
 export interface ICreateUserData {
   username: string;
   email: string;
-  passwordHash: string;
+  passwordHash?: string | null;
   displayName?: string | null;
+  avatarUrl?: string | null;
 }
 
 export interface IUpdateUserProfileData {

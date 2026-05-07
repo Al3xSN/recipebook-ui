@@ -715,14 +715,6 @@ export type NullableEnumDifficultyFieldUpdateOperationsInput = {
   set?: $Enums.Difficulty | null;
 };
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null;
-  increment?: number;
-  decrement?: number;
-  multiply?: number;
-  divide?: number;
-};
-
 export type RecipeCreateNestedOneWithoutIngredientsInput = {
   create?: Prisma.XOR<
     Prisma.RecipeCreateWithoutIngredientsInput,

@@ -26,6 +26,23 @@ export interface ICommentDto {
   createdAt: Date;
 }
 
+const toCommentDto = (c: {
+  id: string;
+  recipeId: string;
+  authorId: string;
+  text: string;
+  createdAt: Date;
+  author: { username: string; avatarUrl: string | null };
+}): ICommentDto => ({
+  id: c.id,
+  recipeId: c.recipeId,
+  authorUserId: c.authorId,
+  authorUsername: c.author.username,
+  authorAvatarUrl: c.author.avatarUrl,
+  text: c.text,
+  createdAt: c.createdAt,
+});
+
 export const getComments = async (recipeId: string): Promise<ICommentDto[]> => {
   const recipe = await db.recipe.findUnique({ where: { id: recipeId } });
   if (!recipe) throw new RecipeNotFoundError();
@@ -36,15 +53,7 @@ export const getComments = async (recipeId: string): Promise<ICommentDto[]> => {
     orderBy: { createdAt: 'asc' },
   });
 
-  return comments.map((c) => ({
-    id: c.id,
-    recipeId: c.recipeId,
-    authorUserId: c.authorId,
-    authorUsername: c.author.username,
-    authorAvatarUrl: c.author.avatarUrl,
-    text: c.text,
-    createdAt: c.createdAt,
-  }));
+  return comments.map(toCommentDto);
 };
 
 export const addComment = async (
@@ -72,15 +81,7 @@ export const addComment = async (
     return newComment;
   });
 
-  return {
-    id: comment.id,
-    recipeId: comment.recipeId,
-    authorUserId: comment.authorId,
-    authorUsername: comment.author.username,
-    authorAvatarUrl: comment.author.avatarUrl,
-    text: comment.text,
-    createdAt: comment.createdAt,
-  };
+  return toCommentDto(comment);
 };
 
 export const deleteComment = async (

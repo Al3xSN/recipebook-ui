@@ -7,6 +7,7 @@ import { IUpdateProfileInfoRequest } from '@/interfaces/IProfile';
 import { NotificationsSettings } from './NotificationsSettings';
 import { IUserDto } from '@/interfaces/IUser';
 import { updateProfileInfo } from '../actions';
+import { ErrorAlert } from '@/components/ErrorAlert';
 
 interface IProfileInfoForm {
   user: IUserDto | null;
@@ -73,11 +74,7 @@ export const ProfileInfoForm = ({ user }: IProfileInfoForm) => {
           Profile updated successfully.
         </p>
       )}
-      {saveError && (
-        <p role="alert" className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">
-          {saveError}
-        </p>
-      )}
+      <ErrorAlert message={saveError} />
 
       <div>
         <label className="mb-1 block text-xs font-semibold tracking-wider text-(--text3) uppercase">

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { apiFetch, ApiRequestError } from '@/lib/api';
+import { getInitials } from '@/lib/formatting';
 import { CommentListSkeleton } from './CommentListSkeleton';
 
 interface ICommentDto {
@@ -65,7 +66,6 @@ export const CommentList = ({ recipeId }: ICommentList) => {
   };
 
   const currentUserId = session?.user?.id;
-  const initials = (username: string) => username.slice(0, 2).toUpperCase();
 
   return (
     <div>
@@ -83,7 +83,7 @@ export const CommentList = ({ recipeId }: ICommentList) => {
           {comments.map((comment) => (
             <div key={comment.id} className="flex gap-3">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">
-                {initials(comment.authorUsername)}
+                {getInitials(comment.authorUsername)}
               </div>
               <div className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3">
                 <div className="mb-1 flex items-center justify-between gap-2">
@@ -117,7 +117,7 @@ export const CommentList = ({ recipeId }: ICommentList) => {
 
       <form onSubmit={handlePost} className="flex gap-3">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">
-          {session?.user?.username ? initials(session.user.username) : 'Me'}
+          {session?.user?.username ? getInitials(session.user.username) : 'Me'}
         </div>
         <div className="flex-1">
           <textarea

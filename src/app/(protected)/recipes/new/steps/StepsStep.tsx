@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowLeftIcon, ArrowRightIcon, PlusIcon, XIcon } from '@/components/icons';
+import { ErrorAlert } from '@/components/ErrorAlert';
 import { useState } from 'react';
 
 interface Instruction {
@@ -79,11 +80,7 @@ export const StepsStep = ({
         <span>Add step</span>
       </button>
 
-      {error && (
-        <p role="alert" className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">
-          {error}
-        </p>
-      )}
+      <ErrorAlert message={error} />
 
       <div className="flex gap-3">
         <button
