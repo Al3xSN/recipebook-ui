@@ -100,7 +100,7 @@ export const DetailsStep = ({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. Roasted Tomato Pasta"
-          className="w-full rounded-lg border border-(--border) bg-white px-3 py-2.5 text-(--text) transition-colors"
+          className="w-full rounded-lg border border-(--border) bg-(--card) px-3 py-2.5 text-(--text) transition-colors"
         />
       </div>
 
@@ -115,7 +115,7 @@ export const DetailsStep = ({
           id="category"
           value={category}
           onChange={(e) => setCategory(Number(e.target.value))}
-          className="w-full rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
+          className="w-full rounded-lg border border-(--border) bg-(--card) px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
         >
           <option value={-1} disabled>
             Select a category…
@@ -141,7 +141,7 @@ export const DetailsStep = ({
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
           placeholder="A short description of your recipe…"
-          className="w-full resize-none rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
+          className="w-full resize-none rounded-lg border border-(--border) bg-(--card) px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
         />
       </div>
 
@@ -160,7 +160,7 @@ export const DetailsStep = ({
             value={cookTimeMinutes}
             onChange={(e) => setCookTimeMinutes(e.target.value)}
             placeholder="45"
-            className="w-full rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
+            className="w-full rounded-lg border border-(--border) bg-(--card) px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
           />
         </div>
         <div className="flex flex-col gap-1.5">
@@ -177,7 +177,7 @@ export const DetailsStep = ({
             value={servings}
             onChange={(e) => setServings(e.target.value)}
             placeholder="4"
-            className="w-full rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
+            className="w-full rounded-lg border border-(--border) bg-(--card) px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
           />
         </div>
       </div>
@@ -196,7 +196,7 @@ export const DetailsStep = ({
           value={prepTimeMinutes}
           onChange={(e) => setPrepTimeMinutes(e.target.value)}
           placeholder="15"
-          className="w-full rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
+          className="w-full rounded-lg border border-(--border) bg-(--card) px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
         />
       </div>
 

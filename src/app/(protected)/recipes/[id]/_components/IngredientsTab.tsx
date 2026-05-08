@@ -21,22 +21,22 @@ export const IngredientsTab = ({ ingredients }: IIngredientsTab) => {
   return (
     <div className="px-4 py-5">
       <div className="mb-4 flex items-center justify-between">
-        <span className="text-sm font-semibold text-gray-800">
+        <span className="text-sm font-semibold text-(--text)">
           {ingredients.length} ingredient{ingredients.length !== 1 ? 's' : ''}
         </span>
         <button
           type="button"
           onClick={cycleScale}
-          className="rounded-full border border-gray-200 px-3 py-1 text-sm text-gray-600 transition-colors hover:border-orange-300 hover:text-orange-600"
+          className="rounded-full border border-(--border) px-3 py-1 text-sm text-(--text2) transition-colors hover:border-(--accent)/30 hover:text-(--accent)"
         >
           Scale ×{scale}
         </button>
       </div>
 
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-(--border)">
         {ingredients.map((ing, i) => (
           <div key={i} className="flex items-center justify-between py-3">
-            <span className="text-sm text-gray-800">{ing.name}</span>
+            <span className="text-sm text-(--text2)">{ing.name}</span>
             <span className="text-sm font-medium text-orange-500">
               {Number((ing.amount * scale).toFixed(2)).toString()} {UNIT_LABELS[ing.unit]}
             </span>

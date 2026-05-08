@@ -89,8 +89,8 @@ export const CommentsTab = ({ recipeId, isOwner, initialComments }: ICommentsTab
   return (
     <div className="px-4 py-5">
       {!isOwner && (
-        <div className="mb-6 rounded-2xl bg-[#f5ede8] p-4">
-          <p className="mb-3 text-sm font-semibold text-gray-800">Leave a review</p>
+        <div className="mb-6 rounded-2xl bg-(--bg2) p-4">
+          <p className="mb-3 text-sm font-semibold text-(--text)">Leave a review</p>
 
           {/* Star rating */}
           <div className="mb-4 flex items-center gap-1">
@@ -107,13 +107,13 @@ export const CommentsTab = ({ recipeId, isOwner, initialComments }: ICommentsTab
               >
                 <StarIcon
                   className={`h-7 w-7 transition-colors ${
-                    star <= (hoveredStar || selectedStar) ? 'text-orange-500' : 'text-gray-300'
+                    star <= (hoveredStar || selectedStar) ? 'text-(--accent)' : 'text-(--border)'
                   }`}
                   fill={star <= (hoveredStar || selectedStar) ? 'currentColor' : 'none'}
                 />
               </button>
             ))}
-            {ratingDone && <span className="ml-2 text-sm text-orange-500">Thanks for rating!</span>}
+            {ratingDone && <span className="ml-2 text-sm text-(--accent)">Thanks for rating!</span>}
             {ratingError && <p className="ml-2 text-sm text-red-500">{ratingError}</p>}
           </div>
 
@@ -125,13 +125,13 @@ export const CommentsTab = ({ recipeId, isOwner, initialComments }: ICommentsTab
               placeholder="Share your experience..."
               rows={3}
               maxLength={500}
-              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-base transition-colors outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
+              className="w-full rounded-xl border border-(--border) bg-(--card) px-4 py-3 text-base text-(--text) transition-colors outline-none focus:border-(--accent) focus:ring-2 focus:ring-(--accent)/20"
             />
             {commentError && <p className="mt-1 text-xs text-red-500">{commentError}</p>}
             <button
               type="submit"
               disabled={isPosting || !text.trim()}
-              className="mt-3 w-full rounded-xl bg-orange-500 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+              className="mt-3 w-full rounded-xl bg-(--accent) py-3 text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
             >
               {isPosting ? 'Posting…' : 'Post review'}
             </button>
@@ -141,11 +141,11 @@ export const CommentsTab = ({ recipeId, isOwner, initialComments }: ICommentsTab
 
       {/* Comment list */}
       {comments.length === 0 ? (
-        <p className="text-sm text-gray-400">No comments yet. Be the first!</p>
+        <p className="text-sm text-(--text3)">No comments yet. Be the first!</p>
       ) : (
         <div className="flex flex-col gap-3">
           {comments.map((comment) => (
-            <div key={comment.id} className="rounded-2xl bg-[#f5ede8] p-4">
+            <div key={comment.id} className="rounded-2xl bg-(--bg2) p-4">
               <div className="mb-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span
@@ -154,21 +154,21 @@ export const CommentsTab = ({ recipeId, isOwner, initialComments }: ICommentsTab
                     {getInitials(comment.authorUsername)}
                   </span>
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">{comment.authorUsername}</p>
-                    <p className="text-xs text-gray-400">{timeAgo(comment.createdAt)}</p>
+                    <p className="text-sm font-semibold text-(--text)">{comment.authorUsername}</p>
+                    <p className="text-xs text-(--text3)">{timeAgo(comment.createdAt)}</p>
                   </div>
                 </div>
                 {comment.authorUserId === currentUserId && (
                   <button
                     type="button"
                     onClick={() => handleDelete(comment.id)}
-                    className="text-xs text-gray-400 hover:text-red-500"
+                    className="text-xs text-(--text3) hover:text-red-500"
                   >
                     Delete
                   </button>
                 )}
               </div>
-              <p className="text-sm text-gray-700">{comment.text}</p>
+              <p className="text-sm text-(--text2)">{comment.text}</p>
             </div>
           ))}
         </div>

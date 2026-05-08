@@ -46,7 +46,7 @@ export const ProfileBanner = ({
   return (
     <div className="relative bg-(--accent) p-5">
       <div className="mb-3 flex items-center gap-3.5">
-        <div className="flex h-18 w-18 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white text-2xl font-bold text-(--accent)">
+        <div className="flex h-18 w-18 shrink-0 items-center justify-center overflow-hidden rounded-full bg-(--card) text-2xl font-bold text-(--accent)">
           {profile.avatarUrl ? (
             <Image
               src={profile.avatarUrl}

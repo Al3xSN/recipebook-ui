@@ -28,7 +28,7 @@ export const DeleteRecipeButton = ({ recipeId }: { recipeId: string }) => {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-red-500"
+        className="flex items-center gap-1.5 rounded-lg bg-(--card)/90 px-3 py-1.5 text-sm font-medium text-(--text2) shadow-sm backdrop-blur-sm transition-colors hover:bg-(--card) hover:text-red-500"
       >
         <TrashIcon className="h-3.5 w-3.5" />
         Delete
@@ -40,11 +40,11 @@ export const DeleteRecipeButton = ({ recipeId }: { recipeId: string }) => {
           onClick={() => !isDeleting && setIsOpen(false)}
         >
           <div
-            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-sm rounded-2xl bg-(--card) p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="mb-1 text-base font-semibold text-gray-900">Delete recipe?</h2>
-            <p className="mb-5 text-sm text-gray-500">This cannot be undone.</p>
+            <h2 className="mb-1 text-base font-semibold text-(--text)">Delete recipe?</h2>
+            <p className="mb-5 text-sm text-(--text2)">This cannot be undone.</p>
 
             {error && (
               <p role="alert" className="mb-4 text-xs text-red-600">
@@ -65,7 +65,7 @@ export const DeleteRecipeButton = ({ recipeId }: { recipeId: string }) => {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 disabled={isDeleting}
-                className="inline-flex flex-1 items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex flex-1 items-center justify-center rounded-lg border border-(--border) px-4 py-2 text-sm font-medium text-(--text) transition-colors hover:bg-(--bg2) disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Cancel
               </button>

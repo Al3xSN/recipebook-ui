@@ -38,14 +38,14 @@ export const StepsTab = ({ steps }: IStepsTab) => {
             >
               <span
                 className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-                  done ? 'bg-gray-100 text-gray-400' : 'bg-orange-500 text-white'
+                  done ? 'bg-(--bg2) text-(--text3)' : 'bg-orange-500 text-white'
                 }`}
               >
                 {step.stepNumber}
               </span>
               <p
                 className={`pt-0.5 leading-relaxed transition-colors ${
-                  done ? 'text-gray-400 line-through' : 'text-gray-700'
+                  done ? 'text-(--text3) line-through' : 'text-(--text2)'
                 }`}
               >
                 {step.text}

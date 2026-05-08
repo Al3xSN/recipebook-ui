@@ -51,7 +51,7 @@ export const RecipeDetailTabs = ({
 
   return (
     <div>
-      <div className="flex border-b border-gray-200">
+      <div className="flex border-b border-(--border)">
         {tabs.map(({ key, label }) => (
           <button
             key={key}
@@ -60,7 +60,7 @@ export const RecipeDetailTabs = ({
             className={`flex-1 py-3 text-xs font-medium transition-colors sm:text-sm ${
               active === key
                 ? 'border-b-2 border-orange-500 text-orange-500'
-                : 'text-gray-400 hover:text-gray-600'
+                : 'text-(--text3) hover:text-(--text2)'
             }`}
           >
             {label}

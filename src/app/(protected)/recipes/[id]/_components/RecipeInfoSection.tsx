@@ -29,7 +29,7 @@ export const RecipeInfoSection = ({ recipe, ratingStats }: IRecipeInfoSectionPro
   return (
     <div className="px-4 pt-4">
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
+        <span className="text-xs font-semibold tracking-wider text-(--text3) uppercase">
           {CATEGORY_LABELS[recipe.category] ?? 'Other'}
         </span>
         {averageRating !== null && totalRatings > 0 && (
@@ -50,7 +50,7 @@ export const RecipeInfoSection = ({ recipe, ratingStats }: IRecipeInfoSectionPro
         )}
       </div>
 
-      <h1 className="mb-3 text-2xl font-bold tracking-tight text-gray-900">{recipe.title}</h1>
+      <h1 className="mb-3 text-2xl font-bold tracking-tight text-(--text)">{recipe.title}</h1>
 
       <div className="mb-4 flex items-center justify-between">
         <Link
@@ -72,35 +72,35 @@ export const RecipeInfoSection = ({ recipe, ratingStats }: IRecipeInfoSectionPro
               {recipe.author.displayName.charAt(0).toUpperCase()}
             </span>
           )}
-          <span className="text-sm text-gray-500 hover:text-gray-700">
+          <span className="text-sm text-(--text2) hover:text-(--text)">
             by {recipe.author.displayName}
           </span>
         </Link>
         {totalRatings > 0 && (
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-(--text3)">
             {totalRatings} review{totalRatings !== 1 ? 's' : ''}
           </span>
         )}
       </div>
 
-      <div className="mb-1 grid grid-cols-3 divide-x divide-gray-200 rounded-2xl border border-gray-200 bg-white py-3">
+      <div className="mb-1 grid grid-cols-3 divide-x divide-(--border) rounded-2xl border border-(--border) bg-(--card) py-3">
         <div className="flex flex-col items-center gap-0.5 px-3">
-          <span className="text-base font-bold text-gray-900">{formatTime(totalTime)}</span>
-          <span className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
+          <span className="text-base font-bold text-(--text)">{formatTime(totalTime)}</span>
+          <span className="text-[10px] font-semibold tracking-wider text-(--text3) uppercase">
             Time
           </span>
         </div>
         <div className="flex flex-col items-center gap-0.5 px-3">
-          <span className="text-base font-bold text-gray-900">{recipe.servings}</span>
-          <span className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
+          <span className="text-base font-bold text-(--text)">{recipe.servings}</span>
+          <span className="text-[10px] font-semibold tracking-wider text-(--text3) uppercase">
             Servings
           </span>
         </div>
         <div className="flex flex-col items-center gap-0.5 px-3">
-          <span className="text-base font-bold text-gray-900">
+          <span className="text-base font-bold text-(--text)">
             {recipe.difficulty ? DIFFICULTY_LABELS[recipe.difficulty] : '—'}
           </span>
-          <span className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
+          <span className="text-[10px] font-semibold tracking-wider text-(--text3) uppercase">
             Level
           </span>
         </div>
