@@ -30,6 +30,7 @@ const RequestsTab = ({
               bio={r.senderBio}
               avatarUrl={r.senderAvatarUrl}
               mutualFriendCount={r.mutualFriendCount}
+              profileUrl={`/profile/${r.senderUsername}`}
               actions={
                 <>
                   <button

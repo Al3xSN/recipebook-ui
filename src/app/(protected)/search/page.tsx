@@ -65,7 +65,7 @@ const SearchPage = async ({
       {!hasQuery ? (
         <>
           <section className="mb-7">
-            <p className="mb-3 text-xs font-semibold tracking-widest text-gray-400 uppercase">
+            <p className="mb-3 text-xs font-semibold tracking-widest text-(--text3) uppercase">
               Trending Searches
             </p>
             <div className="flex flex-wrap gap-2">
@@ -73,7 +73,7 @@ const SearchPage = async ({
                 <Link
                   key={term}
                   href={`/search?search=${encodeURIComponent(term)}`}
-                  className="rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm text-gray-700 transition-colors hover:border-orange-300 hover:text-orange-600"
+                  className="rounded-full border border-(--border) bg-(--bg2) px-4 py-1.5 text-sm text-(--text2) transition-colors hover:border-(--accent) hover:text-(--accent)"
                 >
                   {term}
                 </Link>
@@ -82,7 +82,7 @@ const SearchPage = async ({
           </section>
 
           <section>
-            <p className="mb-3 text-xs font-semibold tracking-widest text-gray-400 uppercase">
+            <p className="mb-3 text-xs font-semibold tracking-widest text-(--text3) uppercase">
               Browse by Category
             </p>
             <div className="grid grid-cols-2 gap-3">
@@ -90,7 +90,7 @@ const SearchPage = async ({
                 <Link
                   key={id}
                   href={`/search?category=${id}`}
-                  className="overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow hover:shadow-md"
+                  className="overflow-hidden rounded-2xl bg-(--card) shadow-(--shadow-card-sm) transition-shadow hover:shadow-(--shadow-card)"
                 >
                   <div className="relative h-28 w-full overflow-hidden">
                     {CATEGORY_IMAGES[Number(id)] ? (
@@ -102,11 +102,11 @@ const SearchPage = async ({
                         sizes="(max-width: 768px) 50vw, 25vw"
                       />
                     ) : (
-                      <div className="h-full w-full bg-gray-200" />
+                      <div className="h-full w-full bg-(--bg2)" />
                     )}
                   </div>
                   <div className="px-3 py-2 text-left">
-                    <span className="text-sm font-semibold text-gray-800">{label}</span>
+                    <span className="text-sm font-semibold text-(--text)">{label}</span>
                   </div>
                 </Link>
               ))}
@@ -116,7 +116,7 @@ const SearchPage = async ({
       ) : (
         <section>
           {results !== null && (
-            <p className="mb-4 text-xs font-semibold tracking-widest text-gray-400 uppercase">
+            <p className="mb-4 text-xs font-semibold tracking-widest text-(--text3) uppercase">
               {results.totalCount} result{results.totalCount !== 1 ? 's' : ''} for &ldquo;
               {displayValue}&rdquo;
             </p>
@@ -128,8 +128,8 @@ const SearchPage = async ({
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-gray-300 bg-white py-16 text-center">
-              <p className="text-sm text-gray-400">No recipes found. Try a different search.</p>
+            <div className="rounded-2xl border border-dashed border-(--border) bg-(--card) py-16 text-center">
+              <p className="text-sm text-(--text3)">No recipes found. Try a different search.</p>
             </div>
           )}
         </section>

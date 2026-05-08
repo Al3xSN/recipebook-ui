@@ -58,14 +58,14 @@ export const IngredientsStep = ({
               onChange={(e) => update(i, 'amount', e.target.value)}
               placeholder="Qty"
               aria-label="Quantity"
-              className="w-14 flex-none rounded-lg border border-(--border) bg-white px-2 py-2.5 text-center text-base text-(--text) transition-colors outline-none focus:ring-2"
+              className="w-14 flex-none rounded-lg border border-(--border) bg-(--card) px-2 py-2.5 text-center text-base text-(--text) transition-colors outline-none focus:ring-2"
             />
 
             <select
               value={ing.unit}
               onChange={(e) => update(i, 'unit', Number(e.target.value))}
               aria-label="Unit"
-              className="w-20 flex-none rounded-lg border border-(--border) bg-white px-2 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
+              className="w-20 flex-none rounded-lg border border-(--border) bg-(--card) px-2 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
             >
               {Object.entries(UNIT_LABELS).map(([val, lbl]) => (
                 <option key={val} value={val}>
@@ -80,7 +80,7 @@ export const IngredientsStep = ({
               onChange={(e) => update(i, 'name', e.target.value)}
               placeholder="Ingredient name"
               aria-label="Ingredient name"
-              className="min-w-0 flex-1 rounded-lg border border-(--border) bg-white px-2 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
+              className="min-w-0 flex-1 rounded-lg border border-(--border) bg-(--card) px-2 py-2.5 text-base text-(--text) transition-colors outline-none focus:ring-2"
             />
 
             <button

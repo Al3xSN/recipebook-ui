@@ -86,7 +86,7 @@ export const ProfileInfoForm = ({ user }: IProfileInfoForm) => {
           type="text"
           value={formData.displayName ?? ''}
           onChange={(e) => handleChange('displayName', e.target.value)}
-          className="w-full rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:border-(--accent) focus:ring-1 focus:ring-(--accent)"
+          className="w-full rounded-lg border border-(--border) bg-(--card) px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:border-(--accent) focus:ring-1 focus:ring-(--accent)"
         />
       </div>
 
@@ -95,7 +95,7 @@ export const ProfileInfoForm = ({ user }: IProfileInfoForm) => {
           Username
         </label>
 
-        <div className="flex overflow-hidden rounded-lg border border-(--border) bg-white transition-colors focus-within:border-(--accent) focus-within:ring-1 focus-within:ring-(--accent)">
+        <div className="flex overflow-hidden rounded-lg border border-(--border) bg-(--card) transition-colors focus-within:border-(--accent) focus-within:ring-1 focus-within:ring-(--accent)">
           <span className="flex items-center border-r border-(--border) bg-(--bg2) px-3 text-sm text-(--text3)">
             @
           </span>
@@ -121,7 +121,7 @@ export const ProfileInfoForm = ({ user }: IProfileInfoForm) => {
           value={formData.bio ?? ''}
           onChange={(e) => handleChange('bio', e.target.value)}
           rows={3}
-          className={`w-full resize-none rounded-lg border border-(--border) bg-white px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:border-(--accent) focus:ring-1 focus:ring-(--accent)`}
+          className={`w-full resize-none rounded-lg border border-(--border) bg-(--card) px-3 py-2.5 text-base text-(--text) transition-colors outline-none focus:border-(--accent) focus:ring-1 focus:ring-(--accent)`}
         />
       </div>
 

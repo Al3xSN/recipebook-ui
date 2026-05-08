@@ -33,3 +33,5 @@ export { FriendRequestIcon } from './FriendRequestIcon';
 export { FriendAcceptedIcon } from './FriendAcceptedIcon';
 export { RatingIcon } from './RatingIcon';
 export { RecipeImportedIcon } from './RecipeImportedIcon';
+export { MoonIcon } from './MoonIcon';
+export { SunIcon } from './SunIcon';

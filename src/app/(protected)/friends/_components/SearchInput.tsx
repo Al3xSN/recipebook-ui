@@ -1,3 +1,5 @@
+'use client';
+
 const SearchInput = ({
   placeholder,
   value,
@@ -24,7 +26,7 @@ const SearchInput = ({
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full rounded-full border border-(--border) bg-white py-2.5 pr-4 pl-10 text-[14px] text-(--text) placeholder-(--text3) outline-none focus:border-(--accent) focus:ring-1 focus:ring-(--accent)"
+      className="w-full rounded-full border border-(--border) bg-(--card) py-2.5 pr-4 pl-10 text-[14px] text-(--text) placeholder-(--text3) outline-none focus:border-(--accent) focus:ring-1 focus:ring-(--accent)"
     />
   </div>
 );

@@ -20,7 +20,7 @@ export const DeleteAccountButton = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
 
-          <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+          <div className="relative w-full max-w-sm rounded-2xl bg-(--card) p-6 shadow-xl">
             <h2 className="mb-2 text-xl font-bold text-(--text)">Delete account?</h2>
 
             <p className="mb-6 text-sm text-(--text2)">

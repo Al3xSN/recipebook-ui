@@ -36,13 +36,13 @@ export const SearchInput = ({ defaultValue }: ISearchInputProps) => {
 
   return (
     <div className="relative mb-5">
-      <SearchIcon className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-gray-400" />
+      <SearchIcon className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-(--text3)" />
       <input
         type="search"
         value={value}
         onChange={(e) => handleChange(e.target.value)}
         placeholder="Search recipes, ingredients..."
-        className={`w-full rounded-2xl border border-gray-200 bg-white py-3 pr-10 pl-11 transition-colors outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20${isPending ? 'opacity-50' : ''}`}
+        className={`w-full rounded-2xl border border-(--border) bg-(--card) py-3 pr-10 pl-11 text-(--text) transition-colors outline-none focus:border-(--accent) focus:ring-2 focus:ring-(--accent)/20 ${isPending ? 'opacity-50' : ''}`}
       />
       {value && (
         <button

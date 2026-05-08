@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { auth } from '@/auth';
 import { ProfileInfoForm } from './_components/ProfileInfoForm';
 import { AvatarUpload } from './_components/AvatarUpload';
+import { AppearanceSettings } from './_components/AppearanceSettings';
 import { SignOutButton } from '@/components/ui/SignOutButton';
 import { DeleteAccountButton } from './_components/DeleteAccountButton';
 import { ArrowLeftIcon } from '@/components/icons';
@@ -26,10 +27,10 @@ const SettingsPage = async ({ params }: { params: Promise<{ username: string }> 
       <div className="mb-6 flex items-center gap-4">
         <Link
           href={`/profile/${username}`}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-(--border) bg-white text-(--text2) transition-colors hover:bg-(--bg2)"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-(--border) bg-(--card) text-(--text2) transition-colors hover:bg-(--bg2)"
           aria-label="Back to profile"
         >
-          <ArrowLeftIcon className="h-5 w-5 text-gray-700" />
+          <ArrowLeftIcon className="h-5 w-5 text-(--text2)" />
         </Link>
 
         <h1 className="text-xl font-bold text-(--text)">Profile Settings</h1>
@@ -42,6 +43,10 @@ const SettingsPage = async ({ params }: { params: Promise<{ username: string }> 
       <hr className="mb-6 border-(--border)" />
 
       <ProfileInfoForm user={user} />
+
+      <hr className="my-6 border-(--border)" />
+
+      <AppearanceSettings />
 
       <hr className="my-6 border-(--border)" />
 

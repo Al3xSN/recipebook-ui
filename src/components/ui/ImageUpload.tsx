@@ -105,7 +105,7 @@ export const ImageUpload = ({
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
           aria-label="Change photo"
-          className="group/upload relative flex h-24 w-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-orange-100 text-2xl font-bold text-orange-600 transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="group/upload relative flex h-24 w-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-(--accent-tint-8) text-2xl font-bold text-(--accent) transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {displayUrl ? (
             <Image
@@ -121,7 +121,7 @@ export const ImageUpload = ({
           {isUploading ? spinner : null}
         </button>
 
-        <p className="text-xs text-gray-500">JPEG, PNG, or WebP — max 5 MB</p>
+        <p className="text-xs text-(--text3)">JPEG, PNG, or WebP — max 5 MB</p>
 
         {error && (
           <p role="alert" className="text-xs text-red-600">
@@ -148,7 +148,7 @@ export const ImageUpload = ({
         onClick={() => fileInputRef.current?.click()}
         disabled={isUploading}
         aria-label="Upload photo"
-        className="group/upload relative w-full cursor-pointer overflow-hidden rounded-xl bg-orange-50 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        className="group/upload relative w-full cursor-pointer overflow-hidden rounded-xl bg-(--accent-tint-6) transition-colors focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
         <div className="aspect-video w-full">
           {displayUrl ? (
@@ -160,9 +160,9 @@ export const ImageUpload = ({
               sizes="(max-width: 672px) 100vw, 672px"
             />
           ) : (
-            <span className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-orange-200 transition-colors hover:border-orange-400">
-              <CameraIcon className="h-10 w-10 text-orange-300" strokeWidth={1.5} />
-              <span className="text-sm text-orange-400">Upload photo</span>
+            <span className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-(--accent-border-tint-20) transition-colors hover:border-(--accent)">
+              <CameraIcon className="h-10 w-10 text-(--accent)" strokeWidth={1.5} />
+              <span className="text-sm text-(--accent)">Upload photo</span>
             </span>
           )}
         </div>
@@ -170,7 +170,7 @@ export const ImageUpload = ({
       </button>
 
       <div className="flex items-center justify-between">
-        <p className="text-xs text-gray-500">JPEG, PNG, or WebP — max 5 MB</p>
+        <p className="text-xs text-(--text3)">JPEG, PNG, or WebP — max 5 MB</p>
         {onRemove && displayUrl && (
           <button
             type="button"
